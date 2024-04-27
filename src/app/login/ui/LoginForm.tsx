@@ -1,4 +1,5 @@
 // Librerías
+import Image from 'next/image'
 import {
   Box,
   Stack,
@@ -14,9 +15,6 @@ import { useForm } from 'react-hook-form'
 
 import { FormInputText } from '@/components/forms'
 
-// Assets
-import CiudadaniaLogo from '../../../assets/images/ciudadania_logo.svg'
-
 // Componentes y hooks
 import { useAuth } from '../../../context/AuthProvider'
 import { ProgresoLineal } from '@/components/progreso'
@@ -31,12 +29,7 @@ import { imprimir } from '../../../utils/imprimir'
 export const LoginForm = () => {
   const theme = useTheme()
   const { ingresar, progresoLogin } = useAuth()
-  const { handleSubmit, control } = useForm<LoginType>({
-    defaultValues: {
-      usuario: 'ADMINISTRADOR-TECNICO',
-      contrasena: '123',
-    },
-  })
+  const { handleSubmit, control } = useForm<LoginType>()
   const matchDownSM = useMediaQuery(theme.breakpoints.down('md'))
 
   const iniciarSesion = async ({ usuario, contrasena }: LoginType) => {
@@ -150,27 +143,7 @@ export const LoginForm = () => {
                     borderColor: theme.palette.grey[100],
                   }}
                 >
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    gap={2}
-                    sx={{ mr: { xs: 1, sm: 2, width: 20 } }}
-                  >
-                    <img
-                      src={CiudadaniaLogo}
-                      alt="logo ciudadanía"
-                      width={30}
-                      height={30}
-                      style={{ marginRight: matchDownSM ? 8 : 16 }}
-                    />
-                  </Box>
-                  <Typography
-                    fontWeight="600"
-                    color={theme.palette.primary.light}
-                  >
-                    Ingresar con Ciudadanía
-                  </Typography>
+                  Iniciar sesión
                 </Button>
               </AnimateButton>
             </Grid>
@@ -183,7 +156,16 @@ export const LoginForm = () => {
               fullWidth
               variant="outlined"
             >
-              Iniciar sesión
+              <Box display="flex" justifyContent="center" alignItems="center">
+                <Image
+                  src="/images/google.svg"
+                  alt="logo google"
+                  width={30}
+                  height={30}
+                  style={{ marginRight: matchDownSM ? 8 : 16 }}
+                />
+                Ingresar con Google
+              </Box>
             </Button>
           </Stack>
 

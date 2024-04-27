@@ -4,10 +4,7 @@ import { Settings as SettingsSlider } from 'react-slick'
 import { Grid, useTheme, Box, Typography } from '@mui/material'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
-
-// Assets
-import Login1 from '../../../assets/images/login/login_1.svg'
-import Login2 from '../../../assets/images/login/login_2.svg'
+import Image from 'next/image'
 
 // Constantes
 const configuracionSlider: SettingsSlider = {
@@ -35,8 +32,8 @@ export const LoginSlider = () => {
       minHeight="100vh"
       bgcolor={theme.palette.background.default}
     >
-      <img
-        src={Login1}
+      <Image
+        src="/images/login_1.svg"
         alt="Barras login"
         width={300}
         height={400}
@@ -102,8 +99,8 @@ export const LoginSlider = () => {
           </Grid>
 
           <Grid item xs={8}>
-            <img
-              src={Login2}
+            <Image
+              src="/images/login_2.svg"
               alt="Imagen de login"
               width={300}
               height={400}
