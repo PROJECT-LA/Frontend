@@ -10,7 +10,7 @@ export const middleware = (req: NextRequest) => {
     if (req.nextUrl.pathname == '/') {
       if (token?.value) {
         const url = req.nextUrl.clone()
-        url.pathname = '/admin'
+        url.pathname = '/admin/home'
         return NextResponse.redirect(url)
       } else {
         const url = req.nextUrl.clone()
@@ -22,14 +22,14 @@ export const middleware = (req: NextRequest) => {
     if (req.nextUrl.pathname == '/login') {
       if (token?.value) {
         const url = req.nextUrl.clone()
-        url.pathname = '/admin'
+        url.pathname = '/admin/home'
         return NextResponse.redirect(url)
       } else {
         return NextResponse.next()
       }
     }
 
-    if (req.nextUrl.pathname.startsWith('/admin')) {
+    if (req.nextUrl.pathname.startsWith('/admin/home')) {
       if (token?.value) {
         return NextResponse.next()
       } else {
@@ -49,5 +49,5 @@ export const middleware = (req: NextRequest) => {
 }
 
 export const config = {
-  matcher: ['/', '/login', '/admin/:path*'],
+  matcher: ['/', '/login', '/admin/home/:path*'],
 }

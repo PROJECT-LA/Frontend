@@ -1,7 +1,8 @@
-'use client'  
+'use client'
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { useFullScreenLoading } from './FullScreenLoadingProvider'
 import { Constantes } from '../config'
+import axios from 'axios'
 import { imprimir } from '../utils/imprimir'
 import { Enforcer } from 'casbin'
 import { useRouter } from 'next/navigation'
@@ -16,6 +17,7 @@ import { useSession } from '../hooks/useSession'
 import { useCasbinEnforcer } from '@/hooks/useCasbinEnforcer'
 
 import { toast } from 'sonner'
+import { AxiosResponse } from 'axios'
 
 interface ContextProps {
   cargarUsuarioManual: () => Promise<void>
@@ -103,22 +105,27 @@ export const AuthProvider = ({ children }: AuthContextType) => {
   const login = async ({ usuario, contrasena }: LoginType) => {
     try {
       setLoading(true)
-      console.log(`${Constantes.baseUrl}/auth`)
+      console.log(`${Constantes.baseUrl}/auth/login`)
 
       await delay(1000)
+
       const respuesta = await Servicios.post({
-        url: `${Constantes.baseUrl}/auth`,
-        body: { usuario, contrasena: encodeBase64(encodeURI(contrasena)) },
+        url: `${Constantes.baseUrl}/auth/login`,
+        body: { username: usuario, password: contrasena },
         headers: {},
       })
 
-      guardarCookie('token', respuesta.datos?.access_token)
-      imprimir(`Token ✅: ${respuesta.datos?.access_token}`)
+      // console.log('------------------------')
+      // console.log(respuesta)
+      // console.log('------------------------')
 
-      setUser(respuesta.datos)
-      imprimir(`Usuarios ✅`, respuesta.datos)
+      // const cookie = guardarCookie('token', respuesta.datos?.access_token)
+      // imprimir(`Token ✅: ${respuesta.datos?.access_token}`)
 
-      await obtenerPermisos()
+      // setUser(respuesta.datos)
+      // imprimir(`Usuarios ✅`, respuesta.datos)
+
+      // await obtenerPermisos()
 
       mostrarFullScreen()
       await delay(1000)

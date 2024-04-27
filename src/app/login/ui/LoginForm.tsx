@@ -130,12 +130,9 @@ export const LoginForm = () => {
             <Grid item xs={12} sx={{ width: '100%' }}>
               <AnimateButton>
                 <Button
-                  type="button"
+                  type="submit"
                   disableElevation
                   fullWidth
-                  onClick={() => {
-                    imprimir('Login Ciudadanía')
-                  }}
                   size="large"
                   variant="contained"
                   sx={{
@@ -150,9 +147,12 @@ export const LoginForm = () => {
 
             <Divider sx={{ width: '80%' }} />
             <Button
-              type="submit"
+              type="button"
               disableElevation
               size="large"
+              onClick={() => {
+                imprimir('Login Google')
+              }}
               fullWidth
               variant="outlined"
             >

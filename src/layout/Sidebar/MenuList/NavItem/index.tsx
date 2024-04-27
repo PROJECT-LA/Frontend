@@ -4,8 +4,8 @@ import {
   forwardRef,
   useEffect,
 } from 'react'
-import { Item } from '@/types/utils'
 import Link from 'next/link'
+import { Item } from '@/types/utils'
 import { usePathname } from 'next/navigation'
 
 // material-ui
@@ -47,9 +47,12 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
 
   let listItemProps: ListItemProps = {
     /* eslint-disable */
-    component: forwardRef<HTMLAnchorElement>((props, ref) => (
-      <Link ref={ref} href={item.url ?? '/'} {...props} target={itemTarget} />
-    )),
+    component: forwardRef<HTMLAnchorElement>((props, ref) => {
+      console.log(item)
+      return (
+        <Link ref={ref} {...props} href={item.url ?? '/'} target={itemTarget} />
+      )
+    }),
   }
   if (item?.external) {
     listItemProps = { component: 'a', href: item.url, target: itemTarget }

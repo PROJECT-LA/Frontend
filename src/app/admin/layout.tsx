@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import Header from '@/layout/Header'
 import Sidebar from '@/layout/Sidebar'
 import { useGlobalStore } from '@/store'
+import 'react-perfect-scrollbar/dist/css/styles.css'
 
 interface MainProps {
   open: boolean
@@ -51,7 +52,7 @@ const Main = styled('main', {
   },
 }))
 
-const MainLayout = ({children}: {children: React.ReactNode}) => {
+const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme()
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'))
 
