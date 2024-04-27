@@ -2,12 +2,11 @@
 import { createContext, ReactNode, useContext, useState } from 'react'
 import { useFullScreenLoading } from './FullScreenLoadingProvider'
 import { Constantes } from '../config'
-import axios from 'axios'
 import { imprimir } from '../utils/imprimir'
 import { Enforcer } from 'casbin'
 import { useRouter } from 'next/navigation'
 import { leerCookie, guardarCookie } from '../utils/cookies'
-import { delay, encodeBase64, InterpreteMensajes } from '../utils/utilidades'
+import { delay, InterpreteMensajes } from '../utils/utilidades'
 import { CasbinTypes } from '../types/utils/casbin'
 import { idRolType, LoginType, RoleType, UsuarioType } from '@/types/login'
 
@@ -17,7 +16,6 @@ import { useSession } from '../hooks/useSession'
 import { useCasbinEnforcer } from '@/hooks/useCasbinEnforcer'
 
 import { toast } from 'sonner'
-import { AxiosResponse } from 'axios'
 
 interface ContextProps {
   cargarUsuarioManual: () => Promise<void>
