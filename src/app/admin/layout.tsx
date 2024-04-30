@@ -58,10 +58,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
 
   const { openDrawer, toggleDrawer } = useGlobalStore()
 
-  const pathname = usePathname()
-
-  console.log(pathname)
-
   return (
     <div
       style={{

@@ -6,7 +6,7 @@ import ProfileSection from './ProfileSection'
 import NotificationSection from './NotificationSection'
 
 // assets
-import { Menu, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { BotonCambioTema } from '@/components/botones'
 
 const Header = ({
@@ -18,23 +18,22 @@ const Header = ({
 
   return (
     <>
-      {/* logo & toggler button */}
-
       <Stack spacing={1} marginTop={2}>
         <Typography variant="h3">Bienvenido</Typography>
         <Typography variant="h1">Dashboard</Typography>
       </Stack>
 
-      {/* header search */}
-      {/* <SearchSection /> */}
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
 
-      {/* notification & profile */}
-      <Stack gap={1} direction="row" alignItems="center">
+      <Stack spacing={2} direction="row" alignItems="center">
         <Button
           endIcon={<Search />}
-          sx={{ paddingY: 1, color: theme.palette.text.primary }}
+          sx={{
+            paddingY: 1,
+            color: theme.palette.text.primary,
+            borderColor: theme.palette.divider,
+          }}
           variant="outlined"
         >
           <Typography>Búsqueda rápida</Typography>

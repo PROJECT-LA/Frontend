@@ -111,7 +111,6 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
       position: 'absolute',
       top: 0,
       bottom: 0,
-      left: '-20px',
       height: '100%',
       zIndex: '-1',
       borderRadius: ' 0 24px 24px 0',
@@ -119,8 +118,11 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
       width: '0',
     },
     '&:hover::before': {
-      width: 'calc(100% + 20px)',
-      backgroundColor: theme.palette.primary.light,
+      width: '100%',
+      borderRadius: '1rem',
+      transition: 'all .3s ease',
+      backgroundColor: `${theme.palette.primary.light}50`,
+      color: theme.palette.text.primary,
     },
     '& > .MuiListItemIcon-root': {
       width: 45,
@@ -131,8 +133,6 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
       borderRadius: '8px',
       marginRight: '8px',
       transition: 'all .3s ease-in-out',
-      // color: item.children ? "" : theme.palette.primary.main,
-      // backgroundColor: item.children ? "" : theme.palette.primary.light,
     },
     '&:hover': {
       backgroundColor: 'transparent !important',
@@ -158,14 +158,7 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
     <>
       <ListItemStyled
         sx={{
-          '&:hover': {
-            '.MuiListItemIcon-root': {
-              color: 'main',
-            },
-          },
-          '&:hover::before': {
-            backgroundColor: 'light',
-          },
+          position: 'relative',
           '&.Mui-selected': {
             color:
               level > 1
@@ -174,15 +167,12 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
             '& .MuiTypography-root': {
               fontWeight: '600 !important',
             },
-            '.MuiListItemIcon-root': {
-              color: 'primary.main',
-            },
             '&:before': {
-              backgroundColor: 'primary.light',
-              color: 'primary.main',
-              '.MuiListItemIcon-root': {
-                color: 'primary.main',
-              },
+              width: !openDrawer ? '75%' : '100%',
+              borderRadius: '1rem',
+              transition: 'all .2s ease',
+              backgroundColor: `${theme.palette.primary.light}50`,
+              color: theme.palette.text.primary,
             },
           },
         }}

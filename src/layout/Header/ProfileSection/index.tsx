@@ -127,9 +127,10 @@ const ProfileSection = () => {
       <Chip
         sx={{
           height: '48px',
+          paddingX: 1,
           alignItems: 'center',
           transition: 'all .2s ease-in-out',
-          borderColor: theme.palette.divider,
+          borderColor: `${theme.palette.divider} !important`,
           border: 1,
 
           '& .MuiChip-label': {
@@ -178,6 +179,8 @@ const ProfileSection = () => {
                 sx={{
                   boxShadow: Constantes.boxShadow,
                   borderRadius: Constantes.borderRadius,
+                  border: 1,
+                  borderColor: theme.palette.divider,
                 }}
               >
                 <Box sx={{ p: 3 }}>
