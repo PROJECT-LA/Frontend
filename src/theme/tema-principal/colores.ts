@@ -6,35 +6,35 @@ export const colores: EsquemaColor = {
   darkTextSecondary: '#e7ecf0',
 
   // paper & background
-  paper: '#ffffff',
-  default: '#f0f5f9',
+  paper: '#f0f5f9',
+  default: '#fff',
 
-  darkPaper: '#111c2d',
-  darkDefault: '#15263a',
+  darkPaper: '#262833',
+  darkDefault: '#242631',
 
   // divider
-  divider: '#e5eaef',
-  dividerDark: '#364152',
+  divider: '#262833',
+  dividerDark: '#9B9BA1',
 
   // primary
   primaryLight: '#e5f3fb',
-  primaryMain: '#0085db',
-  primaryDark: '#074173',
+  primaryMain: '#84B898',
+  primaryDark: '#4F6F52',
 
   // primary dark
-  darkPrimaryLight: '#1f2a4c',
-  darkPrimaryMain: '#2196f3',
-  darkPrimaryDark: '#1e88e5',
+  darkPrimaryLight: '#e5f3fb',
+  darkPrimaryMain: '#84B898',
+  darkPrimaryDark: '#4F6F52',
 
   // secondary
-  secondaryLight: '#e7ecf0',
-  secondaryMain: '#707a82',
+  secondaryLight: '#E4D6F3',
+  secondaryMain: '#A686C4',
   secondaryDark: '#707a82',
 
   // secondary dark
-  darkSecondaryLight: '#d1c4e9',
-  darkSecondaryMain: '#7c4dff',
-  darkSecondaryDark: '#651fff',
+  darkSecondaryLight: '#E4D6F3',
+  darkSecondaryMain: '#A686C4',
+  darkSecondaryDark: '#7c4dff',
 
   // success
   successLight: '#dffff3',

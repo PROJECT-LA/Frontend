@@ -84,7 +84,7 @@ export const useSession = () => {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        url: `${Constantes.baseUrl}/logout`,
+        url: `${Constantes.baseUrl}/auth/logout`,
       })
       imprimir(`finalizando con respuesta`, respuesta)
 

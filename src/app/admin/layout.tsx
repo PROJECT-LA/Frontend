@@ -18,6 +18,7 @@ const Main = styled('main', {
 })<MainProps>(({ theme, open }) => ({
   ...theme.typography.mainContent,
   borderBottomLeftRadius: 0,
+  position: 'relative',
   borderBottomRightRadius: 0,
   transition: theme.transitions.create(
     'margin',
@@ -32,12 +33,11 @@ const Main = styled('main', {
         }
   ),
   [theme.breakpoints.up('md')]: {
-    marginTop: 120,
-    marginLeft: open ? 40 : -(Constantes.drawerWidth - 20),
-    width: '98%',
+    marginTop: 100,
+    marginLeft: open ? 15 : -(Constantes.drawerWidth - 120),
+    width: '92%',
     marginRight: open && '1.4rem',
     paddingBottom: 20,
-    // width: open ? `calc(97% - ${Constantes.drawerWidth}px - 5px)` : "98%",
   },
   [theme.breakpoints.down('md')]: {
     marginLeft: '20px',
@@ -66,48 +66,36 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <div
       style={{
         display: 'flex',
-        // backgroundColor: theme.palette.background.default,
       }}
     >
+      <Sidebar
+        drawerOpen={!matchDownMd ? openDrawer : !openDrawer}
+        drawerToggle={toggleDrawer}
+      />
+
       <AppBar
         enableColorOnDark
         position="fixed"
-        elevation={0}
         sx={{
+          boxShadow: 'none',
           bgcolor: theme.palette.background.default,
           transition: openDrawer ? theme.transitions.create('width') : 'none',
         }}
       >
         <Toolbar
           sx={{
-            marginTop: 2.5,
             paddingY: 2,
-            marginX: 2.5,
-            borderRadius: Constantes.borderRadius,
-            border: 1,
+            marginRight: 2.5,
+            marginLeft: openDrawer
+              ? `${Constantes.drawerWidth + 50}px`
+              : `100px`,
             borderColor: theme.palette.divider,
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: Constantes.boxShadow,
           }}
         >
           <Header handleLeftDrawerToggle={toggleDrawer} />
         </Toolbar>
       </AppBar>
-
-      <Sidebar
-        drawerOpen={!matchDownMd ? openDrawer : !openDrawer}
-        drawerToggle={toggleDrawer}
-      />
-
       <Main theme={theme} open={openDrawer}>
-        {/* <Breadcrumbs
-          separator={IconChevronRight}
-          navigation={navigation}
-          icon
-          title
-          rightAlign
-        /> */}
-        {/* <Box bgcolor="red"> */}
         {children}
       </Main>
     </div>

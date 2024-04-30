@@ -18,8 +18,11 @@ import NavItem from '../NavItem'
 
 // assets
 import { ChevronDown, ChevronUp, LayoutDashboard } from 'lucide-react'
+import { useGlobalStore } from '@/store'
 
 const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
+  const { openDrawer } = useGlobalStore()
+
   const theme = useTheme()
 
   const router = useRouter()
@@ -189,39 +192,43 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
         <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
           {menuIcon}
         </ListItemIcon>
-        <ListItemText
-          primary={
-            <Typography
-              variant={selected === menu.id ? 'h5' : 'body1'}
-              color="inherit"
-              sx={{ my: 'auto' }}
-            >
-              {menu.title}
-            </Typography>
-          }
-          secondary={
-            menu.caption && (
-              <Typography
-                variant="caption"
-                sx={{ ...SubMenuCaption }}
-                display="block"
-                gutterBottom
-              >
-                {menu.caption}
-              </Typography>
-            )
-          }
-        />
-        {open ? (
-          <ChevronUp
-            size="1rem"
-            style={{ marginTop: 'auto', marginBottom: 'auto' }}
-          />
-        ) : (
-          <ChevronDown
-            size="1rem"
-            style={{ marginTop: 'auto', marginBottom: 'auto' }}
-          />
+        {openDrawer && (
+          <>
+            <ListItemText
+              primary={
+                <Typography
+                  variant={selected === menu.id ? 'h5' : 'body1'}
+                  color="inherit"
+                  sx={{ my: 'auto' }}
+                >
+                  {menu.title}
+                </Typography>
+              }
+              secondary={
+                menu.caption && (
+                  <Typography
+                    variant="caption"
+                    sx={{ ...SubMenuCaption }}
+                    display="block"
+                    gutterBottom
+                  >
+                    {menu.caption}
+                  </Typography>
+                )
+              }
+            />
+            {open ? (
+              <ChevronUp
+                size="1rem"
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}
+              />
+            ) : (
+              <ChevronDown
+                size="1rem"
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}
+              />
+            )}
+          </>
         )}
       </ListItemStyled>
       <Collapse in={open} timeout="auto" unmountOnExit>

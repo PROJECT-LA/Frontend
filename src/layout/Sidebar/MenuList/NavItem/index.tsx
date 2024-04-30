@@ -30,7 +30,8 @@ interface ListItemProps {
 }
 const NavItem = ({ item, level }: { item: Item; level: any }) => {
   const theme = useTheme()
-  const { cerrarDrawer } = useGlobalStore()
+
+  const { cerrarDrawer, openDrawer } = useGlobalStore()
   const pathname = usePathname()
   const matchesSM = useMediaQuery(theme.breakpoints.down('lg'))
 
@@ -183,25 +184,28 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       >
         {itemIcon}
       </ListItemIcon>
-      <ListItemText
-        primary={
-          <Typography variant={'h5'} color="inherit">
-            {item.title}
-          </Typography>
-        }
-        secondary={
-          item.caption && (
-            <Typography
-              variant="caption"
-              sx={{ ...SubMenuCaption }}
-              display="block"
-              gutterBottom
-            >
-              {item.caption}
+
+      {openDrawer && (
+        <ListItemText
+          primary={
+            <Typography variant={'h5'} color="inherit">
+              {item.title}
             </Typography>
-          )
-        }
-      />
+          }
+          secondary={
+            item.caption && (
+              <Typography
+                variant="caption"
+                sx={{ ...SubMenuCaption }}
+                display="block"
+                gutterBottom
+              >
+                {item.caption}
+              </Typography>
+            )
+          }
+        />
+      )}
 
       {/* 
         El numeral que aparece en la parte superior
