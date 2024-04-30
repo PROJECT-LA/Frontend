@@ -95,7 +95,7 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       left: '-20px',
       height: '100%',
       zIndex: '-1',
-      borderRadius: ' 0 24px 24px 0',
+
       transition: 'all .3s ease-in-out',
       width: '0',
     },
@@ -110,7 +110,6 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: '8px',
-      marginRight: '8px',
       transition: 'all .3s ease-in-out',
       // color: item.children ? "" : theme.palette.primary.main,
       // backgroundColor: item.children ? "" : theme.palette.primary.light,
@@ -130,7 +129,6 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
         width: 'calc(100% + 16px)',
       },
       '&:hover': {
-        // backgroundColor: theme.palette.primary.light,
         color: theme.palette.text.primary,
       },
     },

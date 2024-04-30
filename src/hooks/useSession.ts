@@ -77,11 +77,13 @@ export const useSession = () => {
       mostrarFullScreen()
       await delay(1000)
       const token = leerCookie('token')
+      console.log(token)
       borrarCookiesSesion()
 
       const respuesta = await Servicios.get({
         headers: {
           accept: 'application/json',
+          token: token,
           Authorization: `Bearer ${token}`,
         },
         url: `${Constantes.baseUrl}/auth/logout`,
