@@ -113,17 +113,16 @@ export const AuthProvider = ({ children }: AuthContextType) => {
         headers: {},
       })
 
-      // console.log('------------------------')
-      // console.log(respuesta)
-      // console.log('------------------------')
+      imprimir(respuesta.token)
+      const cookie = guardarCookie('token', respuesta.token)
+      imprimir(`Token ✅: ${cookie}`)
 
-      // const cookie = guardarCookie('token', respuesta.datos?.access_token)
-      // imprimir(`Token ✅: ${respuesta.datos?.access_token}`)
+      imprimir(leerCookie('token'))
 
-      // setUser(respuesta.datos)
-      // imprimir(`Usuarios ✅`, respuesta.datos)
+      setUser(respuesta.datos)
+      imprimir(`Usuarios ✅`, respuesta.datos)
 
-      // await obtenerPermisos()
+      await obtenerPermisos()
 
       mostrarFullScreen()
       await delay(1000)

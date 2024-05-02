@@ -61,7 +61,7 @@ export const LoginForm = () => {
             >
               <Grid item>
                 <Stack alignItems="center" justifyContent="center" spacing={1}>
-                  <Typography gutterBottom variant={matchDownSM ? 'h5' : 'h1'}>
+                  <Typography gutterBottom variant={matchDownSM ? 'h2' : 'h1'}>
                     Bienvenido
                   </Typography>
                   <Typography
