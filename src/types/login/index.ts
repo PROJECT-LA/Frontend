@@ -11,19 +11,32 @@ export interface idRolType {
 
 /// Usuario que iniciar sesión
 
+export interface PersonaType {
+  names: string
+  lastNames: string
+  nroDocumento: string
+  fechaNacimiento: string
+}
+
+export interface UsuarioType {
+  id: string
+  usuario: string // ADMIN | TÉCNICO ...
+  idRol: string // Id del rol
+  persona: PersonaType
+  roles: RoleType[]
+}
+
+export interface RoleType {
+  idRol: string
+  rol: string
+  nombre: string
+  modulos: ModuloType[]
+}
+
 export interface PropiedadesType {
   icono?: string
   descripcion?: string
   orden: number
-}
-
-export type SubModuloType = {
-  id: string
-  label: string
-  url: string
-  nombre: string
-  propiedades: PropiedadesType
-  estado: string
 }
 
 export type ModuloType = {
@@ -36,33 +49,16 @@ export type ModuloType = {
   subModulo: SubModuloType[]
 }
 
-export interface RoleType {
-  idRol: string
-  rol: string
-  nombre: string
-  modulos: ModuloType[]
-}
-
-export interface PersonaType {
-  nombres: string
-  primerApellido: string
-  segundoApellido: string
-  tipoDocumento: string
-  nroDocumento: string
-  fechaNacimiento: string
-}
-
-export interface UsuarioType {
-  access_token: string
+export type SubModuloType = {
   id: string
-  usuario: string
-  ciudadania_digital: boolean
+  label: string
+  url: string
+  nombre: string
+  propiedades: PropiedadesType
   estado: string
-  roles: RoleType[]
-  persona: PersonaType
-  idRol: string
 }
 
+/*  *********************************************************** */
 export interface PoliticaType {
   sujeto: string
   objeto: string

@@ -1,39 +1,39 @@
-import { Phone, Book, MessageCircle, User2 } from "lucide-react";
+import { MenuItems } from '@/types/menuTypes'
 
-const otros = {
-  id: "otros",
-  title: "Otros",
-  type: "group",
+const otros: MenuItems = {
+  id: 'otros',
+  title: 'Otros',
+  type: 'group',
   children: [
     {
-      id: "contacts",
-      title: "Contactos",
-      type: "item",
-      icon: Phone,
-      url: "/contactos",
+      id: 'contacts',
+      title: 'Contactos',
+      type: 'item',
+      icon: 'phone',
+      url: '/contactos',
     },
     {
-      id: "blog",
-      title: "Blog",
-      type: "item",
-      icon: Book,
-      url: "/blog",
+      id: 'blog',
+      title: 'Blog',
+      type: 'item',
+      icon: 'book',
+      url: '/blog',
     },
     {
-      id: "mensajes",
-      title: "Contactos",
-      type: "item",
-      icon: MessageCircle,
-      url: "/mensajes",
+      id: 'mensajes',
+      title: 'Contactos',
+      type: 'item',
+      icon: 'message-circle',
+      url: '/mensajes',
     },
     {
-      id: "users",
-      title: "Usuarios",
-      type: "item",
-      icon: User2,
-      url: "/users",
+      id: 'users',
+      title: 'Usuarios',
+      type: 'item',
+      icon: 'user',
+      url: '/users',
     },
   ],
-};
+}
 
-export default otros;
+export default otros

@@ -19,6 +19,7 @@ import NavItem from '../NavItem'
 // assets
 import { ChevronDown, ChevronUp, LayoutDashboard } from 'lucide-react'
 import { useGlobalStore } from '@/store'
+import Icon from '@/components/LucideIcon'
 
 const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
   const { openDrawer } = useGlobalStore()
@@ -85,17 +86,6 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
 
   // @ts-expect-error Error en Sub menu
   const SubMenuCaption = theme.typography.subMenuCaption
-  const Icon = menu.icon
-  const menuIcon = menu.icon ? (
-    <Icon
-      strokeWidth={1.5}
-      size="1.3rem"
-      color={theme.palette.text.primary}
-      style={{ marginTop: 'auto', marginBottom: 'auto' }}
-    />
-  ) : (
-    <LayoutDashboard fontSize={level > 0 ? 'inherit' : 'medium'} />
-  )
 
   const ListItemStyled = styled(ListItemButton)(() => ({
     whiteSpace: 'nowrap',
@@ -159,6 +149,7 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
       <ListItemStyled
         sx={{
           position: 'relative',
+          marginLeft: !openDrawer ? '15px' : '0px',
           '&.Mui-selected': {
             color:
               level > 1
@@ -180,7 +171,7 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
         onClick={handleClick}
       >
         <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
-          {menuIcon}
+          <Icon name={menu.icon} />
         </ListItemIcon>
         {openDrawer && (
           <>
@@ -235,7 +226,7 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
               height: '100%',
               width: '1px',
               opacity: 1,
-              background: theme.palette.primary.light,
+              background: theme.palette.divider,
             },
           }}
         >

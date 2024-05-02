@@ -7,8 +7,6 @@ import {
 import Link from 'next/link'
 import { Item } from '@/types/utils'
 import { usePathname } from 'next/navigation'
-
-// material-ui
 import { styled, useTheme } from '@mui/material/styles'
 import {
   Box,
@@ -18,6 +16,7 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material'
+import Icon from '@/components/LucideIcon'
 
 import { useGlobalStore } from '@/store'
 
@@ -38,9 +37,6 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
 
   // @ts-expect-error Error en el caption
   const SubMenuCaption = theme.typography.subMenuCaption
-
-  const Icon = item.icon
-  const itemIcon = item?.icon && <Icon size="1.3rem" />
 
   let itemTarget = '_self'
   if (item.target) {
@@ -108,7 +104,7 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
         theme.palette.mode === 'light'
           ? `${theme.palette.primary.main}50`
           : `${theme.palette.primary.light}50`,
-      color: theme.palette.text.primary,
+      color: theme.palette.primary.light,
     },
     '& > .MuiListItemIcon-root': {
       width: 45,
@@ -144,6 +140,7 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       selected={pathname === item?.url}
       sx={{
         position: 'relative',
+        marginLeft: !openDrawer ? '15px' : '0px',
         '&.Mui-selected': {
           color:
             level > 1
@@ -173,8 +170,9 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
             position: 'absolute',
             width: '5px',
             backgroundColor: theme.palette.text.primary,
+            color: theme.palette.primary.light,
             top: '3px',
-            left: '-20px',
+            left: openDrawer ? '-20px' : '-14px',
           }}
         />
       )}
@@ -182,19 +180,14 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
         sx={{
           my: 'auto',
           minWidth: !item?.icon ? 18 : 36,
-          color: theme.palette.primary.dark,
         }}
       >
-        {itemIcon}
+        <Icon name={item.icon ?? 'Home'} size="1.3rem" />
       </ListItemIcon>
 
       {openDrawer && (
         <ListItemText
-          primary={
-            <Typography variant={'h5'} color="inherit">
-              {item.title}
-            </Typography>
-          }
+          primary={<Typography variant={'h5'}>{item.title}</Typography>}
           secondary={
             item.caption && (
               <Typography

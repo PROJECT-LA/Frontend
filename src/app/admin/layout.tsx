@@ -19,6 +19,7 @@ const Main = styled('main', {
   ...theme.typography.mainContent,
   borderBottomLeftRadius: 0,
   position: 'relative',
+
   borderBottomRightRadius: 0,
   transition: theme.transitions.create(
     'margin',
@@ -33,10 +34,10 @@ const Main = styled('main', {
         }
   ),
   [theme.breakpoints.up('md')]: {
-    marginTop: 100,
+    marginTop: 120,
     marginLeft: open ? 15 : -(Constantes.drawerWidth - 120),
     width: '92%',
-    marginRight: open && '1.4rem',
+    marginRight: '2rem',
     paddingBottom: 20,
   },
   [theme.breakpoints.down('md')]: {
@@ -81,7 +82,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <Toolbar
           sx={{
             paddingY: 2,
-            marginRight: 2.5,
+            marginRight: 1,
             marginLeft: openDrawer
               ? `${Constantes.drawerWidth + 50}px`
               : `100px`,

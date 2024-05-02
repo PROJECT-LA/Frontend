@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: AuthContextType) => {
   const [enforcer, setEnforcer] = useState<Enforcer>()
 
   const inicializarUsuario = async () => {
-    const token = leerCookie('token')
+    const token = leerCookie('token_jwt')
 
     if (!token) {
       setLoading(false)
@@ -114,15 +114,16 @@ export const AuthProvider = ({ children }: AuthContextType) => {
       })
 
       imprimir(respuesta.token)
-      const cookie = guardarCookie('token', respuesta.token)
-      imprimir(`Token ✅: ${cookie}`)
+      guardarCookie('token_jwt', respuesta.token)
 
-      imprimir(leerCookie('token'))
+      console.log('-----------------------')
+      console.log(respuesta)
+      console.log('-----------------------')
 
-      setUser(respuesta.datos)
+      // setUser(respuesta.datos)
       imprimir(`Usuarios ✅`, respuesta.datos)
 
-      await obtenerPermisos()
+      // await obtenerPermisos()
 
       mostrarFullScreen()
       await delay(1000)

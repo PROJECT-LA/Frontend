@@ -18,6 +18,7 @@ const nextConfig = {
   images: {
     remotePatterns: [],
   },
+  transpilePackages: ['lucide-react'],
 }
 
 export default nextConfig

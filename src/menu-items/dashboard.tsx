@@ -1,36 +1,23 @@
-// assets
-import { Home, CloudDownload, ScanSearch } from 'lucide-react'
+import { MenuItems } from '@/types/menuTypes'
 
-// constant
-
-const dashboard = {
+const dashboard: MenuItems = {
   id: 'dashboard',
   title: 'Principal',
   type: 'group',
   children: [
     {
       id: 'default',
-      title: 'Dashboard',
+      title: 'Inicio',
       type: 'item',
       url: '/admin/home',
-      icon: Home,
-      breadcrumbs: false,
+      icon: 'home',
     },
     {
       id: 'migrar-consulta',
-      title: 'Migrar consulta',
+      title: 'Perfil',
       type: 'item',
-      url: '/admin/migrar-consulta',
-      icon: CloudDownload,
-      Breadcrumbs: false,
-    },
-    {
-      id: 'consulta-dinamica',
-      title: 'Consulta dinámica',
-      type: 'item',
-      url: '/admin/consulta-dinamica',
-      icon: ScanSearch,
-      Breadcrumbs: false,
+      url: '/admin/profile',
+      icon: 'user',
     },
   ],
 }

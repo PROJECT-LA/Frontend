@@ -1,38 +1,32 @@
-// assets
-import { ClipboardType } from "lucide-react";
+import { MenuItems } from '@/types/menuTypes'
 
-// constant
-
-const formulario = {
-  id: "dashboard",
-  title: "Elementos Formulario",
-  type: "group",
+const formulario: MenuItems = {
+  id: 'dashboard',
+  title: 'Elementos Formulario',
+  type: 'group',
   children: [
     {
-      id: "boton",
-      title: "Botón",
-      type: "item",
-      url: "/admin/form/boton",
-      icon: ClipboardType,
-      breadcrumbs: false,
+      id: 'boton',
+      title: 'Botón',
+      type: 'item',
+      url: '/admin/form/boton',
+      icon: 'clipboard-type',
     },
     {
-      id: "autocomplete",
-      title: "Autocompletado",
-      type: "item",
-      url: "/admin/form/autocomplete",
-      icon: ClipboardType,
-      Breadcrumbs: false,
+      id: 'autocomplete',
+      title: 'Autocompletado',
+      type: 'item',
+      url: '/admin/form/autocomplete',
+      icon: 'clipboard-type',
     },
     {
-      id: "checkbox",
-      title: "Checkbox",
-      type: "item",
-      url: "/admin/form/checkbox",
-      icon: ClipboardType,
-      Breadcrumbs: false,
+      id: 'checkbox',
+      title: 'Checkbox',
+      type: 'item',
+      url: '/admin/form/checkbox',
+      icon: 'clipboard-type',
     },
   ],
-};
+}
 
-export default formulario;
+export default formulario

@@ -10,8 +10,10 @@ import { verificarToken } from '@/utils/token'
 
 import { useFullScreenLoading } from '../context/FullScreenLoadingProvider'
 import { Constantes } from '../config'
+import { useRouter } from 'next/navigation'
 
 export const useSession = () => {
+  const router = useRouter()
   const { mostrarFullScreen, ocultarFullScreen } = useFullScreenLoading()
 
   const sesionPeticion = async ({
@@ -24,14 +26,14 @@ export const useSession = () => {
     withCredentials,
   }: peticionFormatoMetodo) => {
     try {
-      if (!verificarToken(leerCookie('token') ?? '')) {
+      if (!verificarToken(leerCookie('token_jwt') ?? '')) {
         imprimir(`Token caducado ⏳`)
         await actualizarSesion()
       }
 
       const cabeceras = {
         accept: 'application/json',
-        Authorization: `Bearer ${leerCookie('token') ?? ''}`,
+        Authorization: `Bearer ${leerCookie('token_jwt') ?? ''}`,
         ...headers,
       }
 
@@ -69,31 +71,32 @@ export const useSession = () => {
 
   const borrarCookiesSesion = () => {
     eliminarCookie('token') // Eliminando access_token
-    eliminarCookie('jid') // Eliminando refresh token
+    eliminarCookie('token_jwt') // Eliminando access_token de frontend
   }
 
   const cerrarSesion = async () => {
     try {
       mostrarFullScreen()
       await delay(1000)
-      const token = leerCookie('token')
+      const token = leerCookie('token_jwt')
       imprimir(token)
+
       borrarCookiesSesion()
 
       const respuesta = await Servicios.get({
         headers: {
           accept: 'application/json',
-          token: token,
+          Authorization: `Bearer ${token}`,
         },
         url: `${Constantes.baseUrl}/auth/logout`,
       })
       imprimir(`finalizando con respuesta`, respuesta)
 
-      if (respuesta?.url) {
-        // window.location.href = respuesta?.url;
-      } else {
-        // router.refresh()
-        // window.location.reload();
+      console.log(respuesta.status)
+      console.log(respuesta.data)
+
+      if (respuesta === 'OK') {
+        router.replace('/login')
       }
     } catch (e) {
       imprimir(`Error al cerrar sesión: `, e)
@@ -111,11 +114,11 @@ export const useSession = () => {
       const respuesta = await Servicios.post({
         url: `${Constantes.baseUrl}/token`,
         body: {
-          token: leerCookie('token'),
+          token: leerCookie('token_jwt'),
         },
       })
 
-      guardarCookie('token', respuesta.datos?.access_token)
+      guardarCookie('token_jwt', respuesta.datos?.access_token)
 
       await delay(500)
     } catch (e) {

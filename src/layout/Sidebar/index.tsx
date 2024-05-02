@@ -150,6 +150,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
           sx={{
             '& .MuiDrawer-paper': {
               width: 75,
+              overflow: 'hidden',
               display: 'flex',
               alignItems: 'center',
               background: theme.palette.background.paper,
