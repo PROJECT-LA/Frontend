@@ -103,8 +103,6 @@ export const AuthProvider = ({ children }: AuthContextType) => {
   const login = async ({ usuario, contrasena }: LoginType) => {
     try {
       setLoading(true)
-      console.log(`${Constantes.baseUrl}/auth/login`)
-
       await delay(1000)
 
       const respuesta = await Servicios.post({
@@ -115,10 +113,6 @@ export const AuthProvider = ({ children }: AuthContextType) => {
 
       imprimir(respuesta.token)
       guardarCookie('token_jwt', respuesta.token)
-
-      console.log('-----------------------')
-      console.log(respuesta)
-      console.log('-----------------------')
 
       // setUser(respuesta.datos)
       imprimir(`Usuarios ✅`, respuesta.datos)

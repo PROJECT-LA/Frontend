@@ -1,17 +1,21 @@
 'use client'
+
 import { styled, useTheme } from '@mui/material/styles'
 import { AppBar, Toolbar, useMediaQuery } from '@mui/material'
 import { Constantes } from '@/config'
-import { usePathname } from 'next/navigation'
+import { notFound, usePathname } from 'next/navigation'
 import Header from '@/layout/Header'
 import Sidebar from '@/layout/Sidebar'
 import { useGlobalStore } from '@/store'
 import 'react-perfect-scrollbar/dist/css/styles.css'
+import { RUTAS, RutasType, obtenerPermisos } from '@/types/temporalTypes'
 
 interface MainProps {
   open: boolean
   theme?: any
 }
+
+
 
 const Main = styled('main', {
   shouldForwardProp: (prop) => prop !== 'open' && prop !== 'theme',

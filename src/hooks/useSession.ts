@@ -92,9 +92,6 @@ export const useSession = () => {
       })
       imprimir(`finalizando con respuesta`, respuesta)
 
-      console.log(respuesta.status)
-      console.log(respuesta.data)
-
       if (respuesta === 'OK') {
         router.replace('/login')
       }

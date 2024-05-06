@@ -46,7 +46,6 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
   let listItemProps: ListItemProps = {
     /* eslint-disable */
     component: forwardRef<HTMLAnchorElement>((props, ref) => {
-      console.log(item)
       return (
         <Link ref={ref} {...props} href={item.url ?? '/'} target={itemTarget} />
       )

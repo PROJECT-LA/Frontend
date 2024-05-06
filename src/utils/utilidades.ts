@@ -1,3 +1,4 @@
+import { Constantes } from '@/config'
 import childProcess from 'child_process'
 
 export const execChildProcess = async (comando: string) => {
@@ -40,4 +41,18 @@ export const InterpreteMensajes = (mensaje: any): string => {
   } catch (e) {
     return isHTML(mensaje) ? 'Solicitud errónea 🚨' : `${mensaje}`
   }
+}
+
+export const titleCase = (word: string) => {
+  return word.length <= 1
+    ? word.toUpperCase()
+    : word
+        .toLowerCase()
+        .split(' ')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+}
+
+export const siteName = () => {
+  return Constantes.siteName ?? ''
 }
