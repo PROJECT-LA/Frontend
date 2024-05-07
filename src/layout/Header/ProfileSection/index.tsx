@@ -131,6 +131,10 @@ const ProfileSection = () => {
           alignItems: 'center',
           transition: 'all .2s ease-in-out',
           borderColor: `${theme.palette.divider} !important`,
+          backgroundColor:
+            theme.palette.mode === 'light'
+              ? theme.palette.background.paper
+              : 'transparent',
           border: 1,
 
           '& .MuiChip-label': {

@@ -6,14 +6,14 @@ export const colores: EsquemaColor = {
   darkTextSecondary: '#e7ecf0',
 
   // paper & background
-  paper: '#f0f5f9',
-  default: '#fff',
+  paper: '#fff',
+  default: '#F0EDE6',
 
   darkPaper: '#262833',
   darkDefault: '#242631',
 
   // divider
-  divider: '#DDE3E9',
+  divider: '#fff',
   dividerDark: '#393B44',
 
   // primary

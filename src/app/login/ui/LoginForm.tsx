@@ -47,7 +47,10 @@ export const LoginForm = () => {
       paddingX={10}
       borderRadius={Constantes.borderRadius}
       sx={{
-        backgroundColor: `${theme.palette.background.default}`,
+        backgroundColor:
+          theme.palette.mode === 'light'
+            ? theme.palette.background.paper
+            : `${theme.palette.background.default}`,
       }}
     >
       <Stack direction="column" alignItems="center">

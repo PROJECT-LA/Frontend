@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles'
-import { Box, ButtonBase, Stack, Button, Typography } from '@mui/material'
+import { Box, Stack, Button, Typography } from '@mui/material'
 
 // project imports
 import ProfileSection from './ProfileSection'
@@ -33,6 +33,10 @@ const Header = ({
             paddingY: 1,
             color: theme.palette.text.primary,
             borderColor: theme.palette.divider,
+            backgroundColor:
+              theme.palette.mode === 'light'
+                ? theme.palette.background.paper
+                : 'transparent',
           }}
           variant="outlined"
         >

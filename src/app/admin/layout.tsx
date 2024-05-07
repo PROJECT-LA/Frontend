@@ -7,12 +7,10 @@ import Sidebar from '@/layout/Sidebar'
 import { useGlobalStore } from '@/store'
 import 'react-perfect-scrollbar/dist/css/styles.css'
 
-
 interface MainProps {
   open: boolean
   theme?: any
 }
-
 
 const Main = styled('main', {
   shouldForwardProp: (prop) => prop !== 'open' && prop !== 'theme',
@@ -20,7 +18,6 @@ const Main = styled('main', {
   ...theme.typography.mainContent,
   borderBottomLeftRadius: 0,
   position: 'relative',
-
   borderBottomRightRadius: 0,
   transition: theme.transitions.create(
     'margin',
@@ -36,7 +33,7 @@ const Main = styled('main', {
   ),
   [theme.breakpoints.up('md')]: {
     marginTop: 120,
-    marginLeft: open ? 15 : -(Constantes.drawerWidth - 120),
+    marginLeft: open ? 40 : -(Constantes.drawerWidth - 120),
     width: '92%',
     marginRight: '2rem',
     paddingBottom: 20,
@@ -59,7 +56,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const { openDrawer, toggleDrawer } = useGlobalStore()
-
 
   return (
     <div
@@ -86,7 +82,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             paddingY: 2,
             marginRight: 1,
             marginLeft: openDrawer
-              ? `${Constantes.drawerWidth + 50}px`
+              ? `${Constantes.drawerWidth + 20}px`
               : `100px`,
             borderColor: theme.palette.divider,
           }}

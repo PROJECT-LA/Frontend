@@ -16,7 +16,7 @@ import { BrowserView, MobileView } from 'react-device-detect'
 // project imports
 import MenuList from './MenuList'
 import { Constantes } from '@/config'
-import { ArrowLeftToLine, LogOut } from 'lucide-react'
+import { ArrowLeftToLine } from 'lucide-react'
 import { Logo, LogoCorto } from '../LogoSection'
 import { useState } from 'react'
 import { useGlobalStore } from '@/store'

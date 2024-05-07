@@ -13,6 +13,10 @@ export const BotonCambioTema = ({ ...rest }: IconButtonProps) => {
         border: 1,
         borderRadius: '50%',
         borderColor: theme.palette.divider,
+        backgroundColor:
+          theme.palette.mode === 'light'
+            ? theme.palette.background.paper
+            : 'transparent',
       }}
       title={
         themeMode.includes('light')

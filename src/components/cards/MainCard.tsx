@@ -11,7 +11,10 @@ const MainCard = ({ children }: { children: React.ReactNode }) => {
         border: 1,
         borderRadius: Constantes.borderRadius,
         borderColor: theme.palette.divider,
-        backgroundColor: 'transparent !important',
+        backgroundColor:
+          theme.palette.mode === 'light'
+            ? theme.palette.background.paper
+            : 'transparent !important',
         padding: '2rem',
       }}
     >

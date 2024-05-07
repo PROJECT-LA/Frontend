@@ -23,7 +23,11 @@ export default function LoginPage() {
         lg={7}
         md={12}
         xs={12}
-        bgcolor={theme.palette.background.paper}
+        bgcolor={
+          theme.palette.mode === 'light'
+            ? theme.palette.background.default
+            : theme.palette.background.paper
+        }
         alignContent="center"
         width="100%"
         minHeight="100vh"
