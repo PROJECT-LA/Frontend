@@ -4,3 +4,9 @@ export interface CasbinTypes {
   update: boolean
   delete: boolean
 }
+
+
+export interface PermisosCasbin {
+  ruta: string,
+  permisos: CasbinTypes
+}

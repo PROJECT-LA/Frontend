@@ -11,6 +11,8 @@ const nextConfig = {
 
     return config
   },
+  // Se apaga por el doble renderizado
+  reactStrictMode: false,
   output: 'standalone',
   eslint: {
     dirs: ['src', 'stories', 'test'],

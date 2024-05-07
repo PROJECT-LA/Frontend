@@ -1,20 +1,17 @@
 'use client'
-
 import { styled, useTheme } from '@mui/material/styles'
 import { AppBar, Toolbar, useMediaQuery } from '@mui/material'
 import { Constantes } from '@/config'
-import { notFound, usePathname } from 'next/navigation'
 import Header from '@/layout/Header'
 import Sidebar from '@/layout/Sidebar'
 import { useGlobalStore } from '@/store'
 import 'react-perfect-scrollbar/dist/css/styles.css'
-import { RUTAS, RutasType, obtenerPermisos } from '@/types/temporalTypes'
+
 
 interface MainProps {
   open: boolean
   theme?: any
 }
-
 
 
 const Main = styled('main', {
@@ -62,6 +59,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const { openDrawer, toggleDrawer } = useGlobalStore()
+
 
   return (
     <div

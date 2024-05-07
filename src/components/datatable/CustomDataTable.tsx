@@ -23,6 +23,8 @@ import { ListSkeleton, TableSkeletonBody } from './CustomSkeleton'
 import { Icono } from '@/components/Icono'
 import { CriterioOrdenType } from '@/types/ordenTypes'
 import { ToggleOrden } from '@/utils/orden'
+import { ArrowDown, ArrowUp } from 'lucide-react'
+import { Constantes } from '@/config'
 
 export interface CustomDataTableType {
   titulo?: string
@@ -123,7 +125,7 @@ export const CustomDataTable = ({
   )
 
   return (
-    <Box sx={{ pb: 2 }}>
+    <Box sx={{ pb: 2}}>
       {/*título y acciones*/}
       <Grid
         container
@@ -175,7 +177,9 @@ export const CustomDataTable = ({
       {/*Contenedor de la tabla*/}
       <Card
         sx={{
+          boxShadow: Constantes.boxShadow,
           borderRadius: 2,
+          border: 1, borderColor: theme.palette.divider,
           pt: 0,
           pl: { sm: 3, md: 3, xl: 3 },
           pr: { sm: 3, md: 3, xl: 3 },
@@ -334,7 +338,7 @@ export const CustomDataTable = ({
                 ) : (
                   <TableContainer>
                     <Table>
-                      <TableHead>
+                      <TableHead >
                         <TableRow>
                           {seleccionable && (
                             <TableCell key={`cabecera-id-seleccionar`}>
@@ -382,8 +386,7 @@ export const CustomDataTable = ({
                                   }}
                                 >
                                   <Typography
-                                    variant={'caption'}
-                                    color="text.primary"
+                                    variant="h4"
                                     fontWeight={'medium'}
                                     align={'left'}
                                   >
@@ -396,15 +399,14 @@ export const CustomDataTable = ({
                                       color={'secondary'}
                                     >
                                       {columna.orden == 'asc'
-                                        ? 'north'
-                                        : 'south'}
+                                        ? <ArrowUp/>
+                                        : <ArrowDown/>}
                                     </Icono>
                                   )}
                                 </Button>
                               ) : (
                                 <Typography
-                                  variant={'caption'}
-                                  color="text.primary"
+                                  variant="h4"
                                   fontWeight={'medium'}
                                   align={'left'}
                                 >

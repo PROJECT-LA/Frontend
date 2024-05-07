@@ -32,8 +32,8 @@ export const VistaModalRol = ({
   const { handleSubmit, control } = useForm<RolCRUDType>({
     defaultValues: {
       id: rol?.id,
-      rol: rol?.rol,
-      nombre: rol?.nombre,
+      name: rol?.name,
+      description: rol?.description,
     },
   })
 
@@ -46,7 +46,7 @@ export const VistaModalRol = ({
       setLoadingModal(true)
       await delay(1000)
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/autorizacion/roles${
+        url: `${Constantes.baseUrl}/roles${
           Rol.id ? `/${Rol.id}` : ''
         }`,
         tipo: !!Rol.id ? 'patch' : 'post',
@@ -71,7 +71,7 @@ export const VistaModalRol = ({
               <FormInputText
                 id={'rol'}
                 control={control}
-                name="rol"
+                name="name"
                 label="Rol"
                 disabled={loadingModal}
                 rules={{ required: 'Este campo es requerido' }}
@@ -81,7 +81,7 @@ export const VistaModalRol = ({
               <FormInputText
                 id={'nombre'}
                 control={control}
-                name="nombre"
+                name="description"
                 label="Nombre"
                 disabled={loadingModal}
                 rules={{ required: 'Este campo es requerido' }}

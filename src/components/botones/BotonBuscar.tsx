@@ -1,5 +1,6 @@
 import { Icono } from '@/components/Icono'
 import { ToggleButton } from '@mui/material'
+import { Search } from 'lucide-react'
 
 interface BotonFiltroParams {
   id: string
@@ -29,7 +30,7 @@ export const BotonBuscar = ({
       }}
       aria-label="search"
     >
-      <Icono>search</Icono>
+      <Search/>
     </ToggleButton>
   )
 }

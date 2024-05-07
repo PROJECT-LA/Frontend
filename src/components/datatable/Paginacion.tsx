@@ -11,6 +11,7 @@ import { IconoTooltip } from '../botones/IconoTooltip'
 import { FC } from 'react'
 import { imprimir } from '@/utils/imprimir'
 import { styled } from '@mui/material/styles'
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 interface Props {
   pagina: number
@@ -121,7 +122,7 @@ export const Paginacion: FC<Props> = ({
             accion={() => {
               cambioPagina(pagina - 1)
             }}
-            icono={'chevron_left'}
+            icono={<ChevronLeft/>}
           />
           <IconoTooltip
             id={'siguientePagina'}
@@ -131,7 +132,7 @@ export const Paginacion: FC<Props> = ({
             accion={() => {
               cambioPagina(pagina + 1)
             }}
-            icono={'chevron_right'}
+            icono={<ChevronRight/>}
           />
         </Box>
       </Grid>

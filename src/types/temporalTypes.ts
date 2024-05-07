@@ -12,6 +12,14 @@ export interface SolicitarPermisos {
 
 export const RUTAS: RutasType[] = [
   {
+    ruta: '/admin/home',
+    permisos: 'read|update|create|delete',
+  },
+  {
+    ruta: '/admin/profile',
+    permisos: 'read|update|create|delete',
+  },
+  {
     ruta: '/admin/roles',
     permisos: 'read|update|create|delete',
   },

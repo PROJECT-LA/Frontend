@@ -26,14 +26,14 @@ export const useSession = () => {
     withCredentials,
   }: peticionFormatoMetodo) => {
     try {
-      if (!verificarToken(leerCookie('token_jwt') ?? '')) {
+      if (!verificarToken(leerCookie('token') ?? '')) {
         imprimir(`Token caducado ⏳`)
         await actualizarSesion()
       }
 
       const cabeceras = {
         accept: 'application/json',
-        Authorization: `Bearer ${leerCookie('token_jwt') ?? ''}`,
+        Authorization: `Bearer ${leerCookie('token') ?? ''}`,
         ...headers,
       }
 
@@ -71,14 +71,14 @@ export const useSession = () => {
 
   const borrarCookiesSesion = () => {
     eliminarCookie('token') // Eliminando access_token
-    eliminarCookie('token_jwt') // Eliminando access_token de frontend
+    eliminarCookie('token') // Eliminando access_token de frontend
   }
 
   const cerrarSesion = async () => {
     try {
       mostrarFullScreen()
       await delay(1000)
-      const token = leerCookie('token_jwt')
+      const token = leerCookie('token')
       imprimir(token)
 
       borrarCookiesSesion()
@@ -111,11 +111,11 @@ export const useSession = () => {
       const respuesta = await Servicios.post({
         url: `${Constantes.baseUrl}/token`,
         body: {
-          token: leerCookie('token_jwt'),
+          token: leerCookie('token'),
         },
       })
 
-      guardarCookie('token_jwt', respuesta.datos?.access_token)
+      guardarCookie('token', respuesta.datos?.access_token)
 
       await delay(500)
     } catch (e) {

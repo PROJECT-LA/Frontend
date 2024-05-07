@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }: AuthContextType) => {
   const [enforcer, setEnforcer] = useState<Enforcer>()
 
   const inicializarUsuario = async () => {
-    const token = leerCookie('token_jwt')
+    const token = leerCookie('token')
 
     if (!token) {
       setLoading(false)
@@ -112,7 +112,7 @@ export const AuthProvider = ({ children }: AuthContextType) => {
       })
 
       imprimir(respuesta.token)
-      guardarCookie('token_jwt', respuesta.token)
+      guardarCookie('token', respuesta.token)
 
       // setUser(respuesta.datos)
       imprimir(`Usuarios ✅`, respuesta.datos)
@@ -122,6 +122,7 @@ export const AuthProvider = ({ children }: AuthContextType) => {
       mostrarFullScreen()
       await delay(1000)
       router.push('/admin/home')
+      
       await delay(1000)
     } catch (e) {
       imprimir(`Error al iniciar sesión: `, e)

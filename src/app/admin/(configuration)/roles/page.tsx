@@ -1,39 +1,45 @@
 'use client'
-import Typography from '@mui/material/Typography'
-import { ReactNode, useEffect, useState } from 'react'
-import { RolCRUDType } from '@/types/roles'
-import { useSession } from '@/hooks/useSession'
-import { useAuth } from '@/context/AuthProvider'
-import { CasbinTypes } from '@/types/utils/casbin'
-import { Button, Grid, useMediaQuery, useTheme } from '@mui/material'
-import {
-  delay,
-  InterpreteMensajes,
-  siteName,
-  titleCase,
-} from '@/utils/utilidades'
-import { usePathname } from 'next/navigation'
-import { Constantes } from '@/config'
-import { CriterioOrdenType } from '@/types/ordenTypes'
-import { AlertDialog } from '@/components/modales/AlertDialog'
-import { imprimir } from '@/utils/imprimir'
-import { ordenFiltrado } from '@/utils/orden'
-import { toast } from 'sonner'
-
 import { BotonBuscar } from '@/components/botones/BotonBuscar'
-import CustomMensajeEstado from '@/components/estados/CustomMensajeEstado'
-import { IconoTooltip } from '@/components/botones/IconoTooltip'
 import { BotonOrdenar } from '@/components/botones/BotonOrdenar'
 import { IconoBoton } from '@/components/botones/IconoBoton'
+import { IconoTooltip } from '@/components/botones/IconoTooltip'
 import { Paginacion } from '@/components/datatable/Paginacion'
+import CustomMensajeEstado from '@/components/estados/CustomMensajeEstado'
+import { AlertDialog } from '@/components/modales/AlertDialog'
 import { CustomDialog } from '@/components/modales/CustomDialog'
-import { CustomDataTable } from '@/components/datatable/CustomDataTable'
-
+import { Constantes } from '@/config'
+import { useSession } from '@/hooks/useSession'
+import { CriterioOrdenType } from '@/types/ordenTypes'
+import { RolCRUDType } from '@/types/roles'
+import { imprimir } from '@/utils/imprimir'
+import { ordenFiltrado } from '@/utils/orden'
+import { InterpreteMensajes, delay, siteName, titleCase } from '@/utils/utilidades'
+import { Button, Grid, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { ReactNode, useEffect, useState } from 'react'
+import { toast } from 'sonner'
 import { VistaModalRol } from './ModalRol'
+import { CustomDataTable } from '@/components/datatable/CustomDataTable'
 import { FiltroRol } from './FiltroRol'
+import { useGlobalStore } from '@/store'
+import { usePathname } from 'next/navigation'
+import { useRoles } from '@/hooks/useRoles'
+import { Edit, RefreshCcw, ToggleLeft, ToggleRight } from 'lucide-react'
 
-export default function RolesPage() {
+
+const RolesPage = () => {
+  /// Verificación adicional para los permisos
+  const pathname = usePathname()
+  const { obtenerPermisosPagina } = useRoles()
+  const { permisos } = useGlobalStore()
+  useEffect(()=>{
+    obtenerPermisosPagina(pathname)
+    /* eslint-disable */
+  }, [])
+  imprimir(permisos)
+  /* Código que se debe de repetir en cada página */
+
   const [rolesData, setRolesData] = useState<RolCRUDType[]>([])
+
   const [loading, setLoading] = useState<boolean>(true)
 
   const [errorRolData, setErrorRolData] = useState<any>()
@@ -78,8 +84,6 @@ export default function RolesPage() {
     setRolEdicion(undefined)
   }
 
-  // router para conocer la ruta actual
-  const pathname = usePathname()
 
   /// Criterios de orden
   const [ordenCriterios, setOrdenCriterios] = useState<
@@ -90,6 +94,59 @@ export default function RolesPage() {
     { campo: 'estado', nombre: 'Estado', ordenar: true },
     { campo: 'acciones', nombre: 'Acciones' },
   ])
+
+  const contenidoTabla: Array<Array<ReactNode>> = rolesData.map(
+    (rolData, indexRol) => [
+      <Typography key={`${rolData.id}-${indexRol}-rol`} variant={'body2'}>
+        {`${rolData.name}`}
+      </Typography>,
+      <Typography
+        key={`${rolData.id}-${indexRol}-nombre`}
+        variant={'body2'}
+      >{`${rolData.name}`}</Typography>,
+      <Typography key={`${rolData.id}-${indexRol}-estado`} component={'div'}>
+        <CustomMensajeEstado
+          titulo={rolData.status}
+          descripcion={rolData.status}
+          color={
+            rolData.status == 'ACTIVO'
+              ? 'success'
+              : rolData.status == 'INACTIVO'
+                ? 'error'
+                : 'info'
+          }
+        />
+      </Typography>,
+      <Grid key={`${rolData.id}-${indexRol}-accion`}>
+        {permisos.permisos.update && (
+          <IconoTooltip
+            id={`cambiarEstadoRol-${rolData.id}`}
+            titulo={rolData.status == 'ACTIVO' ? 'Inactivar' : 'Activar'}
+            color={rolData.status == 'ACTIVO' ? 'success' : 'error'}
+            accion={() => {
+              editarEstadoRolModal(rolData)
+            }}
+            desactivado={rolData.status == 'PENDIENTE'}
+            icono={rolData.status == 'ACTIVO' ? <ToggleRight/> : <ToggleLeft/>}
+            name={rolData.status == 'ACTIVO' ? 'Inactivar Rol' : 'Activar Rol'}
+          />
+        )}
+        {permisos.permisos.update && (
+          <IconoTooltip
+            id={`editarRol-${rolData.id}`}
+            titulo={'Editar'}
+            color={'primary'}
+            accion={() => {
+              imprimir(`Editaremos`, rolData)
+              editarRolModal(rolData)
+            }}
+            icono={<Edit/>}
+            name={'Roles'}
+          />
+        )}
+      </Grid>,
+    ]
+  )
 
   const acciones: Array<ReactNode> = [
     <BotonBuscar
@@ -114,10 +171,10 @@ export default function RolesPage() {
       accion={async () => {
         await obtenerRolesPeticion()
       }}
-      icono={'refresh'}
+      icono={<RefreshCcw/>}
       name={'Actualizar lista de roles'}
     />,
-    permisos.create && (
+    permisos.permisos.create && (
       <IconoBoton
         id={'agregarRol'}
         key={'agregarRol'}
@@ -132,21 +189,32 @@ export default function RolesPage() {
     ),
   ]
 
+  useEffect(() => {
+    obtenerRolesPeticion().finally(() => {})
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    pagina,
+    limite,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    JSON.stringify(ordenCriterios),
+    filtroRol,
+  ])
+
   const cambiarEstadoRolPeticion = async (rol: RolCRUDType) => {
     try {
       setLoading(true)
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/autorizacion/roles/${rol.id}/${
-          rol.estado == 'ACTIVO' ? 'inactivacion' : 'activacion'
+        url: `${Constantes.baseUrl}/roles/${rol.id}/${
+          rol.status == 'ACTIVO' ? 'inactivacion' : 'activacion'
         }`,
         tipo: 'patch',
       })
       imprimir(`respuesta inactivar rol: ${respuesta}`)
-      toast.success(InterpreteMensajes(respuesta))
+      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
       await obtenerRolesPeticion()
     } catch (e) {
       imprimir(`Error al inactivar rol`, e)
-      toast.error(InterpreteMensajes(e))
+      toast.error('Error', { description: InterpreteMensajes(e) })
     } finally {
       setLoading(false)
     }
@@ -157,7 +225,7 @@ export default function RolesPage() {
       setLoading(true)
 
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/autorizacion/roles/todos`,
+        url: `${Constantes.baseUrl}/roles`,
         params: {
           pagina: pagina,
           limite: limite,
@@ -169,13 +237,15 @@ export default function RolesPage() {
               }),
         },
       })
-      setRolesData(respuesta.datos?.filas)
-      setTotal(respuesta.datos?.total)
+
+      imprimir(respuesta)
+      setRolesData(respuesta.data?.rows)
+      setTotal(respuesta.data?.total)
       setErrorRolData(null)
     } catch (e) {
       imprimir(`Error al obtener Roles`, e)
       setErrorRolData(e)
-      toast.error(InterpreteMensajes(e))
+      toast.error('Error', {description: InterpreteMensajes(e)})
     } finally {
       setLoading(false)
     }
@@ -195,17 +265,6 @@ export default function RolesPage() {
     await delay(500)
     setRolEdicion(undefined)
   }
-
-  useEffect(() => {
-    obtenerRolesPeticion().finally(() => {})
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    pagina,
-    limite,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    JSON.stringify(ordenCriterios),
-    filtroRol,
-  ])
 
   useEffect(() => {
     if (!mostrarFiltroRol) {
@@ -230,8 +289,8 @@ export default function RolesPage() {
         isOpen={mostrarAlertaEstadoRol}
         titulo={'Alerta'}
         texto={`¿Está seguro de ${
-          rolEdicion?.estado == 'ACTIVO' ? 'inactivar' : 'activar'
-        } a ${titleCase(rolEdicion?.nombre ?? '')} ?`}
+          rolEdicion?.status == 'ACTIVO' ? 'inactivar' : 'activar'
+        } a ${titleCase(rolEdicion?.description ?? '')} ?`}
       >
         <Button onClick={cancelarAlertaEstadoRol}>Cancelar</Button>
         <Button onClick={aceptarAlertaEstadoRol}>Aceptar</Button>
@@ -251,7 +310,6 @@ export default function RolesPage() {
         />
       </CustomDialog>
       <CustomDataTable
-        titulo={'Roles'}
         error={!!errorRolData}
         cargando={loading}
         acciones={acciones}
@@ -276,3 +334,5 @@ export default function RolesPage() {
     </>
   )
 }
+
+export default RolesPage

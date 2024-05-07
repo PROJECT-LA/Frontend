@@ -54,7 +54,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
           style={{
             display: 'flex',
             flexDirection: 'column',
-            justifyContent: 'space-between',
             height: !matchUpMd ? 'calc(100vh - 140px)' : 'calc(100vh -  150px)',
             paddingLeft: '25px',
             paddingRight: '16px',

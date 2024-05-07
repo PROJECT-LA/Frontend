@@ -13,7 +13,7 @@ export const colores: EsquemaColor = {
   darkDefault: '#242631',
 
   // divider
-  divider: '#38593B',
+  divider: '#DDE3E9',
   dividerDark: '#393B44',
 
   // primary

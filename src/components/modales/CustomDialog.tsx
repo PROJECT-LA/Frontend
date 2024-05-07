@@ -16,6 +16,7 @@ import { TransitionSlide, TransitionZoom } from '../Animations'
 
 import { PortalProps } from '@mui/base/Portal'
 import { Icono } from '@/components/Icono'
+import { CircleX } from 'lucide-react'
 
 interface Props {
   isOpen: boolean
@@ -90,7 +91,7 @@ export const CustomDialog: FC<PropsWithChildren<Props>> = ({
               <Box />
             )}
             <IconButton onClick={handleClose} color={'primary'}>
-              <Icono color={'primary'}>close</Icono>
+              <Icono color={'primary'}><CircleX/></Icono>
             </IconButton>
           </Grid>
         </DialogTitle>
