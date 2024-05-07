@@ -23,6 +23,10 @@ export const RUTAS: RutasType[] = [
     ruta: '/admin/roles',
     permisos: 'read|update|create|delete',
   },
+  {
+    ruta: '/admin/users',
+    permisos: 'read|update|create|delete',
+  }
 ]
 
 // Tipos de datos

@@ -70,7 +70,6 @@ export const useSession = () => {
   }
 
   const borrarCookiesSesion = () => {
-    eliminarCookie('token') // Eliminando access_token
     eliminarCookie('token') // Eliminando access_token de frontend
   }
 
@@ -93,7 +92,7 @@ export const useSession = () => {
       imprimir(`finalizando con respuesta`, respuesta)
 
       if (respuesta === 'OK') {
-        router.replace('/login')
+        router.push('/login')
       }
     } catch (e) {
       imprimir(`Error al cerrar sesión: `, e)

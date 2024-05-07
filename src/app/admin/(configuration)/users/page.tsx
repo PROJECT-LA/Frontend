@@ -3,15 +3,12 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { Constantes } from '@/config'
 import React, { ReactNode, useEffect, useState } from 'react'
-import { delay, InterpreteMensajes, siteName, titleCase } from '@/utils'
+import { delay, InterpreteMensajes, siteName, titleCase } from '@/utils/utilidades'
 import { imprimir } from '@/utils/imprimir'
-import {
-  RolType,
-  UsuarioCRUDType,
-} from '@/app/admin/(configuracion)/usuarios/types/usuariosCRUDTypes'
-import { useAlerts, useSession } from '@/hooks'
+import { RolType, UsuarioRolCRUDType } from './types'
+import { useSession } from '@/hooks/useSession'
 import { useAuth } from '@/context/AuthProvider'
-import { CasbinTypes } from '@/types'
+
 import { Button, Chip, Grid, useMediaQuery, useTheme } from '@mui/material'
 import { usePathname } from 'next/navigation'
 import { CriterioOrdenType } from '@/types/ordenTypes'
@@ -23,22 +20,33 @@ import { IconoBoton } from '@/components/botones/IconoBoton'
 import { ordenFiltrado } from '@/utils/orden'
 import { AlertDialog } from '@/components/modales/AlertDialog'
 import { CustomDialog } from '@/components/modales/CustomDialog'
-import {
-  FiltroUsuarios,
-  VistaModalUsuario,
-} from '@/app/admin/(configuracion)/usuarios/ui'
+import { FiltroUsuarios } from './ui/FiltroUsuarios'
+import { VistaModalUsuario } from './ui/ModalUsuarios'
+
 import { CustomDataTable } from '@/components/datatable/CustomDataTable'
 import { Paginacion } from '@/components/datatable/Paginacion'
+import { toast } from 'sonner'
+import { useRoles } from '@/hooks/useRoles'
+import { useGlobalStore } from '@/store'
+import { Key, KeyRound, Mail, Mails, Pencil, RefreshCcw, ToggleLeft, ToggleRight, Trash } from 'lucide-react'
 
 export default function UsuariosPage() {
+   /// Verificación adicional para los permisos
+   const pathname = usePathname()
+   const { obtenerPermisosPagina } = useRoles()
+   const { permisos } = useGlobalStore()
+   useEffect(()=>{
+     obtenerPermisosPagina(pathname)
+     /* eslint-disable */
+   }, [])
+   imprimir(permisos)
+   /* Código que se debe de repetir en cada página */
+
   // data de usuarios
-  const [usuariosData, setUsuariosData] = useState<UsuarioCRUDType[]>([])
+  const [usuariosData, setUsuariosData] = useState<UsuarioRolCRUDType[]>([])
 
   // Flag que indica que hay un proceso cargando visualmente
   const [loading, setLoading] = useState<boolean>(true)
-
-  // Hook para mostrar alertas
-  const { Alerta } = useAlerts()
 
   /// Indicador de error en una petición
   const [errorData, setErrorData] = useState<any>()
@@ -60,7 +68,7 @@ export default function UsuariosPage() {
 
   /// Variable que contiene el estado del usuario que se está editando
   const [usuarioEdicion, setUsuarioEdicion] = useState<
-    UsuarioCRUDType | undefined | null
+    UsuarioRolCRUDType | undefined | null
   >()
 
   // Roles de usuario
@@ -81,74 +89,57 @@ export default function UsuariosPage() {
   // Proveedor de la sesión
 
   const { sesionPeticion } = useSession()
-  const { permisoUsuario } = useAuth()
 
-  // Permisos para acciones
-  const [permisos, setPermisos] = useState<CasbinTypes>({
-    read: false,
-    create: false,
-    update: false,
-    delete: false,
-  })
 
   const theme = useTheme()
   const xs = useMediaQuery(theme.breakpoints.only('xs'))
 
-  // router para conocer la ruta actual
-  const pathname = usePathname()
 
   /// Criterios de orden
   const [ordenCriterios, setOrdenCriterios] = useState<
     Array<CriterioOrdenType>
   >([
-    { campo: 'nroDocumento', nombre: 'Nro. Documento', ordenar: true },
-    { campo: 'nombres', nombre: 'Nombres', ordenar: true },
-    { campo: 'usuario', nombre: 'Usuario', ordenar: true },
-    { campo: 'tipo', nombre: 'Tipo' },
-    { campo: 'rol', nombre: 'Roles', ordenar: true },
-    { campo: 'estado', nombre: 'Estado', ordenar: true },
+    { campo: 'names', nombre: 'Nombres', ordenar: true },
+    { campo: 'lastNames', nombre: 'Apellidos', ordenar: true },
+    { campo: 'email', nombre: 'Correo electrónico', ordenar: true },
+    { campo: 'phone', nombre: 'Número de telefono' },
+    { campo: 'roles', nombre: 'Roles' },
+    { campo: 'status', nombre: 'Estado', ordenar: true },
     { campo: 'acciones', nombre: 'Acciones' },
   ])
 
   /// Contenido del data table
   const contenidoTabla: Array<Array<ReactNode>> = usuariosData.map(
     (usuarioData, indexUsuario) => [
-      <Typography
-        key={`${usuarioData.id}-${indexUsuario}-tipoDoc`}
-        variant={'body2'}
-      >
-        {`${usuarioData.persona.tipoDocumento} ${usuarioData.persona.nroDocumento}`}
-      </Typography>,
       <div key={`${usuarioData.id}-${indexUsuario}-nombres`}>
         <Typography variant={'body2'}>
-          {`${usuarioData.persona.nombres} ${usuarioData.persona.primerApellido} ${usuarioData.persona.segundoApellido}`}
+          {`${usuarioData.names}`}
         </Typography>
       </div>,
+      <div key={`${usuarioData.id}-${indexUsuario}-apellidos`}>
+      <Typography variant={'body2'}>
+        {`${usuarioData.lastNames}`}
+      </Typography>
+    </div>,
+       <Typography
+       key={`${usuarioData.id}-${indexUsuario}-tipoDoc`}
+       variant={'body2'}
+     >
+       {`${usuarioData.email}`}
+     </Typography>,
       <Typography
         key={`${usuarioData.id}-${indexUsuario}-usuario`}
         variant={'body2'}
       >
-        {usuarioData.usuario}
+        {usuarioData.phone}
       </Typography>,
 
-      <Box key={`${usuarioData.id}-${indexUsuario}-tipo`}>
-        {usuarioData.ciudadaniaDigital && (
-          <Chip
-            size={'small'}
-            color={'primary'}
-            label="Ciudadanía"
-            variant="outlined"
-          />
-        )}
-        {!usuarioData.ciudadaniaDigital && (
-          <Chip size={'small'} label="Normal" variant="outlined" />
-        )}
-      </Box>,
+      
       <Grid key={`${usuarioData.id}-${indexUsuario}-roles`}>
-        {usuarioData.usuarioRol.map((itemUsuarioRol, indexUsuarioRol) => (
+        {usuarioData.roles.map((itemUsuarioRol, indexUsuarioRol) => (
           <Chip
             key={`usuario-rol-${indexUsuarioRol}`}
-            label={itemUsuarioRol.rol.rol}
+            label={itemUsuarioRol.name}
           />
         ))}
       </Grid>,
@@ -157,54 +148,49 @@ export default function UsuariosPage() {
         key={`${usuarioData.id}-${indexUsuario}-estado`}
       >
         <CustomMensajeEstado
-          titulo={usuarioData.estado}
-          descripcion={usuarioData.estado}
+          titulo={usuarioData.status}
+          descripcion={usuarioData.status}
           color={
-            usuarioData.estado == 'ACTIVO'
+            usuarioData.status == 'ACTIVO'
               ? 'success'
-              : usuarioData.estado == 'INACTIVO'
+              : usuarioData.status == 'INACTIVO'
                 ? 'error'
                 : 'info'
           }
         />
       </Typography>,
       <Grid key={`${usuarioData.id}-${indexUsuario}-acciones`}>
-        {permisos.update && (
+        {permisos.permisos.update && (
           <IconoTooltip
             id={`editarEstadoUsuario-${usuarioData.id}`}
-            titulo={usuarioData.estado == 'ACTIVO' ? 'Inactivar' : 'Activar'}
-            color={usuarioData.estado == 'ACTIVO' ? 'success' : 'error'}
+            titulo={usuarioData.status == 'ACTIVO' ? 'Inactivar' : 'Activar'}
+            color={usuarioData.status == 'ACTIVO' ? 'success' : 'error'}
             accion={async () => {
               await editarEstadoUsuarioModal(usuarioData)
             }}
-            desactivado={usuarioData.estado == 'PENDIENTE'}
-            icono={usuarioData.estado == 'ACTIVO' ? 'toggle_on' : 'toggle_off'}
+            desactivado={usuarioData.status == 'PENDIENTE'}
+            icono={usuarioData.status == 'ACTIVO' ? <ToggleRight/> : <ToggleLeft/>}
             name={
-              usuarioData.estado == 'ACTIVO'
+              usuarioData.status == 'ACTIVO'
                 ? 'Inactivar Usuario'
                 : 'Activar Usuario'
             }
           />
         )}
-        {(usuarioData.estado == 'ACTIVO' ||
-          usuarioData.estado == 'INACTIVO') && (
+        {(usuarioData.status == 'ACTIVO' ||
+          usuarioData.status == 'INACTIVO') && (
           <IconoTooltip
             id={`restablecerContrasena-${usuarioData.id}`}
-            titulo={
-              usuarioData.ciudadaniaDigital
-                ? 'No puede restablecer la contraseña'
-                : 'Restablecer contraseña'
-            }
+            titulo= 'Restablecer contraseña'
             color={'info'}
             accion={async () => {
               await restablecimientoPassUsuarioModal(usuarioData)
             }}
-            desactivado={usuarioData.ciudadaniaDigital}
-            icono={'vpn_key'}
+            icono={<KeyRound/>}
             name={'Restablecer contraseña'}
           />
         )}
-        {usuarioData.estado == 'PENDIENTE' && (
+        {usuarioData.status == 'PENDIENTE' && (
           <IconoTooltip
             id={`reenviarCorreoActivacion-${usuarioData.id}`}
             titulo={'Reenviar correo de activación'}
@@ -212,12 +198,11 @@ export default function UsuariosPage() {
             accion={async () => {
               await reenvioCorreoModal(usuarioData)
             }}
-            desactivado={usuarioData.ciudadaniaDigital}
-            icono={'forward_to_inbox'}
+            icono={<Mails/>}
             name={'Reenviar correo de activación'}
           />
         )}
-        {permisos.update && (
+        {permisos.permisos.update && (
           <IconoTooltip
             id={`editarUsusario-${usuarioData.id}`}
             titulo={'Editar'}
@@ -226,10 +211,25 @@ export default function UsuariosPage() {
               imprimir(`Editaremos`, usuarioData)
               editarUsuarioModal(usuarioData)
             }}
-            icono={'edit'}
+            icono={<Pencil/>}
             name={'Editar usuario'}
           />
         )}
+        {
+          permisos.permisos.delete && (
+            <IconoTooltip
+              id={`eliminarUsuario-${usuarioData.id}`}
+              titulo={'Eliminar'}
+              color={'secondary'}
+              accion={()=>{
+                imprimir(`Eliminaremos`, usuarioData)
+                eliminarCuenta(usuarioData)
+              }}
+              icono={<Trash/>}
+              name={'Eliminar cuenta'}
+            />
+          )
+}
       </Grid>,
     ]
   )
@@ -258,10 +258,10 @@ export default function UsuariosPage() {
       accion={async () => {
         await obtenerUsuariosPeticion()
       }}
-      icono={'refresh'}
+      icono={<RefreshCcw/>}
       name={'Actualizar lista de usuario'}
     />,
-    permisos.create && (
+    permisos.permisos.create && (
       <IconoBoton
         id={'agregarUsuario'}
         key={'agregarUsuario'}
@@ -282,7 +282,7 @@ export default function UsuariosPage() {
       setLoading(true)
 
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/usuarios`,
+        url: `${Constantes.baseUrl}/users`,
         params: {
           pagina: pagina,
           limite: limite,
@@ -295,13 +295,13 @@ export default function UsuariosPage() {
               }),
         },
       })
-      setUsuariosData(respuesta.datos?.filas)
-      setTotal(respuesta.datos?.total)
+      setUsuariosData(respuesta.data?.rows)
+      setTotal(respuesta.data?.total)
       setErrorData(null)
     } catch (e) {
       imprimir(`Error al obtener usuarios`, e)
       setErrorData(e)
-      Alerta({ mensaje: `${InterpreteMensajes(e)}`, variant: 'error' })
+      toast.error('Error', {description: InterpreteMensajes(e)})
     } finally {
       setLoading(false)
     }
@@ -312,14 +312,14 @@ export default function UsuariosPage() {
     try {
       setLoading(true)
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/autorizacion/roles`,
+        url: `${Constantes.baseUrl}/roles`,
       })
-      setRolesData(respuesta.datos)
+      setRolesData(respuesta.data.rows)
       setErrorData(null)
     } catch (e) {
       imprimir(`Error al obtener roles`, e)
       setErrorData(e)
-      Alerta({ mensaje: `${InterpreteMensajes(e)}`, variant: 'error' })
+      toast.error('Error', {description: InterpreteMensajes(e)})
       throw e
     } finally {
       setLoading(false)
@@ -327,68 +327,78 @@ export default function UsuariosPage() {
   }
 
   /// Petición que cambia el estado de un usuario
-  const cambiarEstadoUsuarioPeticion = async (usuario: UsuarioCRUDType) => {
+  const cambiarEstadoUsuarioPeticion = async (usuario: UsuarioRolCRUDType) => {
     try {
       setLoading(true)
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/usuarios/${usuario.id}/${
-          usuario.estado == 'ACTIVO' ? 'inactivacion' : 'activacion'
+        url: `${Constantes.baseUrl}/users/${usuario.id}/${
+          usuario.status == 'ACTIVO' ? 'inactivacion' : 'activacion'
         }`,
         tipo: 'patch',
       })
       imprimir(`respuesta inactivar usuario: ${respuesta}`)
-      Alerta({
-        mensaje: InterpreteMensajes(respuesta),
-        variant: 'success',
-      })
+      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
       await obtenerUsuariosPeticion()
     } catch (e) {
       imprimir(`Error al inactivar usuarios`, e)
-      Alerta({ mensaje: `${InterpreteMensajes(e)}`, variant: 'error' })
+      toast.error('Error', {description: InterpreteMensajes(e)})
     } finally {
       setLoading(false)
     }
   }
 
   /// Petición que restablecer la contraseña del usuario
-  const restablecerPassUsuarioPeticion = async (usuario: UsuarioCRUDType) => {
+  const restablecerPassUsuarioPeticion = async (usuario: UsuarioRolCRUDType) => {
     try {
       setLoading(true)
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/usuarios/${usuario.id}/restauracion`,
+        url: `${Constantes.baseUrl}/users/${usuario.id}/restauracion`,
         tipo: 'patch',
       })
       imprimir(`respuesta restablecer usuario: ${respuesta}`)
-      Alerta({
-        mensaje: InterpreteMensajes(respuesta),
-        variant: 'success',
-      })
+      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
       await obtenerUsuariosPeticion()
     } catch (e) {
       imprimir(`Error al restablecer usuario`, e)
-      Alerta({ mensaje: `${InterpreteMensajes(e)}`, variant: 'error' })
+      toast.error('Error', {description: InterpreteMensajes(e)})
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  /// Petición que elimina cuenta de usuario
+  const eliminarCuenta = async (usuario: UsuarioRolCRUDType) => {
+    try {
+      setLoading(true)
+      const respuesta = await sesionPeticion({
+        url: `${Constantes.baseUrl}/users/${usuario.id}`,
+        tipo: 'delete',
+      })
+      imprimir(`eliminar cuenta de usuario: ${respuesta}`)
+      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
+      await obtenerUsuariosPeticion()
+    } catch (e) {
+      imprimir(`Error al reenvio correo usuario`, e)
+      toast.error('Error', {description: InterpreteMensajes(e)})
     } finally {
       setLoading(false)
     }
   }
 
   /// Petición que reenvia correo de activación
-  const reenviarCorreoActivacionPeticion = async (usuario: UsuarioCRUDType) => {
+  const reenviarCorreoActivacionPeticion = async (usuario: UsuarioRolCRUDType) => {
     try {
       setLoading(true)
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/usuarios/${usuario.id}/reenviar`,
+        url: `${Constantes.baseUrl}/users/${usuario.id}/reenviar`,
         tipo: 'patch',
       })
       imprimir(`respuesta reenviar correo usuario: ${respuesta}`)
-      Alerta({
-        mensaje: InterpreteMensajes(respuesta),
-        variant: 'success',
-      })
+      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
       await obtenerUsuariosPeticion()
     } catch (e) {
       imprimir(`Error al reenvio correo usuario`, e)
-      Alerta({ mensaje: `${InterpreteMensajes(e)}`, variant: 'error' })
+      toast.error('Error', {description: InterpreteMensajes(e)})
     } finally {
       setLoading(false)
     }
@@ -401,7 +411,7 @@ export default function UsuariosPage() {
     setModalUsuario(true)
   }
   /// Método abre una ventana modal para un usuario existente
-  const editarUsuarioModal = (usuario: UsuarioCRUDType) => {
+  const editarUsuarioModal = (usuario: UsuarioRolCRUDType) => {
     setUsuarioEdicion(usuario)
     setModalUsuario(true)
   }
@@ -415,21 +425,21 @@ export default function UsuariosPage() {
 
   /// Método que muestra alerta de cambio de estado
 
-  const editarEstadoUsuarioModal = (usuario: UsuarioCRUDType) => {
+  const editarEstadoUsuarioModal = (usuario: UsuarioRolCRUDType) => {
     setUsuarioEdicion(usuario) // para mostrar datos de usuario en la alerta
     setMostrarAlertaEstadoUsuario(true) // para mostrar alerta de usuarios
   }
 
   /// Método que muestra alerta de restablecimiento de contraseña
 
-  const restablecimientoPassUsuarioModal = (usuario: UsuarioCRUDType) => {
+  const restablecimientoPassUsuarioModal = (usuario: UsuarioRolCRUDType) => {
     setUsuarioEdicion(usuario) // para mostrar datos de usuario en la alerta
     setMostrarAlertaRestablecerUsuario(true) // para mostrar alerta de usuarios
   }
 
   /// Método que muestra alerta de reenvio de correo
 
-  const reenvioCorreoModal = (usuario: UsuarioCRUDType) => {
+  const reenvioCorreoModal = (usuario: UsuarioRolCRUDType) => {
     setUsuarioEdicion(usuario) // para mostrar datos de usuario en la alerta
     setMostrarAlertaReenvioCorreo(true) // para mostrar alerta de usuarios
   }
@@ -485,16 +495,7 @@ export default function UsuariosPage() {
     setUsuarioEdicion(null)
   }
 
-  /// Método que define permisos por rol desde la sesión
-  const definirPermisos = async () => {
-    setPermisos(await permisoUsuario(pathname))
-  }
 
-  useEffect(() => {
-    imprimir('usuarios..')
-    definirPermisos().finally()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     obtenerRolesPeticion()
@@ -530,8 +531,8 @@ export default function UsuariosPage() {
         isOpen={mostrarAlertaEstadoUsuario}
         titulo={'Alerta'}
         texto={`¿Está seguro de ${
-          usuarioEdicion?.estado == 'ACTIVO' ? 'inactivar' : 'activar'
-        } a ${titleCase(usuarioEdicion?.persona.nombres ?? '')} ?`}
+          usuarioEdicion?.status == 'ACTIVO' ? 'inactivar' : 'activar'
+        } a ${titleCase(usuarioEdicion?.names ?? '')} ?`}
       >
         <Button onClick={cancelarAlertaEstadoUsuario}>Cancelar</Button>
         <Button onClick={aceptarAlertaEstadoUsuario}>Aceptar</Button>
@@ -540,7 +541,7 @@ export default function UsuariosPage() {
         isOpen={mostrarAlertaRestablecerUsuario}
         titulo={'Alerta'}
         texto={`¿Está seguro de restablecer la contraseña de
-         ${titleCase(usuarioEdicion?.persona.nombres ?? '')} ?`}
+         ${titleCase(usuarioEdicion?.names ?? '')} ?`}
       >
         <Button onClick={cancelarAlertaRestablecerUsuario}>Cancelar</Button>
         <Button onClick={aceptarAlertaRestablecerUsuario}>Aceptar</Button>
@@ -549,7 +550,7 @@ export default function UsuariosPage() {
         isOpen={mostrarAlertaReenvioCorreo}
         titulo={'Alerta'}
         texto={`¿Está seguro de reenviar el correo de activación de
-         ${titleCase(usuarioEdicion?.persona.nombres ?? '')} ?`}
+         ${titleCase(usuarioEdicion?.names ?? '')} ?`}
       >
         <Button onClick={cancelarAlertaReenvioCorreo}>Cancelar</Button>
         <Button onClick={aceptarAlertaReenvioCorreo}>Aceptar</Button>
@@ -571,7 +572,6 @@ export default function UsuariosPage() {
         />
       </CustomDialog>
       <CustomDataTable
-        titulo={'Usuarios'}
         error={!!errorData}
         cargando={loading}
         acciones={acciones}

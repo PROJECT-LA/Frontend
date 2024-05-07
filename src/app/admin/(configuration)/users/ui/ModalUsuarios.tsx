@@ -1,35 +1,27 @@
 /// Vista modal de usuario
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
-import {
-  CrearEditarUsuarioType,
-  RolType,
-  UsuarioCRUDType,
-} from '../types/usuariosCRUDTypes'
-
+import { CrearEditarUsuarioType, RolType, UsuarioRolCRUDType } from '../types'
+import { useSession } from '@/hooks/useSession'
+import { delay, InterpreteMensajes } from '@/utils/utilidades'
+import { Constantes } from '@/config'
+import { imprimir } from '@/utils/imprimir'
+import { FormInputDropdownMultiple } from '@/components/forms/FormDropdownMultiple'
+import { FormInputText } from '@/components/forms'
 import {
   Box,
   Button,
   DialogActions,
   DialogContent,
+  Divider,
   Grid,
   Typography,
 } from '@mui/material'
-import { useAlerts, useSession } from '@/hooks'
-import { delay, InterpreteMensajes } from '@/utils'
-import { Constantes } from '@/config/Constantes'
-import { formatoFecha } from '@/utils/fechas'
-import { imprimir } from '@/utils/imprimir'
-import {
-  FormInputDate,
-  FormInputDropdownMultiple,
-  FormInputText,
-} from 'src/components/form'
-import { isValidEmail } from '@/utils/validations'
-import ProgresoLineal from '@/components/progreso/ProgresoLineal'
+import { ProgresoLineal } from '@/components/progreso/ProgresoLineal'
+import { toast } from 'sonner'
 
 export interface ModalUsuarioType {
-  usuario?: UsuarioCRUDType | undefined | null
+  usuario?: UsuarioRolCRUDType | undefined | null
   roles: RolType[]
   accionCorrecta: () => void
   accionCancelar: () => void
@@ -44,8 +36,6 @@ export const VistaModalUsuario = ({
   // Flag que índica que hay un proceso en ventana modal cargando visualmente
   const [loadingModal, setLoadingModal] = useState<boolean>(false)
 
-  // Hook para mostrar alertas
-  const { Alerta } = useAlerts()
 
   // Proveedor de la sesión
   const { sesionPeticion } = useSession()
@@ -53,18 +43,14 @@ export const VistaModalUsuario = ({
   const { handleSubmit, control } = useForm<CrearEditarUsuarioType>({
     defaultValues: {
       id: usuario?.id,
-      usuario: usuario?.usuario,
-      roles: usuario?.usuarioRol.map((rol) => rol.rol.id),
-      estado: usuario?.estado,
-      correoElectronico: usuario?.correoElectronico,
-      persona: {
-        nroDocumento: usuario?.persona.nroDocumento,
-        nombres: usuario?.persona.nombres,
-        primerApellido: usuario?.persona.primerApellido,
-        segundoApellido: usuario?.persona.segundoApellido,
-        fechaNacimiento: usuario?.persona.fechaNacimiento,
-      },
-      ciudadaniaDigital: usuario?.ciudadaniaDigital,
+      username: usuario?.username,
+      names: usuario?.names, 
+      phone: usuario?.phone,
+      lastNames: usuario?.lastNames,
+      password: usuario?.password,
+      roles: usuario?.roles.map((rol) => rol.id),
+      status: usuario?.status,
+      email: usuario?.email
     },
   })
 
@@ -76,36 +62,25 @@ export const VistaModalUsuario = ({
     usuario: CrearEditarUsuarioType
   ) => {
     try {
+      imprimir(usuario)
+
       setLoadingModal(true)
       await delay(1000)
       const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/usuarios${
+        url: `${Constantes.baseUrl}/users${
           usuario.id ? `/${usuario.id}` : ''
         }`,
         tipo: !!usuario.id ? 'patch' : 'post',
         body: {
           ...usuario,
-          ...{
-            persona: {
-              ...usuario.persona,
-              ...{
-                fechaNacimiento: formatoFecha(
-                  usuario.persona.fechaNacimiento,
-                  'YYYY-MM-DD'
-                ),
-              },
-            },
-          },
         },
       })
-      Alerta({
-        mensaje: InterpreteMensajes(respuesta),
-        variant: 'success',
-      })
+      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
+
       accionCorrecta()
     } catch (e) {
       imprimir(`Error al crear o actualizar usuario: `, e)
-      Alerta({ mensaje: `${InterpreteMensajes(e)}`, variant: 'error' })
+      toast.error('Error', {description: InterpreteMensajes(e)})
     } finally {
       setLoadingModal(false)
     }
@@ -116,67 +91,92 @@ export const VistaModalUsuario = ({
       <DialogContent dividers>
         <Grid container direction={'column'} justifyContent="space-evenly">
           <Box height={'5px'} />
-          <Typography sx={{ fontWeight: 'medium' }} variant={'subtitle2'}>
+          <Typography sx={{ fontWeight: 'medium', textAlign: "center" }} variant="h5">
             Datos personales
           </Typography>
           <Box height={'20px'} />
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Grid item xs={12} sm={12} md={4}>
+            <Grid item xs={12} sm={12} md={6}>
               <FormInputText
-                id={'nroDocumento'}
+                id={'names'}
                 control={control}
-                name="persona.nroDocumento"
-                label="Nro. Documento"
+                name="names"
+                label="Nombres"
                 disabled={loadingModal}
                 rules={{ required: 'Este campo es requerido' }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={4}>
+            <Grid item xs={12} sm={12} md={6}>
               <FormInputText
-                id={'nombre'}
+                id={'lastNames'}
                 control={control}
-                name="persona.nombres"
-                label="Nombre"
+                name="lastNames"
+                label="Apellidos"
                 disabled={loadingModal}
                 rules={{ required: 'Este campo es requerido' }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={4}>
+            <Grid item xs={12} sm={12} md={6}>
               <FormInputText
-                id={'primerApellido'}
+                id={'phone'}
                 control={control}
-                name="persona.primerApellido"
-                label="Primer Apellido"
+                type="number"
+                name="phone"
+                label="Teléfono/Celular"
                 disabled={loadingModal}
               />
             </Grid>
-            <Grid item xs={12} sm={12} md={4}>
+            <Grid item xs={12} sm={12} md={6}>
               <FormInputText
-                id={'segundoApellido'}
+                id={'email'}
                 control={control}
-                name="persona.segundoApellido"
-                label="Segundo apellido"
+                name="email"
+                type="email"
+                label="Correo electrónico"
                 disabled={loadingModal}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={4}>
-              <FormInputDate
-                id={'fechaNacimiento'}
-                control={control}
-                name="persona.fechaNacimiento"
-                label="Fecha de nacimiento"
-                disabled={loadingModal}
-                rules={{ required: 'Este campo es requerido' }}
               />
             </Grid>
           </Grid>
           <Grid>
-            <Box height={'20px'} />
-            <Typography sx={{ fontWeight: 'medium' }} variant={'subtitle2'}>
-              Datos de usuario
+            <Box height={'25px'} />
+            <Divider/>
+            <Box height={'25px'} />
+            <Typography sx={{ fontWeight: 'medium', textAlign: "center" }} variant="h5">
+              Autorización del usuario
             </Typography>
             <Box height={'10px'} />
             <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
+
+            <Grid item xs={12} sm={12} md={6}>
+              <FormInputText
+                id={'username'}
+                control={control}
+                name="username"
+                label="Usuario"
+                disabled={loadingModal}
+              />
+              </Grid>
+            <Grid item xs={12} sm={12} md={6}>
+              <FormInputText
+                id={'password'}
+                control={control}
+                name="password"
+                type="password"
+                label="Contraseña"
+                disabled={loadingModal}
+              />
+              </Grid>
+            {/* </Grid>
+            <Grid item xs={12} sm={12} md={6}>
+              <FormInputText
+                id={'email'}
+                control={control}
+                name="repassword"
+                type="re"
+                label="Verificar contraseña"
+                disabled={loadingModal}
+              />
+            </Grid> */}
               <Grid item xs={12} sm={12} md={12}>
                 <FormInputDropdownMultiple
                   id={'roles'}
@@ -187,24 +187,9 @@ export const VistaModalUsuario = ({
                   options={roles.map((rol) => ({
                     key: rol.id,
                     value: rol.id,
-                    label: rol.nombre,
+                    label: rol.name,
                   }))}
                   rules={{ required: 'Este campo es requerido' }}
-                />
-              </Grid>
-              <Grid item xs={12} sm={12} md={12}>
-                <FormInputText
-                  id={'correoElectronico'}
-                  control={control}
-                  name="correoElectronico"
-                  label="Correo electrónico"
-                  disabled={loadingModal}
-                  rules={{
-                    required: 'Este campo es requerido',
-                    validate: (value) => {
-                      if (!isValidEmail(value)) return 'No es un correo válido'
-                    },
-                  }}
                 />
               </Grid>
             </Grid>

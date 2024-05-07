@@ -3,12 +3,8 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 
 import { Box, Button, DialogActions, DialogContent, Grid } from '@mui/material'
-
-import {
-  FiltroModalUsuarioType,
-  FiltroType,
-} from '@/app/admin/(configuracion)/usuarios/ui/FiltroUsuarios'
-import { FormInputDropdownMultiple } from 'src/components/form'
+import { FiltroModalUsuarioType, FiltroType } from './FiltroUsuarios'
+import { FormInputDropdownMultiple } from '@/components/forms/FormDropdownMultiple'
 
 export const FiltroModalUsuarios = ({
   rolesDisponibles,
@@ -36,7 +32,7 @@ export const FiltroModalUsuarios = ({
                 options={rolesDisponibles.map((rol) => ({
                   key: rol.id,
                   value: rol.id,
-                  label: rol.nombre,
+                  label: rol.name,
                 }))}
                 rules={{ required: 'Este campo es requerido' }}
               />

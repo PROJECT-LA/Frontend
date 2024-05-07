@@ -3,8 +3,10 @@ import { useForm } from 'react-hook-form'
 import { Box, Grid } from '@mui/material'
 
 import { useDebouncedCallback } from 'use-debounce'
-import { RolType } from '../types/usuariosCRUDTypes'
-import { FormInputDropdownMultiple, FormInputText } from 'src/components/form'
+import { RolType } from '../types'
+import { FormInputDropdownMultiple } from '@/components/forms/FormDropdownMultiple'
+import { FormInputText } from '@/components/forms'
+
 
 export interface FiltroType {
   usuario: string
@@ -79,7 +81,7 @@ export const FiltroUsuarios = ({
             options={rolesDisponibles.map((rol) => ({
               key: rol.id,
               value: rol.id,
-              label: rol.nombre,
+              label: rol.name,
             }))}
           />
         </Grid>
