@@ -47,7 +47,10 @@ export const LoginForm = () => {
       paddingX={10}
       borderRadius={Constantes.borderRadius}
       sx={{
-        backgroundColor: `${theme.palette.background.default}`,
+        backgroundColor:
+          theme.palette.mode === 'light'
+            ? theme.palette.background.paper
+            : `${theme.palette.background.default}`,
       }}
     >
       <Stack direction="column" alignItems="center">
@@ -61,7 +64,7 @@ export const LoginForm = () => {
             >
               <Grid item>
                 <Stack alignItems="center" justifyContent="center" spacing={1}>
-                  <Typography gutterBottom variant={matchDownSM ? 'h5' : 'h1'}>
+                  <Typography gutterBottom variant={matchDownSM ? 'h2' : 'h1'}>
                     Bienvenido
                   </Typography>
                   <Typography

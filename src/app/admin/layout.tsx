@@ -2,11 +2,11 @@
 import { styled, useTheme } from '@mui/material/styles'
 import { AppBar, Toolbar, useMediaQuery } from '@mui/material'
 import { Constantes } from '@/config'
-import { usePathname } from 'next/navigation'
 import Header from '@/layout/Header'
 import Sidebar from '@/layout/Sidebar'
 import { useGlobalStore } from '@/store'
 import 'react-perfect-scrollbar/dist/css/styles.css'
+import { useEffect, useState } from 'react'
 
 interface MainProps {
   open: boolean
@@ -18,6 +18,7 @@ const Main = styled('main', {
 })<MainProps>(({ theme, open }) => ({
   ...theme.typography.mainContent,
   borderBottomLeftRadius: 0,
+  position: 'relative',
   borderBottomRightRadius: 0,
   transition: theme.transitions.create(
     'margin',
@@ -33,11 +34,10 @@ const Main = styled('main', {
   ),
   [theme.breakpoints.up('md')]: {
     marginTop: 120,
-    marginLeft: open ? 40 : -(Constantes.drawerWidth - 20),
-    width: '98%',
-    marginRight: open && '1.4rem',
+    marginLeft: open ? 40 : -(Constantes.drawerWidth - 120),
+    width: '92%',
+    marginRight: '2rem',
     paddingBottom: 20,
-    // width: open ? `calc(97% - ${Constantes.drawerWidth}px - 5px)` : "98%",
   },
   [theme.breakpoints.down('md')]: {
     marginLeft: '20px',
@@ -55,59 +55,58 @@ const Main = styled('main', {
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme()
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'))
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 0
+      setScrolled(isScrolled)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   const { openDrawer, toggleDrawer } = useGlobalStore()
-
-  const pathname = usePathname()
-
-  console.log(pathname)
 
   return (
     <div
       style={{
         display: 'flex',
-        // backgroundColor: theme.palette.background.default,
       }}
     >
+      <Sidebar
+        drawerOpen={!matchDownMd ? openDrawer : !openDrawer}
+        drawerToggle={toggleDrawer}
+      />
+
       <AppBar
         enableColorOnDark
         position="fixed"
-        elevation={0}
         sx={{
+          boxShadow: scrolled ? Constantes.boxShadow : 'none',
           bgcolor: theme.palette.background.default,
           transition: openDrawer ? theme.transitions.create('width') : 'none',
         }}
       >
         <Toolbar
           sx={{
-            marginTop: 2.5,
-            paddingY: 2,
-            marginX: 2.5,
-            borderRadius: Constantes.borderRadius,
-            border: 1,
+            paddingY: scrolled ? 1 : 2,
+            transition: 'all .3s ease',
+            marginRight: 1,
+            marginLeft: openDrawer
+              ? `${Constantes.drawerWidth + 20}px`
+              : `100px`,
             borderColor: theme.palette.divider,
-            backgroundColor: theme.palette.background.paper,
-            boxShadow: Constantes.boxShadow,
           }}
         >
-          <Header handleLeftDrawerToggle={toggleDrawer} />
+          <Header handleLeftDrawerToggle={toggleDrawer} scrolled={scrolled} />
         </Toolbar>
       </AppBar>
-
-      <Sidebar
-        drawerOpen={!matchDownMd ? openDrawer : !openDrawer}
-        drawerToggle={toggleDrawer}
-      />
-
       <Main theme={theme} open={openDrawer}>
-        {/* <Breadcrumbs
-          separator={IconChevronRight}
-          navigation={navigation}
-          icon
-          title
-          rightAlign
-        /> */}
-        {/* <Box bgcolor="red"> */}
         {children}
       </Main>
     </div>

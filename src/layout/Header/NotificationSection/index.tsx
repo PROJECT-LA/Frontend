@@ -92,22 +92,16 @@ const NotificationSection = () => {
 
   return (
     <>
-      <Box
-        sx={{
-          ml: 2,
-          mr: 3,
-          [theme.breakpoints.down('md')]: {
-            mr: 2,
-          },
-        }}
-      >
+      <Box>
         <ButtonBase
           sx={{
             padding: 1,
-            borderRadius: '12px',
+            borderRadius: '50%',
             transition: 'all .2s ease-in-out',
             background: theme.palette.background.paper,
             color: theme.palette.text.primary,
+            border: 1,
+            borderColor: theme.palette.divider,
             position: 'relative',
           }}
         >
@@ -117,10 +111,10 @@ const NotificationSection = () => {
               position: 'absolute',
               display: 'grid',
               placeItems: 'center',
-              top: 0,
-              right: 0,
+              top: -5,
+              right: -5,
               width: 20,
-              backgroundColor: theme.palette.primary.dark,
+              backgroundColor: theme.palette.secondary.main,
               borderRadius: '100%',
             }}
           >

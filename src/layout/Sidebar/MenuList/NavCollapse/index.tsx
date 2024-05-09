@@ -18,8 +18,12 @@ import NavItem from '../NavItem'
 
 // assets
 import { ChevronDown, ChevronUp, LayoutDashboard } from 'lucide-react'
+import { useGlobalStore } from '@/store'
+import Icon from '@/components/LucideIcon'
 
 const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
+  const { openDrawer } = useGlobalStore()
+
   const theme = useTheme()
 
   const router = useRouter()
@@ -82,17 +86,6 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
 
   // @ts-expect-error Error en Sub menu
   const SubMenuCaption = theme.typography.subMenuCaption
-  const Icon = menu.icon
-  const menuIcon = menu.icon ? (
-    <Icon
-      strokeWidth={1.5}
-      size="1.3rem"
-      color={theme.palette.text.primary}
-      style={{ marginTop: 'auto', marginBottom: 'auto' }}
-    />
-  ) : (
-    <LayoutDashboard fontSize={level > 0 ? 'inherit' : 'medium'} />
-  )
 
   const ListItemStyled = styled(ListItemButton)(() => ({
     whiteSpace: 'nowrap',
@@ -108,7 +101,6 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
       position: 'absolute',
       top: 0,
       bottom: 0,
-      left: '-20px',
       height: '100%',
       zIndex: '-1',
       borderRadius: ' 0 24px 24px 0',
@@ -116,8 +108,11 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
       width: '0',
     },
     '&:hover::before': {
-      width: 'calc(100% + 20px)',
-      backgroundColor: theme.palette.primary.light,
+      width: '100%',
+      borderRadius: '1rem',
+      transition: 'all .3s ease',
+      backgroundColor: `${theme.palette.primary.light}50`,
+      color: theme.palette.text.primary,
     },
     '& > .MuiListItemIcon-root': {
       width: 45,
@@ -128,8 +123,6 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
       borderRadius: '8px',
       marginRight: '8px',
       transition: 'all .3s ease-in-out',
-      // color: item.children ? "" : theme.palette.primary.main,
-      // backgroundColor: item.children ? "" : theme.palette.primary.light,
     },
     '&:hover': {
       backgroundColor: 'transparent !important',
@@ -155,14 +148,8 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
     <>
       <ListItemStyled
         sx={{
-          '&:hover': {
-            '.MuiListItemIcon-root': {
-              color: 'main',
-            },
-          },
-          '&:hover::before': {
-            backgroundColor: 'light',
-          },
+          position: 'relative',
+          marginLeft: !openDrawer ? '15px' : '0px',
           '&.Mui-selected': {
             color:
               level > 1
@@ -171,15 +158,12 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
             '& .MuiTypography-root': {
               fontWeight: '600 !important',
             },
-            '.MuiListItemIcon-root': {
-              color: 'primary.main',
-            },
             '&:before': {
-              backgroundColor: 'primary.light',
-              color: 'primary.main',
-              '.MuiListItemIcon-root': {
-                color: 'primary.main',
-              },
+              width: !openDrawer ? '75%' : '100%',
+              borderRadius: '1rem',
+              transition: 'all .2s ease',
+              backgroundColor: `${theme.palette.primary.light}50`,
+              color: theme.palette.text.primary,
             },
           },
         }}
@@ -187,41 +171,45 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
         onClick={handleClick}
       >
         <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
-          {menuIcon}
+          <Icon name={menu.icon} />
         </ListItemIcon>
-        <ListItemText
-          primary={
-            <Typography
-              variant={selected === menu.id ? 'h5' : 'body1'}
-              color="inherit"
-              sx={{ my: 'auto' }}
-            >
-              {menu.title}
-            </Typography>
-          }
-          secondary={
-            menu.caption && (
-              <Typography
-                variant="caption"
-                sx={{ ...SubMenuCaption }}
-                display="block"
-                gutterBottom
-              >
-                {menu.caption}
-              </Typography>
-            )
-          }
-        />
-        {open ? (
-          <ChevronUp
-            size="1rem"
-            style={{ marginTop: 'auto', marginBottom: 'auto' }}
-          />
-        ) : (
-          <ChevronDown
-            size="1rem"
-            style={{ marginTop: 'auto', marginBottom: 'auto' }}
-          />
+        {openDrawer && (
+          <>
+            <ListItemText
+              primary={
+                <Typography
+                  variant={selected === menu.id ? 'h5' : 'body1'}
+                  color="inherit"
+                  sx={{ my: 'auto' }}
+                >
+                  {menu.title}
+                </Typography>
+              }
+              secondary={
+                menu.caption && (
+                  <Typography
+                    variant="caption"
+                    sx={{ ...SubMenuCaption }}
+                    display="block"
+                    gutterBottom
+                  >
+                    {menu.caption}
+                  </Typography>
+                )
+              }
+            />
+            {open ? (
+              <ChevronUp
+                size="1rem"
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}
+              />
+            ) : (
+              <ChevronDown
+                size="1rem"
+                style={{ marginTop: 'auto', marginBottom: 'auto' }}
+              />
+            )}
+          </>
         )}
       </ListItemStyled>
       <Collapse in={open} timeout="auto" unmountOnExit>
@@ -238,7 +226,7 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
               height: '100%',
               width: '1px',
               opacity: 1,
-              background: theme.palette.primary.light,
+              background: theme.palette.divider,
             },
           }}
         >

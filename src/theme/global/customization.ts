@@ -41,47 +41,7 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
           },
         },
       },
-      MuiListItemButton: {
-        styleOverrides: {
-          root: {
-            color: color.darkTextPrimary,
-            paddingTop: '10px',
-            paddingBottom: '10px',
-            '&.Mui-selected': {
-              color: color.primaryLight,
-              backgroundColor: color.primaryLight,
-              '&:hover': {
-                backgroundColor: color.primaryLight,
-              },
-              '& .MuiListItemIcon-root': {
-                color: color.primaryDark,
-              },
-            },
-            '&:hover': {
-              backgroundColor: color.secondaryLight,
-              color: color.primaryMain,
-              '& .MuiListItemIcon-root': {
-                color: color.primaryDark,
-              },
-            },
-          },
-        },
-      },
-      MuiListItemIcon: {
-        styleOverrides: {
-          root: {
-            color: color.darkTextPrimary,
-            minWidth: '36px',
-          },
-        },
-      },
-      MuiListItemText: {
-        styleOverrides: {
-          primary: {
-            color: color.grey900,
-          },
-        },
-      },
+
       MuiInputBase: {
         styleOverrides: {
           color: color.grey900,
@@ -167,47 +127,7 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
           },
         },
       },
-      MuiListItemButton: {
-        styleOverrides: {
-          root: {
-            color: color.darkTextPrimary,
-            paddingTop: '10px',
-            paddingBottom: '10px',
-            '&.Mui-selected': {
-              color: color.secondaryDark,
-              backgroundColor: color.secondaryDark,
-              '&:hover': {
-                backgroundColor: color.secondaryDark,
-              },
-              '& .MuiListItemIcon-root': {
-                color: color.secondaryDark,
-              },
-            },
-            '&:hover': {
-              backgroundColor: color.secondaryDark,
-              color: color.secondaryDark,
-              '& .MuiListItemIcon-root': {
-                color: color.secondaryDark,
-              },
-            },
-          },
-        },
-      },
-      MuiListItemIcon: {
-        styleOverrides: {
-          root: {
-            color: color.darkTextPrimary,
-            minWidth: '36px',
-          },
-        },
-      },
-      MuiListItemText: {
-        styleOverrides: {
-          primary: {
-            color: color.grey900,
-          },
-        },
-      },
+
       MuiInputBase: {
         styleOverrides: {
           color: color.grey200,

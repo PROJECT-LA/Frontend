@@ -6,8 +6,10 @@ import { List, Typography } from '@mui/material'
 import NavItem from '../NavItem'
 import NavCollapse from '../NavCollapse'
 import { Item } from '@/types/utils'
+import { useGlobalStore } from '@/store'
 
 const NavGroup = ({ item }: { item: Item }) => {
+  const { openDrawer } = useGlobalStore()
   const theme = useTheme()
 
   // menu list collapse & items
@@ -35,7 +37,8 @@ const NavGroup = ({ item }: { item: Item }) => {
     <>
       <List
         subheader={
-          item.title && (
+          item.title &&
+          openDrawer && (
             <Typography
               marginTop={2}
               variant="subtitle1"

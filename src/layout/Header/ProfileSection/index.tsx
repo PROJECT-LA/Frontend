@@ -127,16 +127,21 @@ const ProfileSection = () => {
       <Chip
         sx={{
           height: '48px',
+          paddingX: 1,
           alignItems: 'center',
           transition: 'all .2s ease-in-out',
-          borderColor: theme.palette.primary.light,
-          border: 'none',
+          borderColor: `${theme.palette.divider} !important`,
+          backgroundColor:
+            theme.palette.mode === 'light'
+              ? theme.palette.background.paper
+              : 'transparent',
+          border: 1,
 
           '& .MuiChip-label': {
             lineHeight: 0,
           },
         }}
-        icon={<CircleUser />}
+        icon={<CircleUser color={theme.palette.text.primary} />}
         label={
           <Stack direction="row" alignItems="center" gap={1}>
             <Stack>
@@ -178,6 +183,8 @@ const ProfileSection = () => {
                 sx={{
                   boxShadow: Constantes.boxShadow,
                   borderRadius: Constantes.borderRadius,
+                  border: 1,
+                  borderColor: theme.palette.divider,
                 }}
               >
                 <Box sx={{ p: 3 }}>
@@ -193,7 +200,7 @@ const ProfileSection = () => {
                       alignItems="center"
                     >
                       <ButtonBase>
-                        <CircleUser />
+                        <CircleUser color={theme.palette.text.primary} />
                       </ButtonBase>
                       <Stack alignItems="center">
                         <Typography

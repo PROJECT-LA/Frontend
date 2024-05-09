@@ -16,9 +16,6 @@ const obtenerNombreFuncionAnterior = (d: number) => {
         .pop()
       const safariMatch = error.stack.split('\n')[d]
 
-      // firefoxMatch ? console.log('firefoxMatch', firefoxMatch) : void 0;
-      // chromeMatch ? console.log('chromeMatch', chromeMatch) : void 0;
-      // safariMatch ? console.log('safariMatch', safariMatch) : void 0;
       r = firefoxMatch || chromeMatch || safariMatch
     }
     return r

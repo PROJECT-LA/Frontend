@@ -10,8 +10,10 @@ import { verificarToken } from '@/utils/token'
 
 import { useFullScreenLoading } from '../context/FullScreenLoadingProvider'
 import { Constantes } from '../config'
+import { useRouter } from 'next/navigation'
 
 export const useSession = () => {
+  const router = useRouter()
   const { mostrarFullScreen, ocultarFullScreen } = useFullScreenLoading()
 
   const sesionPeticion = async ({
@@ -68,8 +70,7 @@ export const useSession = () => {
   }
 
   const borrarCookiesSesion = () => {
-    eliminarCookie('token') // Eliminando access_token
-    eliminarCookie('jid') // Eliminando refresh token
+    eliminarCookie('token') // Eliminando access_token de frontend
   }
 
   const cerrarSesion = async () => {
@@ -77,6 +78,8 @@ export const useSession = () => {
       mostrarFullScreen()
       await delay(1000)
       const token = leerCookie('token')
+      imprimir(token)
+
       borrarCookiesSesion()
 
       const respuesta = await Servicios.get({
@@ -84,15 +87,12 @@ export const useSession = () => {
           accept: 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        url: `${Constantes.baseUrl}/logout`,
+        url: `${Constantes.baseUrl}/auth/logout`,
       })
       imprimir(`finalizando con respuesta`, respuesta)
 
-      if (respuesta?.url) {
-        // window.location.href = respuesta?.url;
-      } else {
-        // router.refresh()
-        // window.location.reload();
+      if (respuesta === 'OK') {
+        router.push('/login')
       }
     } catch (e) {
       imprimir(`Error al cerrar sesión: `, e)

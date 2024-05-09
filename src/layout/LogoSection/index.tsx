@@ -1,28 +1,35 @@
-// material-ui
+import Link from 'next/link'
+
 import { ButtonBase, Stack, Typography, useTheme } from '@mui/material'
 
-import { FilePieChart } from 'lucide-react'
+import { Constantes } from '@/config'
 
-const LogoSection = () => {
+import { FilePieChart } from 'lucide-react'
+import { IconoLogo } from './Logo'
+
+export const LogoCorto = () => {
   const theme = useTheme()
 
   return (
-    <ButtonBase disableRipple>
-      <Stack direction="row" gap={1} alignItems="center">
-        {/* <img src={LogoSpike} alt="Logo spike" height={35} /> */}
-        <FilePieChart size="2rem" color={theme.palette.primary.dark} />
-        <Stack>
-          <Typography variant="h5" color={theme.palette.text.primary}>
-            Boletín
-          </Typography>
-
-          <Typography variant="h3" color={theme.palette.primary.main}>
-            IOP
-          </Typography>
-        </Stack>
-      </Stack>
-    </ButtonBase>
+    <Link href={Constantes.sitePath}>
+      <IconoLogo />
+    </Link>
   )
 }
 
-export default LogoSection
+export const Logo = () => {
+  const theme = useTheme()
+
+  return (
+    <Link style={{ textDecoration: 'none' }} href={Constantes.sitePath}>
+      <Stack direction="row" gap={1} alignItems="center">
+        <IconoLogo />
+        <Stack>
+          <Typography variant="h3" color={theme.palette.primary.main}>
+            Auditoría
+          </Typography>
+        </Stack>
+      </Stack>
+    </Link>
+  )
+}

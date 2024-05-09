@@ -30,7 +30,11 @@ export const LoginSlider = () => {
       lg={5}
       md={6}
       minHeight="100vh"
-      bgcolor={theme.palette.background.default}
+      bgcolor={
+        theme.palette.mode === 'light'
+          ? theme.palette.background.paper
+          : theme.palette.background.default
+      }
     >
       <Image
         src="/images/login_1.svg"

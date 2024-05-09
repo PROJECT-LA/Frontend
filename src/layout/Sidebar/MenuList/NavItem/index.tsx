@@ -7,16 +7,16 @@ import {
 import Link from 'next/link'
 import { Item } from '@/types/utils'
 import { usePathname } from 'next/navigation'
-
-// material-ui
 import { styled, useTheme } from '@mui/material/styles'
 import {
+  Box,
   ListItemButton,
   ListItemIcon,
   ListItemText,
   Typography,
   useMediaQuery,
 } from '@mui/material'
+import Icon from '@/components/LucideIcon'
 
 import { useGlobalStore } from '@/store'
 
@@ -30,15 +30,13 @@ interface ListItemProps {
 }
 const NavItem = ({ item, level }: { item: Item; level: any }) => {
   const theme = useTheme()
-  const { cerrarDrawer } = useGlobalStore()
+
+  const { cerrarDrawer, openDrawer } = useGlobalStore()
   const pathname = usePathname()
   const matchesSM = useMediaQuery(theme.breakpoints.down('lg'))
 
   // @ts-expect-error Error en el caption
   const SubMenuCaption = theme.typography.subMenuCaption
-
-  const Icon = item.icon
-  const itemIcon = item?.icon && <Icon size="1.3rem" />
 
   let itemTarget = '_self'
   if (item.target) {
@@ -48,7 +46,6 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
   let listItemProps: ListItemProps = {
     /* eslint-disable */
     component: forwardRef<HTMLAnchorElement>((props, ref) => {
-      console.log(item)
       return (
         <Link ref={ref} {...props} href={item.url ?? '/'} target={itemTarget} />
       )
@@ -91,7 +88,7 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       position: 'absolute',
       top: 0,
       bottom: 0,
-      left: '-20px',
+
       height: '100%',
       zIndex: '-1',
       borderRadius: ' 0 24px 24px 0',
@@ -99,8 +96,14 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       width: '0',
     },
     '&:hover::before': {
-      width: 'calc(100% + 20px)',
-      backgroundColor: theme.palette.primary.light,
+      width: '100%',
+      borderRadius: '1rem',
+      transition: 'all .3s ease',
+      backgroundColor:
+        theme.palette.mode === 'light'
+          ? `${theme.palette.primary.main}50`
+          : `${theme.palette.primary.light}50`,
+      color: theme.palette.primary.light,
     },
     '& > .MuiListItemIcon-root': {
       width: 45,
@@ -111,15 +114,11 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       borderRadius: '8px',
       marginRight: '8px',
       transition: 'all .3s ease-in-out',
-      // color: item.children ? "" : theme.palette.primary.main,
-      // backgroundColor: item.children ? "" : theme.palette.primary.light,
     },
     '&:hover': {
       backgroundColor: 'transparent !important',
-      //color: theme.palette.primary.main,
     },
     '&.Mui-selected': {
-      // color: theme.palette.text.primary,
       backgroundColor: 'transparent !important',
       '.MuiListItemIcon-root': {
         color: theme.palette.primary.main,
@@ -129,7 +128,6 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
         width: 'calc(100% + 16px)',
       },
       '&:hover': {
-        // backgroundColor: theme.palette.primary.light,
         color: theme.palette.text.primary,
       },
     },
@@ -138,70 +136,71 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
   return (
     <ListItemStyled
       {...listItemProps}
-      selected={pathname == item?.url}
+      selected={pathname === item?.url}
       sx={{
-        '&:hover': {
-          '.MuiListItemIcon-root': {
-            color: theme.palette.primary.main,
-          },
-        },
-        '&:hover::before': {
-          backgroundColor: 'light',
-        },
+        position: 'relative',
+        marginLeft: !openDrawer ? '15px' : '0px',
         '&.Mui-selected': {
           color:
             level > 1
               ? `${theme.palette.text.primary} !important`
-              : 'primary.main',
+              : 'primary.dark',
           '& .MuiTypography-root': {
             fontWeight: '600 !important',
           },
-          '.MuiListItemIcon-root': {
-            color: 'primary.main',
-          },
           '&:before': {
-            backgroundColor: 'primary.light',
-            color: 'primary.main',
-            '.MuiListItemIcon-root': {
-              color: 'primary.main',
-            },
+            width: !openDrawer ? '75%' : '100%',
+            borderRadius: '1rem',
+            transition: 'all .2s ease',
+            backgroundColor:
+              theme.palette.mode === 'light'
+                ? `${theme.palette.primary.main}50`
+                : `${theme.palette.primary.light}50`,
+            color: theme.palette.text.primary,
           },
         },
       }}
-      // selected={customization.isOpen.findIndex((id) => id === item.id) > -1}
       onClick={() => itemHandler(item.id)}
     >
+      {pathname === item?.url && (
+        <Box
+          sx={{
+            height: '90%',
+            position: 'absolute',
+            width: '5px',
+            backgroundColor: theme.palette.text.primary,
+            color: theme.palette.primary.light,
+            top: '3px',
+            left: openDrawer ? '-20px' : '-14px',
+          }}
+        />
+      )}
       <ListItemIcon
         sx={{
           my: 'auto',
           minWidth: !item?.icon ? 18 : 36,
-          color:
-            level > 1 && pathname === item?.url
-              ? `${theme.palette.primary.main}!important`
-              : 'inherit',
         }}
       >
-        {itemIcon}
+        <Icon name={item.icon ?? 'Home'} size="1.3rem" />
       </ListItemIcon>
-      <ListItemText
-        primary={
-          <Typography variant={'h5'} color="inherit">
-            {item.title}
-          </Typography>
-        }
-        secondary={
-          item.caption && (
-            <Typography
-              variant="caption"
-              sx={{ ...SubMenuCaption }}
-              display="block"
-              gutterBottom
-            >
-              {item.caption}
-            </Typography>
-          )
-        }
-      />
+
+      {openDrawer && (
+        <ListItemText
+          primary={<Typography variant={'h5'}>{item.title}</Typography>}
+          secondary={
+            item.caption && (
+              <Typography
+                variant="caption"
+                sx={{ ...SubMenuCaption }}
+                display="block"
+                gutterBottom
+              >
+                {item.caption}
+              </Typography>
+            )
+          }
+        />
+      )}
 
       {/* 
         El numeral que aparece en la parte superior

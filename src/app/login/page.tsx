@@ -1,7 +1,7 @@
 'use client'
 // Librerías
 import Box from '@mui/material/Box'
-import { Grid, useTheme } from '@mui/material'
+import { Grid, Hidden, useTheme } from '@mui/material'
 
 // Componentes y hooks
 import { BotonCambioTema } from '@/components/botones'
@@ -21,9 +21,13 @@ export default function LoginPage() {
       <Grid
         item
         lg={7}
-        md={6}
+        md={12}
         xs={12}
-        bgcolor={theme.palette.background.paper}
+        bgcolor={
+          theme.palette.mode === 'light'
+            ? theme.palette.background.default
+            : theme.palette.background.paper
+        }
         alignContent="center"
         width="100%"
         minHeight="100vh"
@@ -43,7 +47,9 @@ export default function LoginPage() {
         </Box>
       </Grid>
 
-      <LoginSlider />
+      <Hidden lgDown={true}>
+        <LoginSlider />
+      </Hidden>
     </Grid>
   )
 }

@@ -44,5 +44,3 @@ export const Constantes = {
   errorServidor: 'Algo salió mal desde el servidor',
   espera: 'Por favor espere...',
 }
-
-console.log(Constantes)

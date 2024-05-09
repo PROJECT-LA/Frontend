@@ -1,38 +1,67 @@
-// assets
-import { Home, CloudDownload, ScanSearch } from "lucide-react";
+import { MenuItems } from '@/types/menuTypes'
 
-// constant
+export const dashboard: MenuItems = {
+  id: 'dashboard',
+  title: 'Principal',
+  type: 'group',
+  children: [
+    {
+      id: 'default',
+      title: 'Inicio',
+      type: 'item',
+      url: '/admin/home',
+      icon: 'home',
+    },
+    {
+      id: 'migrar-consulta',
+      title: 'Perfil',
+      type: 'item',
+      url: '/admin/profile',
+      icon: 'user',
+    },
+  ],
+}
 
-const dashboard = {
-  id: "dashboard",
-  title: "Principal",
+export const configuration: MenuItems = {
+  id: 'configuration',
+  title: "Configuración",
   type: "group",
   children: [
     {
-      id: "default",
-      title: "Dashboard",
+      id: 'users',
+      title: 'Usuarios',
       type: "item",
-      url: "/admin",
-      icon: Home,
-      breadcrumbs: false,
+      url: '/admin/users',
+      icon: 'user-cog'
     },
     {
-      id: "migrar-consulta",
-      title: "Migrar consulta",
+      id: 'parameters',
+      title: 'Parámetros',
       type: "item",
-      url: "/admin/migrar-consulta",
-      icon: CloudDownload,
-      Breadcrumbs: false,
+      url: '/admin/parameters',
+      icon: 'sliders-horizontal'
     },
     {
-      id: "consulta-dinamica",
-      title: "Consulta dinámica",
-      type: "item",
-      url: "/admin/consulta-dinamica",
-      icon: ScanSearch,
-      Breadcrumbs: false,
+      id: 'modules',
+      title: 'Módulos',
+      type: 'item',
+      url: '/admin/modules',
+      icon: 'package-open'
     },
-  ],
-};
+    {
+      id: 'policies',
+      title: 'Políticas',
+      type: 'item',
+      url: '/admin/policies',
+      icon: 'sliders-horizontal'
+    },
+    {
+      id: 'roles',
+      title: 'Roles',
+      type: 'item',
+      url:'/admin/roles',
+      icon: 'shield-question'
+    }
+  ]
+}
 
-export default dashboard;

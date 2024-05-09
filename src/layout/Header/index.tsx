@@ -1,64 +1,53 @@
+'use client'
 import { useTheme } from '@mui/material/styles'
-import { Box, ButtonBase, Stack, Button, Typography } from '@mui/material'
+import { Box, Stack, Button, Typography } from '@mui/material'
 
 // project imports
-import LogoSection from '../LogoSection'
 import ProfileSection from './ProfileSection'
 import NotificationSection from './NotificationSection'
 
 // assets
-import { Menu, Search } from 'lucide-react'
+import { Search } from 'lucide-react'
 import { BotonCambioTema } from '@/components/botones'
+import { useEffect, useState } from 'react'
 
 const Header = ({
   handleLeftDrawerToggle,
+  scrolled,
 }: {
   handleLeftDrawerToggle: () => void
+  scrolled: boolean
 }) => {
   const theme = useTheme()
 
   return (
     <>
-      {/* logo & toggler button */}
-      <Box
-        sx={{
-          width: 228,
-          display: 'flex',
-          [theme.breakpoints.down('md')]: {
-            width: 'auto',
-          },
-        }}
-      >
-        <Box
-          component="span"
-          sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}
+      <Stack spacing={1} alignItems={scrolled ? 'center' : 'end'}>
+        <Typography
+          sx={{ transition: 'all .3s ease' }}
+          variant={scrolled ? 'h3' : 'h1'}
         >
-          <LogoSection />
-        </Box>
-        <ButtonBase
-          onClick={handleLeftDrawerToggle}
-          sx={{
-            width: 30,
-            borderRadius: '12px',
-            overflow: 'hidden',
-            transition: 'all .2s ease-in-out',
-            color: theme.palette.primary.dark,
-          }}
-        >
-          <Menu size="1.5rem" />
-        </ButtonBase>
-      </Box>
+          Dashboard
+        </Typography>
+      </Stack>
 
-      {/* header search */}
-      {/* <SearchSection /> */}
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
 
-      {/* notification & profile */}
-      <Stack gap={1} direction="row" alignItems="center">
+      <Stack spacing={2} direction="row" alignItems="center">
         <Button
-          startIcon={<Search />}
-          sx={{ paddingY: 1, color: theme.palette.text.primary }}
+          endIcon={<Search />}
+          sx={{
+            paddingBottom: 1,
+            paddingTop: 1,
+            transition: 'all .3s ease',
+            color: theme.palette.text.primary,
+            borderColor: theme.palette.divider,
+            backgroundColor:
+              theme.palette.mode === 'light'
+                ? theme.palette.background.paper
+                : 'transparent',
+          }}
           variant="outlined"
         >
           <Typography>Búsqueda rápida</Typography>
