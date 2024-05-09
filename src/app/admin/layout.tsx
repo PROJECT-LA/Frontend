@@ -6,6 +6,7 @@ import Header from '@/layout/Header'
 import Sidebar from '@/layout/Sidebar'
 import { useGlobalStore } from '@/store'
 import 'react-perfect-scrollbar/dist/css/styles.css'
+import { useEffect, useState } from 'react'
 
 interface MainProps {
   open: boolean
@@ -54,6 +55,20 @@ const Main = styled('main', {
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme()
   const matchDownMd = useMediaQuery(theme.breakpoints.down('md'))
+  const [scrolled, setScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 0
+      setScrolled(isScrolled)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   const { openDrawer, toggleDrawer } = useGlobalStore()
 
@@ -72,14 +87,15 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         enableColorOnDark
         position="fixed"
         sx={{
-          boxShadow: 'none',
+          boxShadow: scrolled ? Constantes.boxShadow : 'none',
           bgcolor: theme.palette.background.default,
           transition: openDrawer ? theme.transitions.create('width') : 'none',
         }}
       >
         <Toolbar
           sx={{
-            paddingY: 2,
+            paddingY: scrolled ? 1 : 2,
+            transition: 'all .3s ease',
             marginRight: 1,
             marginLeft: openDrawer
               ? `${Constantes.drawerWidth + 20}px`
@@ -87,7 +103,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             borderColor: theme.palette.divider,
           }}
         >
-          <Header handleLeftDrawerToggle={toggleDrawer} />
+          <Header handleLeftDrawerToggle={toggleDrawer} scrolled={scrolled} />
         </Toolbar>
       </AppBar>
       <Main theme={theme} open={openDrawer}>

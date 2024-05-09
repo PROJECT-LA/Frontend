@@ -1,3 +1,4 @@
+'use client'
 import { useTheme } from '@mui/material/styles'
 import { Box, Stack, Button, Typography } from '@mui/material'
 
@@ -8,19 +9,26 @@ import NotificationSection from './NotificationSection'
 // assets
 import { Search } from 'lucide-react'
 import { BotonCambioTema } from '@/components/botones'
+import { useEffect, useState } from 'react'
 
 const Header = ({
   handleLeftDrawerToggle,
+  scrolled,
 }: {
   handleLeftDrawerToggle: () => void
+  scrolled: boolean
 }) => {
   const theme = useTheme()
 
   return (
     <>
-      <Stack spacing={1} marginTop={2}>
-        <Typography variant="h3">Bienvenido</Typography>
-        <Typography variant="h1">Dashboard</Typography>
+      <Stack spacing={1} alignItems={scrolled ? 'center' : 'end'}>
+        <Typography
+          sx={{ transition: 'all .3s ease' }}
+          variant={scrolled ? 'h3' : 'h1'}
+        >
+          Dashboard
+        </Typography>
       </Stack>
 
       <Box sx={{ flexGrow: 1 }} />
@@ -30,7 +38,9 @@ const Header = ({
         <Button
           endIcon={<Search />}
           sx={{
-            paddingY: 1,
+            paddingBottom: 1,
+            paddingTop: 1,
+            transition: 'all .3s ease',
             color: theme.palette.text.primary,
             borderColor: theme.palette.divider,
             backgroundColor:

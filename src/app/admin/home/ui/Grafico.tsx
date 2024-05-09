@@ -74,6 +74,7 @@ export const Grafico = (): JSX.Element => {
 
   const option: EChartsOption = {
     color: colors,
+    tooltip: {},
     xAxis: [
       {
         show: false,
@@ -141,15 +142,7 @@ export const Grafico = (): JSX.Element => {
         emphasis: {
           focus: 'series',
         },
-        data: generateNormalDistribution(50, 20.0, 12),
-      },
-      {
-        type: 'line',
-        smooth: true,
-        emphasis: {
-          focus: 'series',
-        },
-        data: generateNormalDistribution(50, 20.0, 12),
+        data: generateNormalDistribution(50, 20.0, 8),
       },
     ],
   }

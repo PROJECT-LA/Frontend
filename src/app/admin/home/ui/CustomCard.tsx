@@ -53,7 +53,7 @@ export const CustomCard = ({
                 display: 'flex',
                 alignItems: 'baseline',
                 bottom: -50,
-                right: -80,
+                right: -100,
               }}
             >
               <Grafico />
@@ -142,12 +142,12 @@ export const MinusCard = ({ name, value, icon, color }: MinusCardProps) => {
           padding={1}
           sx={{
             backgroundColor: color,
-            borderRadius: '0.5rem',
-            padding: 1,
-            color: '#fff',
+            borderRadius: '1.2rem',
+            padding: 1.5,
+            color: '#000',
           }}
         >
-          <Icon name={icon} fontSize="1.5rem" />
+          <Icon name={icon} fontSize="1rem" />
         </Box>
         <Stack>
           <Typography variant="h5">{name}</Typography>

@@ -48,69 +48,141 @@ const CARDS: CustomCardProps[] = [
 const Home = () => {
   const theme = useTheme()
   return (
-    <MainCard>
-      <Stack spacing={Constantes.gridSpacing}>
-        <Stack direction="row" justifyContent="space-between">
-          <Typography variant="h3">Detalles de uso</Typography>
-          <Stack direction="row" spacing={2}>
-            <IconButton
-              sx={{
-                border: 1,
-                borderRadius: '50%',
-                borderColor: theme.palette.divider,
-              }}
-            >
-              <Icono>
-                <Calendar />
-              </Icono>
-            </IconButton>
-            <IconButton
-              sx={{
-                border: 1,
-                borderRadius: '50%',
-                borderColor: theme.palette.divider,
-              }}
-            >
-              <Icono>
-                <Ellipsis />
-              </Icono>
-            </IconButton>
-          </Stack>
-        </Stack>
-
-        <Box>
-          <Grid container spacing={Constantes.gridSpacing}>
-            {CARDS.map((elem, index) => (
-              <CustomCard
-                key={`${elem.name}-${index}`}
-                name={elem.name}
-                value={elem.value}
-                color={elem.color}
-                detallesUrl={elem.detallesUrl}
-              />
-            ))}
-          </Grid>
-        </Box>
-
-        <MainCard>
-          <Stack
-            direction="row"
-            justifyContent="space-around"
-            alignItems="center"
-          >
-            {MinusArray.map((elem: MinusCardProps, index: number) => (
-              <MinusCard
-                key={`${elem.icon}-${index}`}
-                color={elem.color}
-                icon={elem.icon}
-                name={elem.name}
-                value={elem.value}
-              />
-            ))}
-          </Stack>
-        </MainCard>
+    <Stack>
+      <Stack>
+        <Typography variant="h2">Bienvenid@ Alexander Nina</Typography>
+        <Box height={5} />
+        <Typography variant="h4">Administrador</Typography>
       </Stack>
-    </MainCard>
+
+      <Box height={20} />
+
+      <MainCard>
+        <Stack spacing={Constantes.gridSpacing}>
+          <Stack direction="row" justifyContent="space-between">
+            <Typography variant="h3">Detalles de uso</Typography>
+            <Stack direction="row" spacing={2}>
+              <IconButton
+                sx={{
+                  border: 1,
+                  borderRadius: '50%',
+                  borderColor: theme.palette.divider,
+                }}
+              >
+                <Icono>
+                  <Calendar />
+                </Icono>
+              </IconButton>
+              <IconButton
+                sx={{
+                  border: 1,
+                  borderRadius: '50%',
+                  borderColor: theme.palette.divider,
+                }}
+              >
+                <Icono>
+                  <Ellipsis />
+                </Icono>
+              </IconButton>
+            </Stack>
+          </Stack>
+
+          <Box>
+            <Grid container spacing={Constantes.gridSpacing}>
+              {CARDS.map((elem, index) => (
+                <CustomCard
+                  key={`${elem.name}-${index}`}
+                  name={elem.name}
+                  value={elem.value}
+                  color={elem.color}
+                  detallesUrl={elem.detallesUrl}
+                />
+              ))}
+            </Grid>
+          </Box>
+        </Stack>
+      </MainCard>
+
+      <Box height={20} />
+
+      <MainCard>
+        <Stack
+          direction="row"
+          justifyContent="space-around"
+          alignItems="center"
+        >
+          {MinusArray.map((elem: MinusCardProps, index: number) => (
+            <MinusCard
+              key={`${elem.icon}-${index}`}
+              color={elem.color}
+              icon={elem.icon}
+              name={elem.name}
+              value={elem.value}
+            />
+          ))}
+        </Stack>
+      </MainCard>
+
+      <Box height={20} />
+
+      <MainCard>
+        <Stack
+          direction="row"
+          justifyContent="space-around"
+          alignItems="center"
+        >
+          {MinusArray.map((elem: MinusCardProps, index: number) => (
+            <MinusCard
+              key={`${elem.icon}-${index}`}
+              color={elem.color}
+              icon={elem.icon}
+              name={elem.name}
+              value={elem.value}
+            />
+          ))}
+        </Stack>
+      </MainCard>
+
+      <Box height={20} />
+
+      <MainCard>
+        <Stack
+          direction="row"
+          justifyContent="space-around"
+          alignItems="center"
+        >
+          {MinusArray.map((elem: MinusCardProps, index: number) => (
+            <MinusCard
+              key={`${elem.icon}-${index}`}
+              color={elem.color}
+              icon={elem.icon}
+              name={elem.name}
+              value={elem.value}
+            />
+          ))}
+        </Stack>
+      </MainCard>
+
+      <Box height={20} />
+
+      <MainCard>
+        <Stack
+          direction="row"
+          justifyContent="space-around"
+          alignItems="center"
+        >
+          {MinusArray.map((elem: MinusCardProps, index: number) => (
+            <MinusCard
+              key={`${elem.icon}-${index}`}
+              color={elem.color}
+              icon={elem.icon}
+              name={elem.name}
+              value={elem.value}
+            />
+          ))}
+        </Stack>
+      </MainCard>
+    </Stack>
   )
 }
 
