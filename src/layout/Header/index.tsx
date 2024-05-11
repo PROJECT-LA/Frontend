@@ -7,9 +7,13 @@ import ProfileSection from './ProfileSection'
 import NotificationSection from './NotificationSection'
 
 // assets
-import { Search } from 'lucide-react'
+import { Menu, Search } from 'lucide-react'
 import { BotonCambioTema } from '@/components/botones'
-import { useEffect, useState } from 'react'
+import { IconoTooltip } from '@/components/botones/IconoTooltip'
+import { Constantes } from '@/config'
+import { usePathname } from 'next/navigation'
+import { obtenerRutas } from '@/utils/utilidades'
+import { useGlobalStore } from '@/store'
 
 const Header = ({
   handleLeftDrawerToggle,
@@ -19,17 +23,29 @@ const Header = ({
   scrolled: boolean
 }) => {
   const theme = useTheme()
+  const { toggleDrawer } = useGlobalStore()
+  const pathname = usePathname()
 
   return (
     <>
-      <Stack spacing={1} alignItems={scrolled ? 'center' : 'end'}>
-        <Typography
-          sx={{ transition: 'all .3s ease' }}
-          variant={scrolled ? 'h3' : 'h1'}
+      <Box>
+        <Stack
+          direction="row"
+          justifyContent="center"
+          spacing={Constantes.gridSpacing}
+          alignItems="center"
         >
-          Dashboard
-        </Typography>
-      </Stack>
+          <IconoTooltip
+            accion={toggleDrawer}
+            titulo="Abrir menú"
+            name="menu"
+            id="menu-hamburguesa"
+            icono={<Menu />}
+          />
+
+          <Typography variant="h3">{obtenerRutas(pathname)}</Typography>
+        </Stack>
+      </Box>
 
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />

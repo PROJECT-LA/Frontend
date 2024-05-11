@@ -43,9 +43,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
       <Box component="span" sx={{ marginX: 3, marginTop: 2, marginBottom: 4 }}>
         <Stack direction="row" justifyContent="space-between">
           <Logo />
-          <ButtonBase onClick={toggleDrawer}>
-            <ArrowLeftToLine />
-          </ButtonBase>
         </Stack>
       </Box>
       <BrowserView>
@@ -138,10 +135,6 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
         </Drawer>
       ) : (
         <Drawer
-          onMouseEnter={() => {
-            setEntradaMiniDrawer(true)
-            toggleDrawer()
-          }}
           container={container}
           variant={matchUpMd ? 'persistent' : 'temporary'}
           anchor="left"

@@ -3,7 +3,12 @@ import Box from '@mui/material/Box'
 import Typography from '@mui/material/Typography'
 import { Constantes } from '@/config'
 import React, { ReactNode, useEffect, useState } from 'react'
-import { delay, InterpreteMensajes, siteName, titleCase } from '@/utils/utilidades'
+import {
+  delay,
+  InterpreteMensajes,
+  siteName,
+  titleCase,
+} from '@/utils/utilidades'
 import { imprimir } from '@/utils/imprimir'
 import { RolType, UsuarioRolCRUDType } from './types'
 import { useSession } from '@/hooks/useSession'
@@ -28,19 +33,29 @@ import { Paginacion } from '@/components/datatable/Paginacion'
 import { toast } from 'sonner'
 import { useRoles } from '@/hooks/useRoles'
 import { useGlobalStore } from '@/store'
-import { Key, KeyRound, Mail, Mails, Pencil, RefreshCcw, ToggleLeft, ToggleRight, Trash } from 'lucide-react'
+import {
+  Key,
+  KeyRound,
+  Mail,
+  Mails,
+  Pencil,
+  RefreshCcw,
+  ToggleLeft,
+  ToggleRight,
+  Trash,
+} from 'lucide-react'
 
 export default function UsuariosPage() {
-   /// Verificación adicional para los permisos
-   const pathname = usePathname()
-   const { obtenerPermisosPagina } = useRoles()
-   const { permisos } = useGlobalStore()
-   useEffect(()=>{
-     obtenerPermisosPagina(pathname)
-     /* eslint-disable */
-   }, [])
-   imprimir(permisos)
-   /* Código que se debe de repetir en cada página */
+  /// Verificación adicional para los permisos
+  const pathname = usePathname()
+  const { obtenerPermisosPagina } = useRoles()
+  const { permisos } = useGlobalStore()
+  useEffect(() => {
+    obtenerPermisosPagina(pathname)
+    /* eslint-disable */
+  }, [])
+  imprimir(permisos)
+  /* Código que se debe de repetir en cada página */
 
   // data de usuarios
   const [usuariosData, setUsuariosData] = useState<UsuarioRolCRUDType[]>([])
@@ -90,10 +105,8 @@ export default function UsuariosPage() {
 
   const { sesionPeticion } = useSession()
 
-
   const theme = useTheme()
   const xs = useMediaQuery(theme.breakpoints.only('xs'))
-
 
   /// Criterios de orden
   const [ordenCriterios, setOrdenCriterios] = useState<
@@ -112,21 +125,17 @@ export default function UsuariosPage() {
   const contenidoTabla: Array<Array<ReactNode>> = usuariosData.map(
     (usuarioData, indexUsuario) => [
       <div key={`${usuarioData.id}-${indexUsuario}-nombres`}>
-        <Typography variant={'body2'}>
-          {`${usuarioData.names}`}
-        </Typography>
+        <Typography variant={'body2'}>{`${usuarioData.names}`}</Typography>
       </div>,
       <div key={`${usuarioData.id}-${indexUsuario}-apellidos`}>
-      <Typography variant={'body2'}>
-        {`${usuarioData.lastNames}`}
-      </Typography>
-    </div>,
-       <Typography
-       key={`${usuarioData.id}-${indexUsuario}-tipoDoc`}
-       variant={'body2'}
-     >
-       {`${usuarioData.email}`}
-     </Typography>,
+        <Typography variant={'body2'}>{`${usuarioData.lastNames}`}</Typography>
+      </div>,
+      <Typography
+        key={`${usuarioData.id}-${indexUsuario}-tipoDoc`}
+        variant={'body2'}
+      >
+        {`${usuarioData.email}`}
+      </Typography>,
       <Typography
         key={`${usuarioData.id}-${indexUsuario}-usuario`}
         variant={'body2'}
@@ -134,7 +143,6 @@ export default function UsuariosPage() {
         {usuarioData.phone}
       </Typography>,
 
-      
       <Grid key={`${usuarioData.id}-${indexUsuario}-roles`}>
         {usuarioData.roles.map((itemUsuarioRol, indexUsuarioRol) => (
           <Chip
@@ -154,8 +162,8 @@ export default function UsuariosPage() {
             usuarioData.status == 'ACTIVO'
               ? 'success'
               : usuarioData.status == 'INACTIVO'
-                ? 'error'
-                : 'info'
+              ? 'error'
+              : 'info'
           }
         />
       </Typography>,
@@ -169,7 +177,9 @@ export default function UsuariosPage() {
               await editarEstadoUsuarioModal(usuarioData)
             }}
             desactivado={usuarioData.status == 'PENDIENTE'}
-            icono={usuarioData.status == 'ACTIVO' ? <ToggleRight/> : <ToggleLeft/>}
+            icono={
+              usuarioData.status == 'ACTIVO' ? <ToggleRight /> : <ToggleLeft />
+            }
             name={
               usuarioData.status == 'ACTIVO'
                 ? 'Inactivar Usuario'
@@ -181,12 +191,12 @@ export default function UsuariosPage() {
           usuarioData.status == 'INACTIVO') && (
           <IconoTooltip
             id={`restablecerContrasena-${usuarioData.id}`}
-            titulo= 'Restablecer contraseña'
+            titulo="Restablecer contraseña"
             color={'info'}
             accion={async () => {
               await restablecimientoPassUsuarioModal(usuarioData)
             }}
-            icono={<KeyRound/>}
+            icono={<KeyRound />}
             name={'Restablecer contraseña'}
           />
         )}
@@ -198,7 +208,7 @@ export default function UsuariosPage() {
             accion={async () => {
               await reenvioCorreoModal(usuarioData)
             }}
-            icono={<Mails/>}
+            icono={<Mails />}
             name={'Reenviar correo de activación'}
           />
         )}
@@ -211,25 +221,23 @@ export default function UsuariosPage() {
               imprimir(`Editaremos`, usuarioData)
               editarUsuarioModal(usuarioData)
             }}
-            icono={<Pencil/>}
+            icono={<Pencil />}
             name={'Editar usuario'}
           />
         )}
-        {
-          permisos.permisos.delete && (
-            <IconoTooltip
-              id={`eliminarUsuario-${usuarioData.id}`}
-              titulo={'Eliminar'}
-              color={'secondary'}
-              accion={()=>{
-                imprimir(`Eliminaremos`, usuarioData)
-                eliminarCuenta(usuarioData)
-              }}
-              icono={<Trash/>}
-              name={'Eliminar cuenta'}
-            />
-          )
-}
+        {permisos.permisos.delete && (
+          <IconoTooltip
+            id={`eliminarUsuario-${usuarioData.id}`}
+            titulo={'Eliminar'}
+            color={'secondary'}
+            accion={() => {
+              imprimir(`Eliminaremos`, usuarioData)
+              eliminarCuenta(usuarioData)
+            }}
+            icono={<Trash />}
+            name={'Eliminar cuenta'}
+          />
+        )}
       </Grid>,
     ]
   )
@@ -258,7 +266,7 @@ export default function UsuariosPage() {
       accion={async () => {
         await obtenerUsuariosPeticion()
       }}
-      icono={<RefreshCcw/>}
+      icono={<RefreshCcw />}
       name={'Actualizar lista de usuario'}
     />,
     permisos.permisos.create && (
@@ -301,7 +309,7 @@ export default function UsuariosPage() {
     } catch (e) {
       imprimir(`Error al obtener usuarios`, e)
       setErrorData(e)
-      toast.error('Error', {description: InterpreteMensajes(e)})
+      toast.error('Error', { description: InterpreteMensajes(e) })
     } finally {
       setLoading(false)
     }
@@ -319,7 +327,7 @@ export default function UsuariosPage() {
     } catch (e) {
       imprimir(`Error al obtener roles`, e)
       setErrorData(e)
-      toast.error('Error', {description: InterpreteMensajes(e)})
+      toast.error('Error', { description: InterpreteMensajes(e) })
       throw e
     } finally {
       setLoading(false)
@@ -337,18 +345,20 @@ export default function UsuariosPage() {
         tipo: 'patch',
       })
       imprimir(`respuesta inactivar usuario: ${respuesta}`)
-      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
+      toast.success('Éxito', { description: InterpreteMensajes(respuesta) })
       await obtenerUsuariosPeticion()
     } catch (e) {
       imprimir(`Error al inactivar usuarios`, e)
-      toast.error('Error', {description: InterpreteMensajes(e)})
+      toast.error('Error', { description: InterpreteMensajes(e) })
     } finally {
       setLoading(false)
     }
   }
 
   /// Petición que restablecer la contraseña del usuario
-  const restablecerPassUsuarioPeticion = async (usuario: UsuarioRolCRUDType) => {
+  const restablecerPassUsuarioPeticion = async (
+    usuario: UsuarioRolCRUDType
+  ) => {
     try {
       setLoading(true)
       const respuesta = await sesionPeticion({
@@ -356,11 +366,11 @@ export default function UsuariosPage() {
         tipo: 'patch',
       })
       imprimir(`respuesta restablecer usuario: ${respuesta}`)
-      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
+      toast.success('Éxito', { description: InterpreteMensajes(respuesta) })
       await obtenerUsuariosPeticion()
     } catch (e) {
       imprimir(`Error al restablecer usuario`, e)
-      toast.error('Error', {description: InterpreteMensajes(e)})
+      toast.error('Error', { description: InterpreteMensajes(e) })
     } finally {
       setLoading(false)
     }
@@ -375,18 +385,20 @@ export default function UsuariosPage() {
         tipo: 'delete',
       })
       imprimir(`eliminar cuenta de usuario: ${respuesta}`)
-      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
+      toast.success('Éxito', { description: InterpreteMensajes(respuesta) })
       await obtenerUsuariosPeticion()
     } catch (e) {
       imprimir(`Error al reenvio correo usuario`, e)
-      toast.error('Error', {description: InterpreteMensajes(e)})
+      toast.error('Error', { description: InterpreteMensajes(e) })
     } finally {
       setLoading(false)
     }
   }
 
   /// Petición que reenvia correo de activación
-  const reenviarCorreoActivacionPeticion = async (usuario: UsuarioRolCRUDType) => {
+  const reenviarCorreoActivacionPeticion = async (
+    usuario: UsuarioRolCRUDType
+  ) => {
     try {
       setLoading(true)
       const respuesta = await sesionPeticion({
@@ -394,11 +406,11 @@ export default function UsuariosPage() {
         tipo: 'patch',
       })
       imprimir(`respuesta reenviar correo usuario: ${respuesta}`)
-      toast.success('Éxito', {description: InterpreteMensajes(respuesta)})
+      toast.success('Éxito', { description: InterpreteMensajes(respuesta) })
       await obtenerUsuariosPeticion()
     } catch (e) {
       imprimir(`Error al reenvio correo usuario`, e)
-      toast.error('Error', {description: InterpreteMensajes(e)})
+      toast.error('Error', { description: InterpreteMensajes(e) })
     } finally {
       setLoading(false)
     }
@@ -494,8 +506,6 @@ export default function UsuariosPage() {
     }
     setUsuarioEdicion(null)
   }
-
-
 
   useEffect(() => {
     obtenerRolesPeticion()

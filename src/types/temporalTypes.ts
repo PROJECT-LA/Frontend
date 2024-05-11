@@ -20,13 +20,21 @@ export const RUTAS: RutasType[] = [
     permisos: 'read|update|create|delete',
   },
   {
+    ruta: '/admin/policies',
+    permisos: 'read|update|create|delete',
+  },
+  {
     ruta: '/admin/roles',
     permisos: 'read|update|create|delete',
   },
   {
     ruta: '/admin/users',
     permisos: 'read|update|create|delete',
-  }
+  },
+  {
+    ruta: '/admin/parameters',
+    permisos: 'read|update|create|delete',
+  },
 ]
 
 // Tipos de datos

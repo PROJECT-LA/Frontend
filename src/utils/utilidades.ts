@@ -23,7 +23,6 @@ export const isValidEmail = (email: string): boolean => {
   return !!match
 }
 
-
 export const delay = (ms: number) => {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
@@ -66,4 +65,21 @@ export const titleCase = (word: string) => {
 
 export const siteName = () => {
   return Constantes.siteName ?? ''
+}
+
+export const RUTAS_NOMBRE = [
+  { ruta: '/admin/home', nombre: 'Principal' },
+  { ruta: '/admin/profile', nombre: 'Perfil' },
+  { ruta: '/admin/users', nombre: 'Usuarios' },
+  { ruta: '/admin/parameters', nombre: 'Parámetros' },
+  { ruta: '/admin/modules', nombre: 'Módulos' },
+  { ruta: '/admin/policies', nombre: 'Políticas' },
+  { ruta: '/admin/roles', nombre: 'Roles' },
+]
+
+export const obtenerRutas = (pathname: string) => {
+  for (const ruta of RUTAS_NOMBRE) {
+    if (ruta.ruta === pathname) return ruta.nombre
+  }
+  return 'Alex'
 }

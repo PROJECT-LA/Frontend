@@ -122,7 +122,7 @@ export const AuthProvider = ({ children }: AuthContextType) => {
       mostrarFullScreen()
       await delay(1000)
       router.push('/admin/home')
-      
+
       await delay(1000)
     } catch (e) {
       imprimir(`Error al iniciar sesión: `, e)
