@@ -96,10 +96,12 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           sx={{
             paddingY: scrolled ? 1 : 2,
             transition: 'all .3s ease',
-            marginRight: 1,
-            marginLeft: openDrawer
-              ? `${Constantes.drawerWidth + 20}px`
-              : `100px`,
+            marginRight: !matchDownMd ? 1 : 0,
+            marginLeft: !matchDownMd
+              ? openDrawer
+                ? `${Constantes.drawerWidth + 20}px`
+                : `100px`
+              : 0,
             borderColor: theme.palette.divider,
           }}
         >

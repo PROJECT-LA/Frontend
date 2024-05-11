@@ -1,6 +1,13 @@
 'use client'
 import { useTheme } from '@mui/material/styles'
-import { Box, Stack, Button, Typography } from '@mui/material'
+import {
+  Box,
+  Stack,
+  Button,
+  Typography,
+  Hidden,
+  useMediaQuery,
+} from '@mui/material'
 
 // project imports
 import ProfileSection from './ProfileSection'
@@ -25,6 +32,7 @@ const Header = ({
   const theme = useTheme()
   const { toggleDrawer } = useGlobalStore()
   const pathname = usePathname()
+  const matchDownMd = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
     <>
@@ -50,24 +58,26 @@ const Header = ({
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ flexGrow: 1 }} />
 
-      <Stack spacing={2} direction="row" alignItems="center">
-        <Button
-          endIcon={<Search />}
-          sx={{
-            paddingBottom: 1,
-            paddingTop: 1,
-            transition: 'all .3s ease',
-            color: theme.palette.text.primary,
-            borderColor: theme.palette.divider,
-            backgroundColor:
-              theme.palette.mode === 'light'
-                ? theme.palette.background.paper
-                : 'transparent',
-          }}
-          variant="outlined"
-        >
-          <Typography>Búsqueda rápida</Typography>
-        </Button>
+      <Stack spacing={!matchDownMd ? 2 : 1} direction="row" alignItems="center">
+        <Hidden mdDown={true}>
+          <Button
+            endIcon={<Search />}
+            sx={{
+              paddingBottom: 1,
+              paddingTop: 1,
+              transition: 'all .3s ease',
+              color: theme.palette.text.primary,
+              borderColor: theme.palette.divider,
+              backgroundColor:
+                theme.palette.mode === 'light'
+                  ? theme.palette.background.paper
+                  : 'transparent',
+            }}
+            variant="outlined"
+          >
+            <Typography>Búsqueda rápida</Typography>
+          </Button>
+        </Hidden>
 
         <NotificationSection />
         <BotonCambioTema />

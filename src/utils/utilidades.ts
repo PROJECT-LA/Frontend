@@ -1,4 +1,5 @@
 import { Constantes } from '@/config'
+import { RoleType } from '@/types/login'
 import childProcess from 'child_process'
 
 export const execChildProcess = async (comando: string) => {
@@ -82,4 +83,16 @@ export const obtenerRutas = (pathname: string) => {
     if (ruta.ruta === pathname) return ruta.nombre
   }
   return 'Alex'
+}
+
+export const obtenerNombreRolActual = (
+  vectorRoles: RoleType[],
+  idRol: string
+) => {
+  for (const rol of vectorRoles) {
+    if (rol.id === idRol) {
+      return rol.name
+    }
+  }
+  return 'Administrador'
 }

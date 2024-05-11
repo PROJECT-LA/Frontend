@@ -16,6 +16,7 @@ import { useSession } from '../hooks/useSession'
 import { useCasbinEnforcer } from '@/hooks/useCasbinEnforcer'
 
 import { toast } from 'sonner'
+import axios from 'axios'
 
 interface ContextProps {
   cargarUsuarioManual: () => Promise<void>
@@ -111,11 +112,11 @@ export const AuthProvider = ({ children }: AuthContextType) => {
         headers: {},
       })
 
-      imprimir(respuesta.token)
-      guardarCookie('token', respuesta.token)
+      imprimir(respuesta.data.token)
+      guardarCookie('token', respuesta.data.token)
 
-      // setUser(respuesta.datos)
-      imprimir(`Usuarios ✅`, respuesta.datos)
+      setUser(respuesta.data)
+      imprimir(`Usuarios ✅`, respuesta.data)
 
       // await obtenerPermisos()
 
@@ -138,26 +139,26 @@ export const AuthProvider = ({ children }: AuthContextType) => {
 
   const CambiarRol = async ({ idRol }: idRolType) => {
     imprimir(`Cambiando rol 👮‍♂️: ${idRol}`)
-    await actualizarRol({ idRol })
-    await obtenerPermisos()
-    router.push('/admin/admin')
+    await actualizarRol(Number(idRol))
+    //await obtenerPermisos()
+    router.push('/admin/home')
   }
 
-  const actualizarRol = async ({ idRol }: idRolType) => {
+  const actualizarRol = async (idRol: number) => {
     const respuestaUsuario = await sesionPeticion({
       tipo: 'patch',
-      url: `${Constantes.baseUrl}/cambiarRol`,
+      url: `${Constantes.baseUrl}/auth/change-rol`,
       body: {
-        idRol,
+        idRole: idRol + '',
       },
     })
 
-    guardarCookie('token', respuestaUsuario.datos?.access_token)
-    imprimir(`Token ✅: ${respuestaUsuario.datos?.access_token}`)
+    guardarCookie('token', respuestaUsuario.datos.token)
+    imprimir(`Token ✅: ${respuestaUsuario.datos.token}`)
 
     setUser(respuestaUsuario.datos)
     imprimir(
-      `rol definido en obtenerUsuarioRol 👨‍💻: ${respuestaUsuario.datos.idRol}`
+      `rol definido en obtenerUsuarioRol 👨‍💻: ${respuestaUsuario.datos.idRole}`
     )
   }
 
@@ -180,7 +181,7 @@ export const AuthProvider = ({ children }: AuthContextType) => {
     )
   }
 
-  const rolUsuario = () => user?.roles.find((rol) => rol.idRol == user?.idRol)
+  const rolUsuario = () => user?.roles.find((rol) => rol.id == user?.idRole)
 
   return (
     <AuthContext.Provider

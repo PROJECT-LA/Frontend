@@ -12,11 +12,14 @@ import {
   useTheme,
 } from '@mui/material'
 import { Calendar, Ellipsis } from 'lucide-react'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { CustomCard, MinusCard } from './ui/CustomCard'
 import { MinusArray, MinusCardProps } from './types'
 
 import { CustomCardProps } from './types'
+import { obtenerNombreRolActual } from '@/utils/utilidades'
+import { useAuth } from '@/context/AuthProvider'
+import { RoleType } from '@/types/login'
 
 const CARDS: CustomCardProps[] = [
   {
@@ -47,12 +50,29 @@ const CARDS: CustomCardProps[] = [
 
 const Home = () => {
   const theme = useTheme()
+  const { usuario, setRolUsuario, rolUsuario } = useAuth()
+  const [roles, setRoles] = useState<RoleType[]>([])
+
+  const interpretarRoles = () => {
+    if (usuario?.roles && usuario?.roles.length > 0) {
+      setRoles(usuario?.roles)
+    }
+  }
+  /// Interpretando roles desde estado
+  useEffect(() => {
+    interpretarRoles()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usuario])
+
   return (
     <Stack>
       <Stack>
         <Typography variant="h2">Bienvenid@ Alexander Nina</Typography>
         <Box height={5} />
-        <Typography variant="h4">Administrador</Typography>
+        <Typography variant="h4">
+          {obtenerNombreRolActual(roles, rolUsuario?.id ?? '0')}
+        </Typography>
       </Stack>
 
       <Box height={20} />

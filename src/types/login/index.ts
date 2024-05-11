@@ -21,15 +21,15 @@ export interface PersonaType {
 export interface UsuarioType {
   id: string
   usuario: string // ADMIN | TÉCNICO ...
-  idRol: string // Id del rol
+  idRole: string // Id del rol
   persona: PersonaType
   roles: RoleType[]
 }
 
 export interface RoleType {
-  idRol: string
+  id: string
   rol: string
-  nombre: string
+  name: string
   modulos: ModuloType[]
 }
 

@@ -25,7 +25,7 @@ import { imprimir } from '@/utils/imprimir'
 import { useAuth } from '@/context/AuthProvider'
 import { RoleType } from '@/types/login'
 import { Icono } from '@/components/Icono'
-import { delay } from '@/utils/utilidades'
+import { delay, obtenerNombreRolActual } from '@/utils/utilidades'
 import { useRouter } from 'next/navigation'
 import { useFullScreenLoading } from '@/context/FullScreenLoadingProvider'
 import { AlertDialog } from '@/components/modales/AlertDialog'
@@ -58,6 +58,7 @@ const ProfileSection = () => {
   /// Interpretando roles desde estado
   useEffect(() => {
     interpretarRoles()
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [usuario])
 
@@ -210,7 +211,9 @@ const ProfileSection = () => {
                         >
                           Alexander Nina
                         </Typography>
-                        <Typography>Administrador</Typography>
+                        <Typography>
+                          {obtenerNombreRolActual(roles, rolUsuario?.id ?? '0')}
+                        </Typography>
                       </Stack>
                     </Stack>
                   </ButtonBase>
@@ -224,19 +227,6 @@ const ProfileSection = () => {
                     {/* Roles */}
                     {roles.length > 1 && (
                       <Box>
-                        <MenuItem
-                          sx={{
-                            p: 2,
-                            ml: 0,
-                            '&.MuiButtonBase-root:hover': {
-                              bgcolor: 'transparent',
-                            },
-                          }}
-                        >
-                          <Icono>switch_account</Icono>
-                          <Box width={'20px'} />
-                          <Typography variant={'body2'}>Roles </Typography>
-                        </MenuItem>
                         <List key={`roles`} sx={{ p: 0 }}>
                           {roles.map((rol, indexRol) => (
                             <ListItem key={`rol-${indexRol}`}>
@@ -250,21 +240,21 @@ const ProfileSection = () => {
                               >
                                 <Box width={'20px'} />
                                 <FormControlLabel
-                                  value={rol.idRol}
+                                  value={rol.id}
                                   control={
                                     <Radio
-                                      checked={rolUsuario?.idRol === rol.idRol}
+                                      checked={rolUsuario?.id === rol.id}
                                       onChange={cambiarRol}
                                       color={'success'}
                                       size="small"
-                                      value={rol.idRol}
+                                      value={rol.id}
                                       name="radio-buttons"
                                     />
                                   }
                                   componentsProps={{
                                     typography: { variant: 'body2' },
                                   }}
-                                  label={rol.nombre}
+                                  label={rol.name}
                                 />
                               </Box>
                             </ListItem>
