@@ -29,7 +29,7 @@ export const middleware = (req: NextRequest) => {
       }
     }
 
-    if (req.nextUrl.pathname.startsWith('/admin/home')) {
+    if (req.nextUrl.pathname.startsWith('/admin')) {
       if (token?.value) {
         return NextResponse.next()
       } else {

@@ -35,7 +35,6 @@ export interface UsuarioCRUDType {
 }
 
 // Crear usuario
-
 export interface CrearPersonaType {
   nombres: string
   primerApellido: string

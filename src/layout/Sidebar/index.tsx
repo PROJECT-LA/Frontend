@@ -111,52 +111,80 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
       }}
       aria-label="mailbox folders"
     >
-      {drawerOpen ? (
-        <Drawer
-          container={container}
-          variant={matchUpMd ? 'persistent' : 'temporary'}
-          anchor="left"
-          open={drawerOpen}
-          onClose={drawerToggle}
-          sx={{
-            '& .MuiDrawer-paper': {
-              width: drawerWidth,
-              background: theme.palette.background.paper,
-              height: '100%',
-              color: theme.palette.text.primary,
-              borderRight: 1,
-              borderColor: theme.palette.divider,
-            },
-          }}
-          ModalProps={{ keepMounted: true }}
-          color="inherit"
-        >
-          {drawer}
-        </Drawer>
+      {matchUpMd ? (
+        <>
+          {drawerOpen ? (
+            <Drawer
+              container={container}
+              variant={matchUpMd ? 'persistent' : 'temporary'}
+              anchor="left"
+              open={drawerOpen}
+              onClose={drawerToggle}
+              sx={{
+                '& .MuiDrawer-paper': {
+                  width: drawerWidth,
+                  background: theme.palette.background.paper,
+                  height: '100%',
+                  color: theme.palette.text.primary,
+                  borderRight: 1,
+                  borderColor: theme.palette.divider,
+                },
+              }}
+              ModalProps={{ keepMounted: true }}
+              color="inherit"
+            >
+              {drawer}
+            </Drawer>
+          ) : (
+            <Drawer
+              container={container}
+              variant={matchUpMd ? 'persistent' : 'temporary'}
+              anchor="left"
+              open={!drawerOpen}
+              sx={{
+                '& .MuiDrawer-paper': {
+                  width: 75,
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  background: theme.palette.background.paper,
+                  height: '100%',
+                  color: theme.palette.text.primary,
+                  borderRight: 1,
+                  borderColor: theme.palette.divider,
+                },
+              }}
+              ModalProps={{ keepMounted: true }}
+              color="inherit"
+            >
+              {drawerCorto}
+            </Drawer>
+          )}
+        </>
       ) : (
-        <Drawer
-          container={container}
-          variant={matchUpMd ? 'persistent' : 'temporary'}
-          anchor="left"
-          open={!drawerOpen}
-          sx={{
-            '& .MuiDrawer-paper': {
-              width: 75,
-              overflow: 'hidden',
-              display: 'flex',
-              alignItems: 'center',
-              background: theme.palette.background.paper,
-              height: '100%',
-              color: theme.palette.text.primary,
-              borderRight: 1,
-              borderColor: theme.palette.divider,
-            },
-          }}
-          ModalProps={{ keepMounted: true }}
-          color="inherit"
-        >
-          {drawerCorto}
-        </Drawer>
+        <>
+          <Drawer
+            container={container}
+            variant={'temporary'}
+            anchor="left"
+            open={drawerOpen}
+            onClose={drawerToggle}
+            sx={{
+              '& .MuiDrawer-paper': {
+                width: drawerWidth,
+                background: theme.palette.background.paper,
+                height: '100%',
+                color: theme.palette.text.primary,
+                borderRight: 1,
+                borderColor: theme.palette.divider,
+              },
+            }}
+            ModalProps={{ keepMounted: true }}
+            color="inherit"
+          >
+            {drawer}
+          </Drawer>
+        </>
       )}
     </Box>
   )

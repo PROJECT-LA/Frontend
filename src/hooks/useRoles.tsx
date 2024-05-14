@@ -1,22 +1,27 @@
-import { notFound } from "next/navigation";
-import { RUTAS, RutasType, obtenerPermisos } from "@/types/temporalTypes";
-import { useGlobalStore } from "@/store";
-
+import { notFound } from 'next/navigation'
+import { obtenerPermisos } from '@/types/temporalTypes'
+import { useGlobalStore } from '@/store'
+import { useSession } from './useSession'
 
 export const useRoles = () => {
-// TODO: lógica para obtener el rol del usuario actual
+  const { setPermisos } = useGlobalStore()
+  const { sesionPeticion } = useSession()
 
-const { setPermisos } = useGlobalStore()
+  const obtenerPermisosPagina = async (ruta: string) => {
+    const respuesta = await sesionPeticion({
+      url: `${process.env.NEXT_PUBLIC_BASE_URL}/authorization/route/policies`,
+      tipo: 'POST',
+      body: {
+        route: ruta,
+      },
+    })
 
-const obtenerPermisosPagina = async (ruta: string) =>{
-/// Fetch api que devuelva los permisos dado un rol de la ruta que se está enviando Ver SolicitarPermisos interface
-const existe: RutasType | undefined = RUTAS.find((elem) => elem.ruta === ruta)
-if (existe === undefined) notFound()
-const permisos = await obtenerPermisos(existe.permisos)
-
-if(permisos)
-    setPermisos(ruta, permisos)
-
-}
-return {obtenerPermisosPagina}
+    if (respuesta.data && respuesta.data.policie) {
+      const permisos = obtenerPermisos(respuesta.data.policie)
+      setPermisos(ruta, permisos)
+    } else {
+      notFound()
+    }
+  }
+  return { obtenerPermisosPagina }
 }

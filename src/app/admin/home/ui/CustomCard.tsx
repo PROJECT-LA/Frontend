@@ -1,6 +1,14 @@
 import Icon from '@/components/LucideIcon'
 import { Constantes } from '@/config'
-import { Box, Button, Grid, Stack, Typography, useTheme } from '@mui/material'
+import {
+  Box,
+  Button,
+  Grid,
+  Hidden,
+  Stack,
+  Typography,
+  useTheme,
+} from '@mui/material'
 import { ArrowRight } from 'lucide-react'
 import { CustomCardProps, MinusCardProps } from '../types'
 import Grafico from './Grafico'
@@ -22,7 +30,7 @@ export const CustomCard = ({
   const indice = color === 'green' ? 0 : color === 'orange' ? 2 : 1
 
   return (
-    <Grid item xs={6}>
+    <>
       <Grid container>
         <Grid
           item
@@ -45,19 +53,21 @@ export const CustomCard = ({
                 {value}
               </Typography>
             </Stack>
-            <Box
-              sx={{
-                height: '250px',
-                width: '300px',
-                position: 'absolute',
-                display: 'flex',
-                alignItems: 'baseline',
-                bottom: -50,
-                right: -100,
-              }}
-            >
-              <Grafico />
-            </Box>
+            <Hidden mdDown={true}>
+              <Box
+                sx={{
+                  height: '250px',
+                  width: '300px',
+                  position: 'absolute',
+                  display: 'flex',
+                  alignItems: 'baseline',
+                  bottom: -50,
+                  right: -100,
+                }}
+              >
+                <Grafico />
+              </Box>
+            </Hidden>
           </Stack>
         </Grid>
         <Grid
@@ -125,7 +135,7 @@ export const CustomCard = ({
           </Box>
         </Grid>
       </Grid>
-    </Grid>
+    </>
   )
 }
 

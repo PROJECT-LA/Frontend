@@ -1,10 +1,11 @@
 'use client'
 import { Constantes } from '@/config'
-import { Card, useTheme } from '@mui/material'
+import { Card, useMediaQuery, useTheme } from '@mui/material'
 import React from 'react'
 
 const MainCard = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme()
+  const matchDownMd = useMediaQuery(theme.breakpoints.down('md'))
   return (
     <Card
       sx={{
@@ -15,7 +16,7 @@ const MainCard = ({ children }: { children: React.ReactNode }) => {
           theme.palette.mode === 'light'
             ? theme.palette.background.paper
             : 'transparent !important',
-        padding: '2rem',
+        padding: !matchDownMd ? '2rem' : '1rem',
       }}
     >
       {children}

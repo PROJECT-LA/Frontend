@@ -40,15 +40,8 @@ const Main = styled('main', {
     paddingBottom: 20,
   },
   [theme.breakpoints.down('md')]: {
-    marginLeft: '20px',
-    width: `calc(100% - ${Constantes.drawerWidth}px)`,
+    width: `100%`,
     padding: '16px',
-  },
-  [theme.breakpoints.down('sm')]: {
-    marginLeft: '10px',
-    width: `calc(100% - ${Constantes.drawerWidth}px)`,
-    padding: '16px',
-    marginRight: '10px',
   },
 }))
 
