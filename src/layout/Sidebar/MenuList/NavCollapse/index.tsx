@@ -17,9 +17,8 @@ import {
 import NavItem from '../NavItem'
 
 // assets
-import { ChevronDown, ChevronUp, LayoutDashboard } from 'lucide-react'
+import { ChevronDown, ChevronUp, Home, LayoutDashboard } from 'lucide-react'
 import { useGlobalStore } from '@/store'
-import Icon from '@/components/LucideIcon'
 
 const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
   const { openDrawer } = useGlobalStore()
@@ -171,7 +170,7 @@ const NavCollapse = ({ menu, level }: { menu: any; level: any }) => {
         onClick={handleClick}
       >
         <ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
-          <Icon name={menu.icon} />
+          {menu.icon ? menu.icon : <Home />}
         </ListItemIcon>
         {openDrawer && (
           <>

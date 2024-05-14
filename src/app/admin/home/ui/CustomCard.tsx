@@ -1,4 +1,3 @@
-import Icon from '@/components/LucideIcon'
 import { Constantes } from '@/config'
 import {
   Box,
@@ -141,29 +140,27 @@ export const CustomCard = ({
 
 export const MinusCard = ({ name, value, icon, color }: MinusCardProps) => {
   return (
-    <Grid item xs={4} alignContent="center">
-      <Stack
-        direction="row"
-        justifyContent="center"
-        alignItems="center"
-        spacing={Constantes.gridSpacing}
+    <Stack
+      direction="row"
+      justifyContent="center"
+      alignItems="center"
+      spacing={Constantes.gridSpacing}
+    >
+      <Box
+        padding={1}
+        sx={{
+          backgroundColor: color,
+          borderRadius: '1.2rem',
+          padding: 1.5,
+          color: '#000',
+        }}
       >
-        <Box
-          padding={1}
-          sx={{
-            backgroundColor: color,
-            borderRadius: '1.2rem',
-            padding: 1.5,
-            color: '#000',
-          }}
-        >
-          <Icon name={icon} fontSize="1rem" />
-        </Box>
-        <Stack>
-          <Typography variant="h5">{name}</Typography>
-          <Typography variant="h3">{value}</Typography>
-        </Stack>
+        {icon}
+      </Box>
+      <Stack>
+        <Typography variant="h5">{name}</Typography>
+        <Typography variant="h3">{value}</Typography>
       </Stack>
-    </Grid>
+    </Stack>
   )
 }

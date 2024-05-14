@@ -128,48 +128,28 @@ const Home = () => {
       <Box height={20} />
 
       <MainCard>
-        <Box>
-          <Grid container spacing={Constantes.gridSpacing}>
-            {MinusArray.map((elem: MinusCardProps, index: number) => (
-              <Grid
-                item
-                xs={12}
-                md={6}
-                lg={4}
-                key={`${elem.icon}-${index}`}
-                alignContent="center"
-              >
-                <MinusCard
-                  color={elem.color}
-                  icon={elem.icon}
-                  name={elem.name}
-                  value={elem.value}
-                />
-              </Grid>
-            ))}
-          </Grid>
-        </Box>
+        <Grid container spacing={Constantes.gridSpacing}>
+          {MinusArray.map((elem: MinusCardProps, index: number) => (
+            <Grid
+              item
+              xs={12}
+              md={6}
+              lg={4}
+              key={`${elem.icon}-${index}`}
+              alignContent="center"
+            >
+              <MinusCard
+                color={elem.color}
+                icon={elem.icon}
+                name={elem.name}
+                value={elem.value}
+              />
+            </Grid>
+          ))}
+        </Grid>
       </MainCard>
 
       <Box height={20} />
-
-      <MainCard>
-        <Stack
-          direction="row"
-          justifyContent="space-around"
-          alignItems="center"
-        >
-          {MinusArray.map((elem: MinusCardProps, index: number) => (
-            <MinusCard
-              key={`${elem.icon}-${index}`}
-              color={elem.color}
-              icon={elem.icon}
-              name={elem.name}
-              value={elem.value}
-            />
-          ))}
-        </Stack>
-      </MainCard>
     </Stack>
   )
 }

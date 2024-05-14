@@ -1,4 +1,12 @@
 import { MenuItems } from '@/types/menuTypes'
+import {
+  Home,
+  PackageOpen,
+  ShieldQuestion,
+  SlidersHorizontal,
+  User,
+  UserCog,
+} from 'lucide-react'
 
 export const dashboard: MenuItems = {
   id: 'dashboard',
@@ -10,58 +18,57 @@ export const dashboard: MenuItems = {
       title: 'Inicio',
       type: 'item',
       url: '/admin/home',
-      icon: 'home',
+      icon: <Home />,
     },
     {
       id: 'migrar-consulta',
       title: 'Perfil',
       type: 'item',
       url: '/admin/profile',
-      icon: 'user',
+      icon: <User />,
     },
   ],
 }
 
 export const configuration: MenuItems = {
   id: 'configuration',
-  title: "Configuración",
-  type: "group",
+  title: 'Configuración',
+  type: 'group',
   children: [
     {
       id: 'users',
       title: 'Usuarios',
-      type: "item",
+      type: 'item',
       url: '/admin/users',
-      icon: 'user-cog'
+      icon: <UserCog />,
     },
     {
       id: 'parameters',
       title: 'Parámetros',
-      type: "item",
+      type: 'item',
       url: '/admin/parameters',
-      icon: 'sliders-horizontal'
+      icon: <SlidersHorizontal />,
     },
     {
       id: 'modules',
       title: 'Módulos',
       type: 'item',
       url: '/admin/modules',
-      icon: 'package-open'
+      icon: <PackageOpen />,
     },
     {
       id: 'policies',
       title: 'Políticas',
       type: 'item',
       url: '/admin/policies',
-      icon: 'sliders-horizontal'
+      icon: <SlidersHorizontal />,
     },
     {
       id: 'roles',
       title: 'Roles',
       type: 'item',
-      url:'/admin/roles',
-      icon: 'shield-question'
-    }
-  ]
+      url: '/admin/roles',
+      icon: <ShieldQuestion />,
+    },
+  ],
 }
-

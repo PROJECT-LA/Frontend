@@ -16,9 +16,9 @@ import {
   Typography,
   useMediaQuery,
 } from '@mui/material'
-import Icon from '@/components/LucideIcon'
 
 import { useGlobalStore } from '@/store'
+import { Home } from 'lucide-react'
 
 interface ListItemProps {
   component:
@@ -181,7 +181,7 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
           minWidth: !item?.icon ? 18 : 36,
         }}
       >
-        <Icon name={item.icon ?? 'Home'} size="1.3rem" />
+        {item.icon ? item.icon : <Home />}
       </ListItemIcon>
 
       {openDrawer && (

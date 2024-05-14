@@ -1,4 +1,5 @@
 import { MenuItems } from '@/types/menuTypes'
+import { KeyRound } from 'lucide-react'
 
 const pages: MenuItems = {
   id: 'pages',
@@ -9,7 +10,7 @@ const pages: MenuItems = {
       id: 'authentication',
       title: 'Authenticación',
       type: 'collapse',
-      icon: 'key-round',
+      icon: <KeyRound />,
       children: [
         {
           id: 'login3',
