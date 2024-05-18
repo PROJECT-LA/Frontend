@@ -1,4 +1,4 @@
-// Librerías
+"use client";
 import Image from "next/image";
 import {
   Box,
@@ -12,16 +12,17 @@ import {
   Divider,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
-import { print } from "@/utils";
+
+import { FormInputText } from "@/components/forms";
 
 // Componentes y hooks
 import { useAuth } from "../../../context/AuthProvider";
-import { FormInputText } from "@/components/forms";
 import { LinealLoader } from "@/components/loaders";
 
-// CONSTANTS y tipos
+// Constantes y tipos
 import { CONSTANTS } from "../../../../config";
 import { LoginType } from "../types";
+import { print } from "@/utils";
 
 export const LoginForm = () => {
   const theme = useTheme();

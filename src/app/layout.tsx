@@ -1,22 +1,16 @@
 import type { Metadata } from "next";
+
 import { Toaster } from "sonner";
-import { Poppins } from "next/font/google";
 import "./globals.css";
-import { CONSTANTS } from "../../config";
+
+// Configuración del tema
 import { StyledEngineProvider } from "@mui/material";
 import ThemeRegistry from "@/theme";
-import { FullScreenLoadingProvider } from "@/context/FullScreenLoading";
-
-const poppins = Poppins({
-  subsets: ["latin"],
-  display: "swap",
-  variable: "--font-poppins",
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
-});
+import { FullScreenLoadingProvider } from "@/context/FullScreenLoadingProvider";
+import { AuthProvider } from "@/context/AuthProvider";
 
 export const metadata: Metadata = {
-  title: CONSTANTS.title,
-  description: CONSTANTS.description,
+  title: "Sistema auditorías",
 };
 
 export default function RootLayout({
@@ -26,10 +20,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={poppins.className}>
+      <body>
         <StyledEngineProvider injectFirst>
           <ThemeRegistry>
-            <FullScreenLoadingProvider>{children}</FullScreenLoadingProvider>
+            <FullScreenLoadingProvider>
+              <AuthProvider>{children}</AuthProvider>
+            </FullScreenLoadingProvider>
           </ThemeRegistry>
         </StyledEngineProvider>
         <Toaster richColors closeButton expand />

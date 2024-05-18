@@ -2,7 +2,8 @@ import { delay } from "@/utils";
 import { saveCookie, readCookie, deleteCookie, print } from "../utils";
 import { Services, forbiddenStates, methodFormatRequest } from "../services";
 import { checkToken } from "@/utils/token";
-import { useFullScreenLoading } from "@/context/FullScreenLoading";
+import {} from "@/context/FullScreenLoadingProvider";
+import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
 import { CONSTANTS } from "../../config";
 import { useRouter } from "next/navigation";
 
@@ -22,7 +23,8 @@ export const useSession = () => {
     try {
       if (!checkToken(readCookie("token") ?? "")) {
         print(`Token caducado ⏳`);
-        await updateSession();
+        await logoutSession();
+        // await updateSession();
       }
 
       const cabeceras = {
@@ -72,7 +74,6 @@ export const useSession = () => {
       showFullScreen();
       await delay(1000);
       const token = readCookie("token");
-      print(token);
 
       deleteSessionCookie();
 
@@ -84,8 +85,8 @@ export const useSession = () => {
         url: `${CONSTANTS.baseUrl}/auth/logout`,
       });
       print(`finalizando con respuesta`, response);
-
       if (response === "OK") {
+        router.refresh();
         router.push("/login");
       }
     } catch (e) {
@@ -106,7 +107,8 @@ export const useSession = () => {
         },
       });
 
-      saveCookie("token", response.datos?.access_token);
+      print(response);
+      saveCookie("token", response.datos);
 
       await delay(500);
     } catch (e) {

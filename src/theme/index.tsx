@@ -54,7 +54,8 @@ export default function ThemeRegistry({ children }: { children: ReactNode }) {
   };
 
   const toggleTheme = () => {
-    isDarkOS ? saveDarkMode() : saveLightMode();
+    if (themeMode) saveLightMode();
+    else saveDarkMode();
   };
 
   useEffect(() => {

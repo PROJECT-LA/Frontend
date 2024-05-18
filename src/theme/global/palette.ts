@@ -47,7 +47,7 @@ export const globalPalette = (
         dark: color.successDark,
       },
       text: {
-        primary: color.grey900,
+        primary: color.grey700,
         secondary: color.grey700,
       },
       background: {
