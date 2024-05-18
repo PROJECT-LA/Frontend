@@ -17,7 +17,8 @@ import { print } from "@/utils";
 // Componentes y hooks
 import { useAuth } from "../../../context/AuthProvider";
 import { FormInputText } from "@/components/forms";
-import { ProgresoLineal } from "@/components/progreso";
+import { LinealLoader } from "@/components/loaders";
+
 import { AnimateButton } from "@/components/botones";
 
 // CONSTANTS y tipos
