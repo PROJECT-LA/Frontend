@@ -4,9 +4,9 @@ import { FullScreenLoading } from "@/components/loaders";
 import { Box, Fade } from "@mui/material";
 
 interface FullScreenLoadingType {
-  estadoFullScreen: boolean;
-  ocultarFullScreen: () => void;
-  mostrarFullScreen: (mensaje?: string | undefined | null) => void;
+  fullScreenState: boolean;
+  hideFullScreen: () => void;
+  showFullScreen: (message?: string | undefined | null) => void;
 }
 
 const FullScreenLoadingContext = createContext<FullScreenLoadingType>(
@@ -20,37 +20,37 @@ interface FullScreenProviderContextType {
 export const FullScreenLoadingProvider = ({
   children,
 }: FullScreenProviderContextType) => {
-  const [mensaje, setMensaje] = useState<string | null>();
-  const [mostrar, setMostrar] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | null>();
+  const [show, setShow] = useState<boolean>(false);
 
-  const mostrarFullScreen = (mensaje?: string | null) => {
-    setMensaje(mensaje);
-    setMostrar(true);
+  const showFullScreen = (message?: string | null) => {
+    setMessage(message);
+    setShow(true);
   };
 
-  const ocultarFullScreen = () => {
-    setMensaje(undefined);
-    setMostrar(false);
+  const hideFullScreen = () => {
+    setMessage(undefined);
+    setShow(false);
   };
 
   return (
     <FullScreenLoadingContext.Provider
       value={{
-        estadoFullScreen: mostrar,
-        ocultarFullScreen: ocultarFullScreen,
-        mostrarFullScreen: mostrarFullScreen,
+        fullScreenState: show,
+        hideFullScreen,
+        showFullScreen,
       }}
     >
-      {mostrar && (
+      {show && (
         <Box minHeight="100vh">
-          <FullScreenLoading mensaje={mensaje} />
+          <FullScreenLoading mensaje={message} />
         </Box>
       )}
-      <Fade in={!mostrar} timeout={1000}>
+      <Fade in={!show} timeout={1000}>
         <Box
           sx={{
-            display: mostrar ? "none" : "block",
-            displayPrint: mostrar ? "none" : "block",
+            display: show ? "none" : "block",
+            displayPrint: show ? "none" : "block",
           }}
           minHeight="100vh"
         >

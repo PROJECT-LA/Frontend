@@ -1,63 +1,61 @@
 import { delay } from "@/utils";
 import { saveCookie, readCookie, deleteCookie, print } from "../utils";
 import { Services, forbiddenStates, methodFormatRequest } from "../services";
-
-import { verificarToken } from "@/utils/token";
-
-import { useFullScreenLoading } from "../context/FullScreenLoadingProvider";
-import { Constantes } from "../config";
+import { checkToken } from "@/utils/token";
+import { useFullScreenLoading } from "@/context/FullScreenLoading";
+import { CONSTANTS } from "../../config";
 import { useRouter } from "next/navigation";
 
 export const useSession = () => {
   const router = useRouter();
-  const { mostrarFullScreen, ocultarFullScreen } = useFullScreenLoading();
+  const { showFullScreen, hideFullScreen } = useFullScreenLoading();
 
-  const sesionPeticion = async ({
+  const sessionRequest = async ({
     url,
-    tipo = "get",
+    type = "get",
     body,
     headers,
     params,
     responseType,
     withCredentials,
-  }: peticionFormatoMetodo) => {
+  }: methodFormatRequest) => {
     try {
-      if (!verificarToken(leerCookie("token") ?? "")) {
-        imprimir(`Token caducado ⏳`);
-        await actualizarSesion();
+      if (!checkToken(readCookie("token") ?? "")) {
+        print(`Token caducado ⏳`);
+        await updateSession();
       }
 
       const cabeceras = {
         accept: "application/json",
-        Authorization: `Bearer ${leerCookie("token") ?? ""}`,
+        Authorization: `Bearer ${readCookie("token") ?? ""}`,
         ...headers,
       };
 
-      imprimir(`enviando 🔐🌍`, body, tipo, url, cabeceras);
-      const response = await Servicios.peticionHTTP({
+      print(`enviando 🔐🌍`, body, type, url, cabeceras);
+      const response = await Services.httpRequest({
         url,
-        tipo,
+        type,
         headers: cabeceras,
         body,
         params,
         responseType,
         withCredentials,
       });
-      imprimir("respuesta 🔐📡", body, tipo, url, response);
+      print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
       if (e.code === "ECONNABORTED") {
         throw new Error("La petición está tardando demasiado");
       }
 
-      if (Servicios.isNetworkError(e)) {
+      if (Services.isNetworkError(e)) {
         throw new Error("Error en la conexión 🌎");
       }
 
-      if (estadosSinPermiso.includes(e.response?.status)) {
-        mostrarFullScreen();
-        await cerrarSesion();
-        ocultarFullScreen();
+      if (forbiddenStates.includes(e.response?.status)) {
+        showFullScreen();
+        await logoutSession();
+        hideFullScreen();
         return;
       }
 
@@ -65,58 +63,56 @@ export const useSession = () => {
     }
   };
 
-  const borrarCookiesSesion = () => {
-    eliminarCookie("token"); // Eliminando access_token de frontend
+  const deleteSessionCookie = () => {
+    deleteCookie("token");
   };
 
-  const cerrarSesion = async () => {
+  const logoutSession = async () => {
     try {
-      mostrarFullScreen();
+      showFullScreen();
       await delay(1000);
-      const token = leerCookie("token");
-      imprimir(token);
+      const token = readCookie("token");
+      print(token);
 
-      borrarCookiesSesion();
+      deleteSessionCookie();
 
-      const respuesta = await Servicios.get({
+      const response = await Services.get({
         headers: {
           accept: "application/json",
           Authorization: `Bearer ${token}`,
         },
-        url: `${Constantes.baseUrl}/auth/logout`,
+        url: `${CONSTANTS.baseUrl}/auth/logout`,
       });
-      imprimir(`finalizando con respuesta`, respuesta);
+      print(`finalizando con respuesta`, response);
 
-      if (respuesta === "OK") {
+      if (response === "OK") {
         router.push("/login");
       }
     } catch (e) {
-      imprimir(`Error al cerrar sesión: `, e);
-      // router.refresh()
-      // window.location.reload();
+      print(`Error al cerrar sesión: `, e);
     } finally {
-      ocultarFullScreen();
+      hideFullScreen();
     }
   };
 
-  const actualizarSesion = async () => {
-    imprimir(`Actualizando token 🚨`);
+  const updateSession = async () => {
+    print(`Actualizando token 🚨`);
 
     try {
-      const respuesta = await Servicios.post({
-        url: `${Constantes.baseUrl}/token`,
+      const response = await Services.post({
+        url: `${CONSTANTS.baseUrl}/token`,
         body: {
-          token: leerCookie("token"),
+          token: readCookie("token"),
         },
       });
 
-      guardarCookie("token", respuesta.datos?.access_token);
+      saveCookie("token", response.datos?.access_token);
 
       await delay(500);
     } catch (e) {
-      await cerrarSesion();
+      await logoutSession();
     }
   };
 
-  return { sesionPeticion, cerrarSesion, borrarCookiesSesion };
+  return { sessionRequest, logoutSession, deleteSessionCookie };
 };

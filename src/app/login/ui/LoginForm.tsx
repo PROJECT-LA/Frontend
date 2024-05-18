@@ -19,8 +19,6 @@ import { useAuth } from "../../../context/AuthProvider";
 import { FormInputText } from "@/components/forms";
 import { LinealLoader } from "@/components/loaders";
 
-import { AnimateButton } from "@/components/botones";
-
 // CONSTANTS y tipos
 import { CONSTANTS } from "../../../../config";
 import { LoginType } from "../types";
@@ -110,7 +108,7 @@ export const LoginForm = () => {
               }}
             />
             <Box sx={{ mt: 1, mb: 1 }}>
-              <ProgresoLineal mostrar={progresoLogin} />
+              <LinealLoader mostrar={progresoLogin} />
             </Box>
           </Stack>
 
@@ -130,21 +128,19 @@ export const LoginForm = () => {
 
           <Stack gap={2} width="100%" marginTop={4} alignItems="center">
             <Grid item xs={12} sx={{ width: "100%" }}>
-              <AnimateButton>
-                <Button
-                  type="submit"
-                  disableElevation
-                  fullWidth
-                  size="large"
-                  variant="contained"
-                  sx={{
-                    color: theme.palette.primary.contrastText,
-                    borderColor: theme.palette.grey[100],
-                  }}
-                >
-                  Iniciar sesión
-                </Button>
-              </AnimateButton>
+              <Button
+                type="submit"
+                disableElevation
+                fullWidth
+                size="large"
+                variant="contained"
+                sx={{
+                  color: theme.palette.primary.contrastText,
+                  borderColor: theme.palette.grey[100],
+                }}
+              >
+                Iniciar sesión
+              </Button>
             </Grid>
 
             <Divider sx={{ width: "80%" }} />
