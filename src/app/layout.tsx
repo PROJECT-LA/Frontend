@@ -1,35 +1,39 @@
-import type { Metadata } from 'next'
+import type { Metadata } from "next";
+import { Toaster } from "sonner";
+import { Poppins } from "next/font/google";
+import "./globals.css";
+import { CONSTANTS } from "../../config";
+import { StyledEngineProvider } from "@mui/material";
+import ThemeRegistry from "@/theme";
+import { FullScreenLoadingProvider } from "@/context/FullScreenLoading";
 
-import { Toaster } from 'sonner'
-import './globals.css'
-
-// Configuración del tema
-import { StyledEngineProvider } from '@mui/material'
-import ThemeRegistry from '@/theme/RegistroTema'
-import { FullScreenLoadingProvider } from '@/context/FullScreenLoadingProvider'
-import { AuthProvider } from '@/context/AuthProvider'
+const poppins = Poppins({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-poppins",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 export const metadata: Metadata = {
-  title: 'Sistema auditorías',
-}
+  title: CONSTANTS.title,
+  description: CONSTANTS.description,
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="es">
-      <body>
+      <body className={poppins.className}>
         <StyledEngineProvider injectFirst>
           <ThemeRegistry>
-            <FullScreenLoadingProvider>
-              <AuthProvider>{children}</AuthProvider>
-            </FullScreenLoadingProvider>
+            <FullScreenLoadingProvider>{children}</FullScreenLoadingProvider>
           </ThemeRegistry>
         </StyledEngineProvider>
         <Toaster richColors closeButton expand />
       </body>
     </html>
-  )
+  );
 }

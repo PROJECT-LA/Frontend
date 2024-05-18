@@ -1,8 +1,11 @@
-import { PaletteOptions } from '@mui/material'
-import { EsquemaColor, BaseTema } from '@/types/temaTypes'
+import { PaletteOptions } from "@mui/material";
+import { EsquemaColor, BaseTema } from "../types";
 
-export const paleta = (modo: BaseTema, color: EsquemaColor): PaletteOptions => {
-  if (modo === 'light') {
+export const globalPalette = (
+  modo: BaseTema,
+  color: EsquemaColor
+): PaletteOptions => {
+  if (modo === "light") {
     return {
       mode: modo,
       common: {
@@ -51,7 +54,7 @@ export const paleta = (modo: BaseTema, color: EsquemaColor): PaletteOptions => {
         paper: color.paper,
         default: color.default,
       },
-    }
+    };
   } else {
     return {
       mode: modo,
@@ -103,6 +106,6 @@ export const paleta = (modo: BaseTema, color: EsquemaColor): PaletteOptions => {
         paper: color.darkPaper,
         default: color.darkDefault,
       },
-    }
+    };
   }
-}
+};

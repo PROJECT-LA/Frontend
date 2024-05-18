@@ -1,29 +1,29 @@
-import { Typography, Link, Container, Grid, Button } from '@mui/material'
+import { Typography, Link, Container, Grid, Button } from "@mui/material";
 
 const NotFoundPage = () => {
   return (
     <Container
       sx={{
-        height: '100vh',
+        height: "100vh",
         px: 4,
         py: { xs: 16, sm: 24 },
-        display: 'grid',
-        placeItems: 'center',
-        '@media (min-width: 768px)': {
+        display: "grid",
+        placeItems: "center",
+        "@media (min-width: 768px)": {
           px: 8,
         },
       }}
     >
-      <Container sx={{ mx: 'auto' }}>
+      <Container sx={{ mx: "auto" }}>
         <Grid container alignItems="center">
           <Typography
             variant="h1"
             component="p"
             sx={{
-              fontSize: { xs: '4xl', sm: '5xl' },
-              fontWeight: 'bold',
-              letterSpacing: 'tight',
-              backgroundClip: 'text',
+              fontSize: { xs: "4xl", sm: "5xl" },
+              fontWeight: "bold",
+              letterSpacing: "tight",
+              backgroundClip: "text",
             }}
           >
             404
@@ -31,17 +31,17 @@ const NotFoundPage = () => {
           <Grid item xs={12} sm={6} ml={{ sm: 6 }}>
             <Container
               sx={{
-                borderLeft: { sm: '1px solid #e5e7eb' },
+                borderLeft: { sm: "1px solid #e5e7eb" },
                 paddingLeft: { sm: 6 },
               }}
             >
               <Typography
                 variant="h1"
                 sx={{
-                  fontSize: { xs: '4xl', sm: '5xl' },
-                  fontWeight: 'bold',
-                  letterSpacing: 'tight',
-                  color: 'text.primary',
+                  fontSize: { xs: "4xl", sm: "5xl" },
+                  fontWeight: "bold",
+                  letterSpacing: "tight",
+                  color: "text.primary",
                 }}
               >
                 Página no encontrada
@@ -54,9 +54,9 @@ const NotFoundPage = () => {
             <Container
               sx={{
                 mt: 10,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
               }}
             >
               <Button>Volver</Button>
@@ -65,7 +65,7 @@ const NotFoundPage = () => {
         </Grid>
       </Container>
     </Container>
-  )
-}
+  );
+};
 
-export default NotFoundPage
+export default NotFoundPage;

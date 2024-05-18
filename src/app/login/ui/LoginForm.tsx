@@ -1,5 +1,5 @@
 // Librerías
-import Image from 'next/image'
+import Image from "next/image";
 import {
   Box,
   Stack,
@@ -10,45 +10,43 @@ import {
   Link,
   Button,
   Divider,
-} from '@mui/material'
-import { useForm } from 'react-hook-form'
-
-import { FormInputText } from '@/components/forms'
+} from "@mui/material";
+import { useForm } from "react-hook-form";
+import { print } from "@/utils";
 
 // Componentes y hooks
-import { useAuth } from '../../../context/AuthProvider'
-import { ProgresoLineal } from '@/components/progreso'
+import { useAuth } from "../../../context/AuthProvider";
+import { FormInputText } from "@/components/forms";
+import { ProgresoLineal } from "@/components/progreso";
+import { AnimateButton } from "@/components/botones";
 
-import { AnimateButton } from '@/components/botones'
-
-// Constantes y tipos
-import { Constantes } from '../../../config'
-import { LoginType } from '@/types/login'
-import { imprimir } from '../../../utils/imprimir'
+// CONSTANTS y tipos
+import { CONSTANTS } from "../../../../config";
+import { LoginType } from "../types";
 
 export const LoginForm = () => {
-  const theme = useTheme()
-  const { ingresar, progresoLogin } = useAuth()
-  const { handleSubmit, control } = useForm<LoginType>()
-  const matchDownSM = useMediaQuery(theme.breakpoints.down('md'))
+  const theme = useTheme();
+  const { ingresar, progresoLogin } = useAuth();
+  const { handleSubmit, control } = useForm<LoginType>();
+  const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
 
   const iniciarSesion = async ({ usuario, contrasena }: LoginType) => {
-    await ingresar({ usuario, contrasena })
-  }
+    await ingresar({ usuario, contrasena });
+  };
 
   return (
     <Box
-      display={'flex'}
-      justifyContent={'center'}
-      alignItems={'center'}
-      color={'primary'}
+      display={"flex"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      color={"primary"}
       width="fit-content"
       paddingY={5}
       paddingX={10}
-      borderRadius={Constantes.borderRadius}
+      borderRadius={CONSTANTS.borderRadius}
       sx={{
         backgroundColor:
-          theme.palette.mode === 'light'
+          theme.palette.mode === "light"
             ? theme.palette.background.paper
             : `${theme.palette.background.default}`,
       }}
@@ -58,19 +56,19 @@ export const LoginForm = () => {
           <Grid item xs={12}>
             <Grid
               container
-              direction={matchDownSM ? 'column-reverse' : 'row'}
+              direction={matchDownSM ? "column-reverse" : "row"}
               alignItems="center"
               justifyContent="center"
             >
               <Grid item>
                 <Stack alignItems="center" justifyContent="center" spacing={1}>
-                  <Typography gutterBottom variant={matchDownSM ? 'h2' : 'h1'}>
+                  <Typography gutterBottom variant={matchDownSM ? "h2" : "h1"}>
                     Bienvenido
                   </Typography>
                   <Typography
                     variant="caption"
                     fontSize="16px"
-                    textAlign={matchDownSM ? 'center' : 'inherit'}
+                    textAlign={matchDownSM ? "center" : "inherit"}
                   >
                     Introduce tu usuario y contraseña para ingresar
                   </Typography>
@@ -83,30 +81,30 @@ export const LoginForm = () => {
 
           <Stack width="100%">
             <FormInputText
-              id={'usuario'}
+              id={"usuario"}
               control={control}
               name="usuario"
               label="Usuario"
-              size={'medium'}
-              labelVariant={'subtitle1'}
+              size={"medium"}
+              labelVariant={"subtitle1"}
               disabled={progresoLogin}
-              rules={{ required: 'Este campo es requerido' }}
+              rules={{ required: "Este campo es requerido" }}
             />
             <Box sx={{ mt: 1, mb: 1 }}></Box>
             <FormInputText
-              id={'contrasena'}
+              id={"contrasena"}
               control={control}
               name="contrasena"
               label="Contraseña"
-              size={'medium'}
-              labelVariant={'subtitle1'}
-              type={'password'}
+              size={"medium"}
+              labelVariant={"subtitle1"}
+              type={"password"}
               disabled={progresoLogin}
               rules={{
-                required: 'Este campo es requerido',
+                required: "Este campo es requerido",
                 minLength: {
                   value: 3,
-                  message: 'Mínimo 3 caracteres',
+                  message: "Mínimo 3 caracteres",
                 },
               }}
             />
@@ -119,7 +117,7 @@ export const LoginForm = () => {
             <Stack direction="row" alignItems="center" justifyContent="left">
               <Link
                 sx={{
-                  textDecoration: 'none',
+                  textDecoration: "none",
                   color: theme.palette.primary.main,
                 }}
                 href="/"
@@ -130,7 +128,7 @@ export const LoginForm = () => {
           </Box>
 
           <Stack gap={2} width="100%" marginTop={4} alignItems="center">
-            <Grid item xs={12} sx={{ width: '100%' }}>
+            <Grid item xs={12} sx={{ width: "100%" }}>
               <AnimateButton>
                 <Button
                   type="submit"
@@ -148,13 +146,13 @@ export const LoginForm = () => {
               </AnimateButton>
             </Grid>
 
-            <Divider sx={{ width: '80%' }} />
+            <Divider sx={{ width: "80%" }} />
             <Button
               type="button"
               disableElevation
               size="large"
               onClick={() => {
-                imprimir('Login Google')
+                print("Login Google");
               }}
               fullWidth
               variant="outlined"
@@ -177,7 +175,7 @@ export const LoginForm = () => {
           <Box width="100%" textAlign="center">
             <Link
               style={{
-                textDecoration: 'none',
+                textDecoration: "none",
                 color: theme.palette.primary.main,
               }}
               href="/"
@@ -188,5 +186,5 @@ export const LoginForm = () => {
         </form>
       </Stack>
     </Box>
-  )
-}
+  );
+};
