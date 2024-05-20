@@ -23,8 +23,7 @@ export const useSession = () => {
     try {
       if (!checkToken(readCookie("token") ?? "")) {
         print(`Token caducado ⏳`);
-        await logoutSession();
-        // await updateSession();
+        await updateSession();
       }
 
       const cabeceras = {
@@ -43,6 +42,7 @@ export const useSession = () => {
         responseType,
         withCredentials,
       });
+
       print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
@@ -75,7 +75,7 @@ export const useSession = () => {
       await delay(1000);
       const token = readCookie("token");
 
-      deleteSessionCookie();
+      deleteCookie("token");
 
       const response = await Services.get({
         headers: {
@@ -98,13 +98,9 @@ export const useSession = () => {
 
   const updateSession = async () => {
     print(`Actualizando token 🚨`);
-
     try {
       const response = await Services.post({
         url: `${CONSTANTS.baseUrl}/token`,
-        body: {
-          token: readCookie("token"),
-        },
       });
 
       print(response);
