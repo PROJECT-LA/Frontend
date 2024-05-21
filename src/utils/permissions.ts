@@ -9,6 +9,10 @@ export interface PermissionTypes {
   delete: boolean;
 }
 
+export interface GlobalPermissionsProps {
+  permissions: PermissionTypes;
+}
+
 const getPermissions = (permission: string): PermissionTypes => {
   return {
     read: permission.includes("read"),

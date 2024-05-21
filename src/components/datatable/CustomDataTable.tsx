@@ -133,7 +133,7 @@ export const CustomDataTable = ({
         alignItems="center"
       >
         {titulo ? (
-          <Typography variant={"h5"} sx={{ fontWeight: "medium", pl: 1 }}>
+          <Typography variant={"h4"} sx={{ fontWeight: "medium", pl: 1 }}>
             {`${titulo}`}
           </Typography>
         ) : tituloPersonalizado ? (
@@ -323,7 +323,7 @@ export const CustomDataTable = ({
                                       color="text.secondary"
                                       variant={"subtitle2"}
                                     >
-                                      {columnas[indexContenido].nombre}
+                                      {columnas[indexContenido].name}
                                     </Typography>
                                     {contenido}
                                   </Grid>
@@ -357,7 +357,7 @@ export const CustomDataTable = ({
                           )}
                           {columnas.map((columna, index) => (
                             <TableCell key={`cabecera-id-${index}`}>
-                              {columna.ordenar ? (
+                              {columna.sort ? (
                                 <Button
                                   disabled={cargando}
                                   style={{
@@ -376,7 +376,7 @@ export const CustomDataTable = ({
                                             ...{
                                               orden:
                                                 index == indice
-                                                  ? ToggleOrden(value.orden)
+                                                  ? ToggleOrden(value.order)
                                                   : undefined,
                                             },
                                           })
@@ -390,15 +390,15 @@ export const CustomDataTable = ({
                                     fontWeight={"medium"}
                                     align={"left"}
                                   >
-                                    {columna.nombre}
+                                    {columna.name}
                                   </Typography>
-                                  {columna.orden && <Box width={"10px"} />}
-                                  {columna.orden && (
+                                  {columna.order && <Box width={"10px"} />}
+                                  {columna.order && (
                                     <Icono
                                       fontSize={"inherit"}
                                       color={"secondary"}
                                     >
-                                      {columna.orden == "asc" ? (
+                                      {columna.order == "asc" ? (
                                         <ArrowUp />
                                       ) : (
                                         <ArrowDown />
@@ -412,7 +412,7 @@ export const CustomDataTable = ({
                                   fontWeight={"medium"}
                                   align={"left"}
                                 >
-                                  {columna.nombre}
+                                  {columna.name}
                                 </Typography>
                               )}
                             </TableCell>

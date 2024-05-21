@@ -1,6 +1,6 @@
 "use client";
 import { styled, useTheme } from "@mui/material/styles";
-import { AppBar, Toolbar, useMediaQuery } from "@mui/material";
+import { AppBar, Box, Toolbar, Typography, useMediaQuery } from "@mui/material";
 import { CONSTANTS } from "../../../config";
 import Header from "@/layout/Header";
 import Sidebar from "@/layout/Sidebar";
@@ -20,8 +20,10 @@ const Main = styled("main", {
   borderBottomLeftRadius: 0,
   position: "relative",
   borderBottomRightRadius: 0,
+
   width: `100%`,
   padding: "16px",
+  marginTop: "6rem",
   transition: theme.transitions.create(
     "margin",
     open
@@ -42,7 +44,7 @@ const Main = styled("main", {
     paddingBottom: 20,
   },
   [theme.breakpoints.up("xl")]: {
-    marginLeft: open ? 110 : -(CONSTANTS.drawerWidth - 180),
+    marginLeft: open ? 125 : -(CONSTANTS.drawerWidth - 195),
     marginRight: "7.5rem",
   },
 }));
@@ -50,7 +52,6 @@ const Main = styled("main", {
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
-  const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
   const matchUpXl = useMediaQuery(theme.breakpoints.up("xl"));
 
   const [scrolled, setScrolled] = useState(false);
@@ -97,8 +98,8 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             marginTop: "0.5rem",
             marginLeft: matchUpXl
               ? openDrawer
-                ? "20rem"
-                : "10rem"
+                ? "21rem"
+                : "11rem"
               : !matchDownMd
               ? openDrawer
                 ? "14.5rem"
@@ -112,7 +113,12 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         </Toolbar>
       </AppBar>
       <Main theme={theme} open={openDrawer}>
-        {children}
+        <div style={{ minHeight: "82vh" }}>{children}</div>
+        <Box display="flex" justifyContent="center" alignItems="center">
+          <Typography>
+            &#169;&nbsp;{new Date().getFullYear()}&nbsp;{CONSTANTS.siteName}
+          </Typography>
+        </Box>
       </Main>
     </div>
   );

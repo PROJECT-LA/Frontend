@@ -18,16 +18,16 @@ export enum OrdenEnum {
 }
 
 export interface CriterioOrdenType {
-  campo: string;
-  nombre: string;
-  orden?: OrdenEnum;
-  ordenar?: boolean;
+  field: string;
+  name: string;
+  order?: OrdenEnum;
+  sort?: boolean;
 }
 
 export const ordenFiltrado = (ordenCriterios: Array<CriterioOrdenType>) =>
   ordenCriterios
-    .filter((value) => value.orden)
-    .map((value) => (value.orden == "asc" ? value.campo : `-${value.campo}`));
+    .filter((value) => value.order)
+    .map((value) => (value.order == "asc" ? value.field : `-${value.field}`));
 
 export const ToggleOrden = (
   ordenAnterior: OrdenEnum | undefined

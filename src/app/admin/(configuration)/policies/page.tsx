@@ -10,7 +10,7 @@ import { Button, Chip, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { CriterioOrdenType } from "@/types/ordenTypes";
 import { IconoTooltip } from "@/components/buttons/IconoTooltip";
 import { imprimir } from "@/utils/imprimir";
-import { BotonBuscar } from "@/components/buttons/BotonBuscar";
+import { BotonBuscar } from "@/components/buttons/SearchButton";
 import { BotonOrdenar } from "@/components/buttons/BotonOrdenar";
 import { IconoBoton } from "@/components/buttons/IconoBoton";
 import { Constantes } from "@/config";
