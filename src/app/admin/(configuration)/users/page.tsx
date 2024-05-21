@@ -16,6 +16,11 @@ const UsersPage = async ({
     order?: "ASC" | "DESC";
   };
 }) => {
+  console.log(searchParams?.limit);
+  console.log(searchParams?.order);
+  console.log(searchParams?.queryUser);
+  console.log(searchParams?.page);
+
   const permissions = await getFrontendPermissions("/admin/users");
   return (
     permissions && (

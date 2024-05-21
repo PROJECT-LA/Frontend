@@ -17,7 +17,7 @@ const MainCard = ({ children }: { children: React.ReactNode }) => {
         backgroundColor: !themeMode
           ? theme.palette.background.paper
           : "transparent !important",
-        padding: !matchDownMd ? "2rem" : "1rem",
+        padding: !matchDownMd ? "2.5rem" : "1rem",
       }}
     >
       {children}

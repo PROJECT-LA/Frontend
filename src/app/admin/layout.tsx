@@ -20,6 +20,8 @@ const Main = styled("main", {
   borderBottomLeftRadius: 0,
   position: "relative",
   borderBottomRightRadius: 0,
+  width: `100%`,
+  padding: "16px",
   transition: theme.transitions.create(
     "margin",
     open
@@ -33,21 +35,24 @@ const Main = styled("main", {
         }
   ),
   [theme.breakpoints.up("md")]: {
-    marginTop: 120,
-    marginLeft: open ? 40 : -(CONSTANTS.drawerWidth - 120),
+    marginTop: 90,
+    marginLeft: open ? 20 : -(CONSTANTS.drawerWidth - 110),
     width: "92%",
-    marginRight: "2rem",
+    marginRight: "0.7rem",
     paddingBottom: 20,
   },
-  [theme.breakpoints.down("md")]: {
-    width: `100%`,
-    padding: "16px",
+  [theme.breakpoints.up("xl")]: {
+    marginLeft: open ? 110 : -(CONSTANTS.drawerWidth - 180),
+    marginRight: "7.5rem",
   },
 }));
 
 const MainLayout = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
+  const matchDownSm = useMediaQuery(theme.breakpoints.down("sm"));
+  const matchUpXl = useMediaQuery(theme.breakpoints.up("xl"));
+
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -89,12 +94,17 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           sx={{
             paddingY: scrolled ? 1 : 2,
             transition: "all .3s ease",
-            marginRight: !matchDownMd ? 1 : 0,
-            marginLeft: !matchDownMd
+            marginTop: "0.5rem",
+            marginLeft: matchUpXl
               ? openDrawer
-                ? `${CONSTANTS.drawerWidth + 5}px`
-                : `85px`
-              : 0,
+                ? "20rem"
+                : "10rem"
+              : !matchDownMd
+              ? openDrawer
+                ? "14.5rem"
+                : "5.5rem"
+              : "0rem",
+            marginRight: matchUpXl ? "7rem" : "0.5rem",
             borderColor: theme.palette.divider,
           }}
         >

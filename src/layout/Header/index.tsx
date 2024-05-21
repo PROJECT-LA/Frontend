@@ -30,7 +30,6 @@ const Header = ({
 }) => {
   const theme = useTheme();
   const { toggleDrawer } = useGlobalStore();
-  const pathname = usePathname();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
@@ -73,7 +72,8 @@ const Header = ({
             }}
             variant="outlined"
           >
-            <Typography>Búsqueda rápida</Typography>
+            <Typography>Buscar</Typography>
+            <Box width={20} />
           </Button>
         </Hidden>
 
