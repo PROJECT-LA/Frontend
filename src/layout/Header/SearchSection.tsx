@@ -141,7 +141,13 @@ const SearchSection = () => {
   }, []);
 
   return (
-    <div ref={containerRef} style={{ position: "relative", width: "250px" }}>
+    <div
+      ref={containerRef}
+      style={{
+        position: "relative",
+        width: theme.breakpoints.down("lg") ? "150px" : "250px",
+      }}
+    >
       <TextField
         sx={{
           "& .MuiInputBase-input::placeholder": {
