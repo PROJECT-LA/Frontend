@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Item {
   id: string;
   title?: string;
@@ -5,7 +7,7 @@ export interface Item {
   caption?: string;
   url?: string;
   children?: Array<Item>;
-  icon?: any;
+  icon?: ReactNode;
   breadcrumbs?: boolean;
   external?: boolean;
   target?: boolean | string;

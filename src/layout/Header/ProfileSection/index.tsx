@@ -106,8 +106,8 @@ const ProfileSection = () => {
     <>
       <AlertDialog
         isOpen={mostrarAlertaCerrarSesion}
-        titulo={"Alerta"}
-        texto={`¿Está seguro de cerrar sesión?`}
+        title={"Alerta"}
+        text={`¿Está seguro de cerrar sesión?`}
       >
         <Button
           onClick={() => {

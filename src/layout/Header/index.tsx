@@ -19,6 +19,7 @@ import { Menu, Search } from "lucide-react";
 import { ThemeToggler } from "@/components/buttons";
 import { usePathname } from "next/navigation";
 import { useGlobalStore } from "@/store";
+import SearchSection from "./SearchSection";
 
 const Header = ({
   handleLeftDrawerToggle,
@@ -56,7 +57,9 @@ const Header = ({
 
       <Stack spacing={!matchDownMd ? 2 : 1} direction="row" alignItems="center">
         <Hidden mdDown={true}>
-          <Button
+          <SearchSection />
+
+          {/* <Button
             endIcon={<Search />}
             sx={{
               paddingBottom: 1,
@@ -73,7 +76,7 @@ const Header = ({
           >
             <Typography>Buscar</Typography>
             <Box width={20} />
-          </Button>
+          </Button> */}
         </Hidden>
 
         <NotificationSection />
