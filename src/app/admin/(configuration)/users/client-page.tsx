@@ -6,19 +6,22 @@ import { delay, MessagesInterpreter, print, titleCase } from "@/utils";
 import { RolType, UserRolCRUDType } from "./types";
 import { useSession } from "@/hooks/useSession";
 import { Button, Chip, Grid, useMediaQuery, useTheme } from "@mui/material";
-import { ordenFiltrado, CriterioOrdenType } from "@/types";
-import CustomMensajeEstado from "@/components/estados/CustomMensajeEstado";
-import { IconoTooltip } from "@/components/buttons/IconoTooltip";
-import { SortButton, SearchButton } from "@/components/buttons";
-import { IconoBoton } from "@/components/buttons/IconoBoton";
-import { AlertDialog } from "@/components/modales/AlertDialog";
-import { CustomDialog } from "@/components/modales/CustomDialog";
+import { sortFilter, SortTypeCriteria } from "@/types";
+import { CustomMessageState } from "@/components/states";
+import {
+  SortButton,
+  SearchButton,
+  OwnIconButton,
+  IconTooltip,
+} from "@/components/buttons";
+import { AlertDialog, CustomDialog } from "@/components/modals";
 import { UsersFilter } from "./ui/UserFilter";
 import { UsersModalView } from "./ui/UsersModal";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
-import { Paginacion } from "@/components/datatable/Paginacion";
+import { Pagination } from "@/components/datatable";
 import { toast } from "sonner";
 import {
+  CirclePlus,
   KeyRound,
   Mails,
   Pencil,
@@ -60,7 +63,7 @@ export default function UsersClientPage({
 
   const { sessionRequest } = useSession();
 
-  const [orderCriteria, setOrderCriteria] = useState<Array<CriterioOrdenType>>([
+  const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
     { field: "names", name: "Nombres", sort: true },
     { field: "lastNames", name: "Apellidos", sort: true },
     { field: "email", name: "Correo electrónico", sort: true },
@@ -103,9 +106,9 @@ export default function UsersClientPage({
         component={"div"}
         key={`${userData.id}-${indexUsuario}-estado`}
       >
-        <CustomMensajeEstado
-          titulo={userData.status}
-          descripcion={userData.status}
+        <CustomMessageState
+          title={userData.status}
+          description={userData.status}
           color={
             userData.status == "ACTIVO"
               ? "success"
@@ -117,15 +120,15 @@ export default function UsersClientPage({
       </Typography>,
       <Grid key={`${userData.id}-${indexUsuario}-acciones`}>
         {permissions.update && (
-          <IconoTooltip
+          <IconTooltip
             id={`editarEstadoUsuario-${userData.id}`}
-            titulo={userData.status == "ACTIVO" ? "Inactivar" : "Activar"}
+            title={userData.status == "ACTIVO" ? "Inactivar" : "Activar"}
             color={userData.status == "ACTIVO" ? "success" : "error"}
-            accion={async () => {
+            action={async () => {
               await editUserModalState(userData);
             }}
-            desactivado={userData.status == "PENDIENTE"}
-            icono={
+            deactivate={userData.status == "PENDIENTE"}
+            icon={
               userData.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />
             }
             name={
@@ -137,52 +140,52 @@ export default function UsersClientPage({
         )}
 
         {(userData.status == "ACTIVO" || userData.status == "INACTIVO") && (
-          <IconoTooltip
+          <IconTooltip
             id={`restablecerContrasena-${userData.id}`}
-            titulo="Restablecer contraseña"
+            title="Restablecer contraseña"
             color={"info"}
-            accion={async () => {
+            action={async () => {
               await restoreUserModalPassword(userData);
             }}
-            icono={<KeyRound />}
+            icon={<KeyRound />}
             name={"Restablecer contraseña"}
           />
         )}
         {userData.status == "PENDIENTE" && (
-          <IconoTooltip
+          <IconTooltip
             id={`reenviarCorreoActivacion-${userData.id}`}
-            titulo={"Reenviar correo de activación"}
+            title={"Reenviar correo de activación"}
             color={"info"}
-            accion={async () => {
+            action={async () => {
               await reenvioCorreoModal(userData);
             }}
-            icono={<Mails />}
+            icon={<Mails />}
             name={"Reenviar correo de activación"}
           />
         )}
         {permissions.update && (
-          <IconoTooltip
+          <IconTooltip
             id={`editarUsusario-${userData.id}`}
-            titulo={"Editar"}
+            title={"Editar"}
             color={"primary"}
-            accion={() => {
+            action={() => {
               print(`Editaremos`, userData);
               editUserModal(userData);
             }}
-            icono={<Pencil />}
+            icon={<Pencil />}
             name={"Editar usuario"}
           />
         )}
         {permissions.delete && (
-          <IconoTooltip
+          <IconTooltip
             id={`eliminarUsuario-${userData.id}`}
-            titulo={"Eliminar"}
+            title={"Eliminar"}
             color={"secondary"}
-            accion={() => {
+            action={() => {
               print(`Eliminaremos`, userData);
               deleteAccount(userData);
             }}
-            icono={<Trash />}
+            icon={<Trash />}
             name={"Eliminar cuenta"}
           />
         )}
@@ -206,25 +209,25 @@ export default function UsersClientPage({
         cambioCriterios={setOrderCriteria}
       />
     ),
-    <IconoTooltip
+    <IconTooltip
       id={"actualizarUsuario"}
-      titulo={"Actualizar"}
+      title={"Actualizar"}
       key={`actualizarUsuario`}
-      accion={async () => {
+      action={async () => {
         await getUsers();
       }}
-      icono={<RefreshCcw />}
+      icon={<RefreshCcw />}
       name={"Actualizar lista de usuario"}
     />,
     permissions.create && (
-      <IconoBoton
+      <OwnIconButton
         id={"agregarUsuario"}
         key={"agregarUsuario"}
-        texto={"Agregar"}
-        variante={xs ? "icono" : "boton"}
-        icono={"add_circle_outline"}
-        descripcion={"Agregar usuario"}
-        accion={() => {
+        text={"Agregar"}
+        alter={xs ? "icono" : "boton"}
+        icon={<CirclePlus />}
+        description={"Agregar usuario"}
+        action={() => {
           addUserModal();
         }}
       />
@@ -240,10 +243,10 @@ export default function UsersClientPage({
           page,
           limit,
           ...(userFilter.length == 0 ? {} : { filter: userFilter }),
-          ...(ordenFiltrado(orderCriteria).length == 0
+          ...(sortFilter(orderCriteria).length == 0
             ? {}
             : {
-                orderRaw: ordenFiltrado(orderCriteria).join(","),
+                orderRaw: sortFilter(orderCriteria).join(","),
               }),
         },
       });
@@ -451,8 +454,8 @@ export default function UsersClientPage({
     <>
       <AlertDialog
         isOpen={showAlertUserState}
-        titulo={"Alerta"}
-        texto={`¿Está seguro de ${
+        title={"Alerta"}
+        text={`¿Está seguro de ${
           userEdition?.status == "ACTIVO" ? "inactivar" : "activar"
         } a ${titleCase(userEdition?.names ?? "")} ?`}
       >
@@ -461,8 +464,8 @@ export default function UsersClientPage({
       </AlertDialog>
       <AlertDialog
         isOpen={showAlertRestoreUser}
-        titulo={"Alerta"}
-        texto={`¿Está seguro de restablecer la contraseña de
+        title={"Alerta"}
+        text={`¿Está seguro de restablecer la contraseña de
          ${titleCase(userEdition?.names ?? "")} ?`}
       >
         <Button onClick={cancelAlertUserRestore}>Cancelar</Button>
@@ -470,8 +473,8 @@ export default function UsersClientPage({
       </AlertDialog>
       <AlertDialog
         isOpen={showAlertEmailResend}
-        titulo={"Alerta"}
-        texto={`¿Está seguro de reenviar el correo de activación de
+        title={"Alerta"}
+        text={`¿Está seguro de reenviar el correo de activación de
          ${titleCase(userEdition?.names ?? "")} ?`}
       >
         <Button onClick={cancelAlertResendEmail}>Cancelar</Button>
@@ -517,12 +520,12 @@ export default function UsersClientPage({
           )
         }
         paginacion={
-          <Paginacion
-            pagina={page}
-            limite={limit}
+          <Pagination
+            page={page}
+            limit={limit}
             total={total}
-            cambioPagina={setPage}
-            cambioLimite={setLimit}
+            changePage={setPage}
+            changeLimit={setLimit}
           />
         }
       />

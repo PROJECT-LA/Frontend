@@ -13,16 +13,16 @@ import { CONSTANTS } from "../../../config";
 
 interface Props {
   isOpen: boolean;
-  titulo: string;
-  texto: string;
+  title: string;
+  text: string;
   disablePortal?: PortalProps["disablePortal"];
   disableScrollLock?: boolean;
 }
 
 export const AlertDialog: FC<PropsWithChildren<Props>> = ({
   isOpen,
-  titulo,
-  texto,
+  title,
+  text,
   children,
   disablePortal,
   disableScrollLock,
@@ -38,11 +38,11 @@ export const AlertDialog: FC<PropsWithChildren<Props>> = ({
       disableScrollLock={disableScrollLock}
     >
       <DialogTitle sx={{ m: 1, p: 2 }} variant="h4">
-        {titulo}
+        {title}
       </DialogTitle>
       <DialogContent>
         <DialogContentText>
-          <Typography component={"span"}>{texto}</Typography>
+          <Typography component={"span"}>{text}</Typography>
         </DialogContentText>
       </DialogContent>
       <DialogActions>{children}</DialogActions>

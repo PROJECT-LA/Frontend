@@ -28,7 +28,7 @@ import { Icono } from "@/components/Icono";
 import { delay } from "@/utils";
 import { useRouter } from "next/navigation";
 import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
-import { AlertDialog } from "@/components/modales/AlertDialog";
+import { AlertDialog } from "@/components/modals/AlertDialog";
 import { useSession } from "@/hooks/useSession";
 
 const ProfileSection = () => {

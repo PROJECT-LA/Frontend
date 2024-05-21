@@ -4,9 +4,9 @@ import Box from "@mui/material/Box";
 import { alpha } from "@mui/material/styles";
 import { useThemeContext } from "@/theme";
 
-export interface MensajeEstadoProps {
-  titulo?: string;
-  descripcion?: string;
+export interface MessageStateProps {
+  title?: string;
+  description?: string;
   fontSize?: number;
   letterSpacing?: number;
   color?:
@@ -18,18 +18,18 @@ export interface MensajeEstadoProps {
     | "info"
     | "warning";
 
-  opacidadFondo?: number;
+  backgroundOpacity?: number;
   customColor?: string;
 }
 
-const CustomMensajeEstado = ({
+export const CustomMessageState = ({
   color = "error",
-  titulo = "",
-  descripcion = "",
+  title = "",
+  description = "",
   fontSize = 12,
   letterSpacing = 0,
-  opacidadFondo = 1,
-}: MensajeEstadoProps) => {
+  backgroundOpacity = 1,
+}: MessageStateProps) => {
   const coloresFondoClaro = {
     primary: "#cce1df",
     secondary: "#dbe0df",
@@ -71,12 +71,12 @@ const CustomMensajeEstado = ({
   const { themeMode } = useThemeContext();
 
   return (
-    <Tooltip title={descripcion}>
+    <Tooltip title={description}>
       <Box
         sx={{
           bgcolor: themeMode
-            ? alpha(coloresFondoOscuro[color], opacidadFondo)
-            : alpha(coloresFondoClaro[color], opacidadFondo),
+            ? alpha(coloresFondoOscuro[color], backgroundOpacity)
+            : alpha(coloresFondoClaro[color], backgroundOpacity),
           textAlign: "center",
           borderRadius: 2,
           pt: 0.1,
@@ -104,11 +104,9 @@ const CustomMensajeEstado = ({
             letterSpacing: letterSpacing,
           }}
         >
-          {titulo}
+          {title}
         </Box>
       </Box>
     </Tooltip>
   );
 };
-
-export default CustomMensajeEstado;

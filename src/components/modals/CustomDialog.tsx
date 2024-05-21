@@ -9,28 +9,28 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@mui/material'
-import { BaseSyntheticEvent, FC, PropsWithChildren } from 'react'
+} from "@mui/material";
+import { BaseSyntheticEvent, FC, PropsWithChildren } from "react";
 
-import { TransitionSlide, TransitionZoom } from '../Animations'
+import { TransitionSlide, TransitionZoom } from "../Animations";
 
-import { PortalProps } from '@mui/base/Portal'
-import { Icono } from '@/components/Icono'
-import { CircleX } from 'lucide-react'
+import { PortalProps } from "@mui/base/Portal";
+import { Icono } from "@/components/Icono";
+import { CircleX } from "lucide-react";
 
 interface Props {
-  isOpen: boolean
-  handleClose: () => void
-  title?: string
-  fullScreen?: boolean
-  maxWidth?: Breakpoint | undefined
-  paperProps?: Partial<PaperProps>
-  disableBackdropClick?: boolean
-  disableEscapeKeyDown?: boolean
-  scroll?: 'body' | 'paper'
-  noTitle?: boolean
-  disablePortal?: PortalProps['disablePortal']
-  disableScrollLock?: boolean
+  isOpen: boolean;
+  handleClose: () => void;
+  title?: string;
+  fullScreen?: boolean;
+  maxWidth?: Breakpoint | undefined;
+  paperProps?: Partial<PaperProps>;
+  disableBackdropClick?: boolean;
+  disableEscapeKeyDown?: boolean;
+  scroll?: "body" | "paper";
+  noTitle?: boolean;
+  disablePortal?: PortalProps["disablePortal"];
+  disableScrollLock?: boolean;
 }
 
 export const CustomDialog: FC<PropsWithChildren<Props>> = ({
@@ -43,23 +43,23 @@ export const CustomDialog: FC<PropsWithChildren<Props>> = ({
   paperProps,
   disableBackdropClick = false,
   disableEscapeKeyDown = false,
-  scroll = 'body',
+  scroll = "body",
   noTitle = false,
   disablePortal,
   disableScrollLock,
 }) => {
-  const theme = useTheme()
-  let dsm = useMediaQuery(theme.breakpoints.down('sm'))
+  const theme = useTheme();
+  let dsm = useMediaQuery(theme.breakpoints.down("sm"));
 
   const cerrarDialog = (event: BaseSyntheticEvent, reason: string) => {
-    if (disableBackdropClick && reason === 'backdropClick') {
-      return false
+    if (disableBackdropClick && reason === "backdropClick") {
+      return false;
     }
-    if (disableEscapeKeyDown && reason === 'escapeKeyDown') {
-      return false
+    if (disableEscapeKeyDown && reason === "escapeKeyDown") {
+      return false;
     }
-    handleClose()
-  }
+    handleClose();
+  };
   return (
     <Dialog
       PaperProps={paperProps}
@@ -84,14 +84,16 @@ export const CustomDialog: FC<PropsWithChildren<Props>> = ({
             alignItems="center"
           >
             {title ? (
-              <Typography sx={{ fontWeight: 'medium', fontSize: 18 }}>
+              <Typography sx={{ fontWeight: "medium", fontSize: 18 }}>
                 {title}
               </Typography>
             ) : (
               <Box />
             )}
-            <IconButton onClick={handleClose} color={'primary'}>
-              <Icono color={'primary'}><CircleX/></Icono>
+            <IconButton onClick={handleClose} color={"primary"}>
+              <Icono color={"primary"}>
+                <CircleX />
+              </Icono>
             </IconButton>
           </Grid>
         </DialogTitle>
@@ -99,5 +101,5 @@ export const CustomDialog: FC<PropsWithChildren<Props>> = ({
 
       {children}
     </Dialog>
-  )
-}
+  );
+};

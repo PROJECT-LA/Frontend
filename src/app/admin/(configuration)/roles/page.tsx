@@ -2,11 +2,11 @@
 import { BotonBuscar } from "@/components/buttons/SearchButton";
 import { BotonOrdenar } from "@/components/buttons/BotonOrdenar";
 import { IconoBoton } from "@/components/buttons/IconoBoton";
-import { IconoTooltip } from "@/components/buttons/IconoTooltip";
+import { IconoTooltip } from "@/components/buttons/IconTooltip";
 import { Paginacion } from "@/components/datatable/Paginacion";
-import CustomMensajeEstado from "@/components/estados/CustomMensajeEstado";
-import { AlertDialog } from "@/components/modales/AlertDialog";
-import { CustomDialog } from "@/components/modales/CustomDialog";
+import CustomMensajeEstado from "@/components/states/CustomMensajeEstado";
+import { AlertDialog } from "@/components/modals/AlertDialog";
+import { CustomDialog } from "@/components/modals/CustomDialog";
 import { Constantes } from "@/config";
 import { useSession } from "@/hooks/useSession";
 import { CriterioOrdenType } from "@/types/ordenTypes";

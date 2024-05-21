@@ -7,18 +7,18 @@ import {
   SelectChangeEvent,
   Typography,
 } from "@mui/material";
-import { IconoTooltip } from "../buttons/IconoTooltip";
+import { IconTooltip } from "../buttons/IconTooltip";
 import { FC } from "react";
 import { print } from "@/utils";
 import { styled } from "@mui/material/styles";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Props {
-  pagina: number;
-  limite: number;
+  page: number;
+  limit: number;
   total: number;
-  cambioPagina: (nuevaPagina: number) => void;
-  cambioLimite: (nuevoLimite: number) => void;
+  changePage: (newPage: number) => void;
+  changeLimit: (newLimit: number) => void;
 }
 
 const BootstrapInput = styled(InputBase)(({ theme }) => ({
@@ -32,7 +32,6 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
     fontSize: 16,
     padding: "5px 26px 5px 12px",
     transition: theme.transitions.create(["border-color", "box-shadow"]),
-    // Use the system font instead of the default Roboto font.
     fontFamily: [
       "-apple-system",
       "BlinkMacSystemFont",
@@ -52,17 +51,17 @@ const BootstrapInput = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-export const Paginacion: FC<Props> = ({
-  pagina,
-  limite,
+export const Pagination: FC<Props> = ({
+  page,
+  limit,
   total,
-  cambioPagina,
-  cambioLimite,
+  changePage,
+  changeLimit,
 }) => {
   const handleChange = (event: SelectChangeEvent) => {
-    print(`cambio limite: ${event.target.value}`);
-    cambioPagina(1);
-    cambioLimite(Number(event.target.value));
+    print(`cambio limit: ${event.target.value}`);
+    changePage(1);
+    changeLimit(Number(event.target.value));
   };
 
   return (
@@ -86,8 +85,8 @@ export const Paginacion: FC<Props> = ({
             Filas por página
           </Typography>
           <Select
-            id="selector-limite"
-            value={`${limite}`}
+            id="selector-limit"
+            value={`${limit}`}
             onChange={handleChange}
             input={<BootstrapInput />}
           >
@@ -109,30 +108,30 @@ export const Paginacion: FC<Props> = ({
           }}
         >
           <Typography color={"text.secondary"} variant={"body2"}>
-            {`${Math.max((pagina - 1) * limite, 1)}-${Math.min(
-              pagina * limite,
+            {`${Math.max((page - 1) * limit, 1)}-${Math.min(
+              page * limit,
               total
             )} de ${total}`}
           </Typography>
-          <IconoTooltip
+          <IconTooltip
             id={"anteriorPagina"}
             name={"Anterior página"}
-            desactivado={pagina == 1}
-            titulo={"Anterior página"}
-            accion={() => {
-              cambioPagina(pagina - 1);
+            deactivate={page == 1}
+            title={"Anterior página"}
+            action={() => {
+              changePage(page - 1);
             }}
-            icono={<ChevronLeft />}
+            icon={<ChevronLeft />}
           />
-          <IconoTooltip
+          <IconTooltip
             id={"siguientePagina"}
             name={"Siguiente página"}
-            desactivado={pagina * limite >= total}
-            titulo={"Siguiente página"}
-            accion={() => {
-              cambioPagina(pagina + 1);
+            deactivate={page * limit >= total}
+            title={"Siguiente página"}
+            action={() => {
+              changePage(page + 1);
             }}
-            icono={<ChevronRight />}
+            icon={<ChevronRight />}
           />
         </Box>
       </Grid>

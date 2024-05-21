@@ -11,33 +11,32 @@ export interface Item {
   target?: boolean | string;
 }
 
-/* Para las tablas */
-export enum OrdenEnum {
+export enum SortEnum {
   ASC = "asc",
   DESC = "desc",
 }
 
-export interface CriterioOrdenType {
+export interface SortTypeCriteria {
   field: string;
   name: string;
-  order?: OrdenEnum;
+  order?: SortEnum;
   sort?: boolean;
 }
 
-export const ordenFiltrado = (ordenCriterios: Array<CriterioOrdenType>) =>
-  ordenCriterios
+export const sortFilter = (sortCriteria: Array<SortTypeCriteria>) =>
+  sortCriteria
     .filter((value) => value.order)
     .map((value) => (value.order == "asc" ? value.field : `-${value.field}`));
 
 export const ToggleOrden = (
-  ordenAnterior: OrdenEnum | undefined
-): OrdenEnum | undefined => {
+  ordenAnterior: SortEnum | undefined
+): SortEnum | undefined => {
   switch (ordenAnterior) {
-    case OrdenEnum.DESC:
-      return OrdenEnum.ASC;
-    case OrdenEnum.ASC:
+    case SortEnum.DESC:
+      return SortEnum.ASC;
+    case SortEnum.ASC:
       return undefined;
     default:
-      return OrdenEnum.DESC;
+      return SortEnum.DESC;
   }
 };

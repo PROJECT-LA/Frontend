@@ -12,12 +12,11 @@ import {
 // project imports
 import ProfileSection from "./ProfileSection";
 import NotificationSection from "./NotificationSection";
-
+import { IconTooltip } from "@/components/buttons";
 // assets
 import { CONSTANTS } from "../../../config";
 import { Menu, Search } from "lucide-react";
 import { ThemeToggler } from "@/components/buttons";
-import { IconoTooltip } from "@/components/buttons/IconoTooltip";
 import { usePathname } from "next/navigation";
 import { useGlobalStore } from "@/store";
 
@@ -41,12 +40,12 @@ const Header = ({
           spacing={CONSTANTS.gridSpacing}
           alignItems="center"
         >
-          <IconoTooltip
-            accion={toggleDrawer}
-            titulo="Abrir menú"
+          <IconTooltip
+            action={toggleDrawer}
+            title="Abrir menú"
             name="menu"
             id="menu-hamburguesa"
-            icono={<Menu />}
+            icon={<Menu />}
           />
 
           <Typography variant="h5">ADMINISTRADOR</Typography>

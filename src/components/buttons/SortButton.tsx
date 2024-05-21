@@ -10,7 +10,8 @@ import {
 } from "@mui/material";
 import { Icono } from "@/components/Icono";
 import React, { ReactNode, useState } from "react";
-import { CriterioOrdenType, ToggleOrden } from "@/types";
+import { SortTypeCriteria, ToggleOrden } from "@/types";
+import { MoveDown, MoveUp } from "lucide-react";
 
 interface BotonOrdenarParams {
   desactivado?: false;
@@ -24,8 +25,8 @@ interface BotonOrdenarParams {
     | "info"
     | "success"
     | "warning";
-  cambioCriterios: (nuevosCriterios: Array<CriterioOrdenType>) => void;
-  criterios: Array<CriterioOrdenType>;
+  cambioCriterios: (nuevosCriterios: Array<SortTypeCriteria>) => void;
+  criterios: Array<SortTypeCriteria>;
   icono?: ReactNode;
   label: string;
   id: string;
@@ -85,7 +86,7 @@ export const SortButton = ({
             color="secondary"
             variant="dot"
             badgeContent={
-              criterios.filter((value) => value.ordenar && value.orden).length
+              criterios.filter((value) => value.sort && value.order).length
             }
           >
             <Icono color={desactivado ? "disabled" : color}>{icono}</Icono>
@@ -107,7 +108,7 @@ export const SortButton = ({
           autoFocus={false}
         >
           {criterios.map((accion, index) => {
-            return accion.ordenar ? (
+            return accion.sort ? (
               <MenuItem
                 sx={{ p: 2 }}
                 id={`${index}-id-orden`}
@@ -122,21 +123,21 @@ export const SortButton = ({
                       ...{
                         orden:
                           index == indice
-                            ? ToggleOrden(value.orden)
+                            ? ToggleOrden(value.order)
                             : undefined,
                       },
                     }))
                   );
                 }}
               >
-                {accion.orden && (
+                {accion.order && (
                   <Icono color={"primary"} fontSize={"small"}>
-                    {accion.orden == "asc" ? "north" : "south"}
+                    {accion.order == "asc" ? <MoveUp /> : <MoveDown />}
                   </Icono>
                 )}
-                {!accion.orden && <Box width={"20px"} />}
+                {!accion.order && <Box width={"20px"} />}
                 <Box width={"15px"} />
-                <Typography variant={"body2"}>{accion.nombre}</Typography>
+                <Typography variant={"body2"}>{accion.name}</Typography>
               </MenuItem>
             ) : undefined;
           })}
