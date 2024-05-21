@@ -2,7 +2,7 @@
 import Typography from "@mui/material/Typography";
 import { CONSTANTS } from "../../../../../config";
 import React, { ReactNode, useEffect, useState } from "react";
-import { delay, InterpreteMensajes, print, titleCase } from "@/utils";
+import { delay, MessagesInterpreter, print, titleCase } from "@/utils";
 import { RolType, UserRolCRUDType } from "./types";
 import { useSession } from "@/hooks/useSession";
 import { Button, Chip, Grid, useMediaQuery, useTheme } from "@mui/material";
@@ -13,8 +13,8 @@ import { SortButton, SearchButton } from "@/components/buttons";
 import { IconoBoton } from "@/components/buttons/IconoBoton";
 import { AlertDialog } from "@/components/modales/AlertDialog";
 import { CustomDialog } from "@/components/modales/CustomDialog";
-import { FiltroUsuarios } from "./ui/FiltroUsuarios";
-import { VistaModalUsuario } from "./ui/ModalUsuarios";
+import { UsersFilter } from "./ui/UserFilter";
+import { UsersModalView } from "./ui/UsersModal";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
 import { Paginacion } from "@/components/datatable/Paginacion";
 import { toast } from "sonner";
@@ -255,7 +255,7 @@ export default function UsersClientPage({
     } catch (e) {
       print(`Error al obtener usuarios`, e);
       setErrorData(e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoading(false);
     }
@@ -272,7 +272,7 @@ export default function UsersClientPage({
     } catch (e) {
       print(`Error al obtener roles`, e);
       setErrorData(e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      toast.error("Error", { description: MessagesInterpreter(e) });
       throw e;
     } finally {
       setLoading(false);
@@ -289,11 +289,11 @@ export default function UsersClientPage({
         type: "patch",
       });
       print(`respuesta inactivar usuario: ${res}`);
-      toast.success("Éxito", { description: InterpreteMensajes(res) });
+      toast.success("Éxito", { description: MessagesInterpreter(res) });
       await getUsers();
     } catch (e) {
       print(`Error al inactivar usuarios`, e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoading(false);
     }
@@ -307,11 +307,11 @@ export default function UsersClientPage({
         type: "patch",
       });
       print(`respuesta restablecer usuario: ${respuesta}`);
-      toast.success("Éxito", { description: InterpreteMensajes(respuesta) });
+      toast.success("Éxito", { description: MessagesInterpreter(respuesta) });
       await getUsers();
     } catch (e) {
       print(`Error al restablecer usuario`, e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoading(false);
     }
@@ -325,11 +325,11 @@ export default function UsersClientPage({
         type: "delete",
       });
       print(`eliminar cuenta de usuario: ${respuesta}`);
-      toast.success("Éxito", { description: InterpreteMensajes(respuesta) });
+      toast.success("Éxito", { description: MessagesInterpreter(respuesta) });
       await getUsers();
     } catch (e) {
       print(`Error al reenvio correo usuario`, e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoading(false);
     }
@@ -343,11 +343,11 @@ export default function UsersClientPage({
         type: "patch",
       });
       print(`respuesta reenviar correo usuario: ${respuesta}`);
-      toast.success("Éxito", { description: InterpreteMensajes(respuesta) });
+      toast.success("Éxito", { description: MessagesInterpreter(respuesta) });
       await getUsers();
     } catch (e) {
       print(`Error al reenvio correo usuario`, e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoading(false);
     }
@@ -488,14 +488,14 @@ export default function UsersClientPage({
         handleClose={closeUserModal}
         title={userEdition ? "Editar usuario" : "Nuevo usuario"}
       >
-        <VistaModalUsuario
-          usuario={userEdition}
+        <UsersModalView
+          user={userEdition}
           roles={rolesData}
-          accionCorrecta={() => {
+          correctAction={() => {
             closeUserModal().finally();
             getUsers().finally();
           }}
-          accionCancelar={closeUserModal}
+          cancelAction={closeUserModal}
         />
       </CustomDialog>
 
@@ -509,17 +509,17 @@ export default function UsersClientPage({
         contenidoTabla={contentTable}
         filtros={
           showUsersFilter && (
-            <FiltroUsuarios
-              rolesDisponibles={rolesData}
-              filtroRoles={filtroRoles}
-              filtroUsuario={filtroUsuario}
-              accionCorrecta={(filtros) => {
+            <UsersFilter
+              availableRoles={rolesData}
+              rolesFilter={filtroRoles}
+              usersFilter={filtroUsuario}
+              correctAction={(filtros) => {
                 setPage(1);
                 setLimit(10);
                 setFiltroRoles(filtros.roles);
-                setFiltroUsuario(filtros.usuario);
+                setFiltroUsuario(filtros.user);
               }}
-              accionCerrar={() => {}}
+              closeAction={() => {}}
             />
           )
         }

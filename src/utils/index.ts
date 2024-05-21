@@ -2,7 +2,7 @@ export { print } from "./print";
 export { saveCookie, deleteCookie, readCookie } from "./cookies";
 export {
   delay,
-  InterpreteMensajes,
+  MessagesInterpreter,
   encodeBase64,
   decodeBase64,
   serializeError,

@@ -1,9 +1,9 @@
-/// Vista modal de usuario
+/// Vista modal de user
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { CrearEditarUsuarioType, RolType, UsuarioRolCRUDType } from "../types";
+import { CRUserType, RolType, UserRolCRUDType } from "../types";
 import { useSession } from "@/hooks/useSession";
-import { delay, InterpreteMensajes, print } from "@/utils";
+import { delay, MessagesInterpreter, print } from "@/utils";
 import { CONSTANTS } from "../../../../../../config";
 import { FormInputDropdownMultiple } from "@/components/forms/FormDropdownMultiple";
 import { FormInputText } from "@/components/forms";
@@ -19,71 +19,66 @@ import {
 import { LinealLoader } from "@/components/loaders";
 import { toast } from "sonner";
 
-export interface ModalUsuarioType {
-  usuario?: UsuarioRolCRUDType | undefined | null;
+export interface ModalUserType {
+  user?: UserRolCRUDType | undefined | null;
   roles: RolType[];
-  accionCorrecta: () => void;
-  accionCancelar: () => void;
+  correctAction: () => void;
+  cancelAction: () => void;
 }
 
-export const VistaModalUsuario = ({
-  usuario,
+export const UsersModalView = ({
+  user,
   roles,
-  accionCorrecta,
-  accionCancelar,
-}: ModalUsuarioType) => {
-  // Flag que índica que hay un proceso en ventana modal cargando visualmente
+  correctAction,
+  cancelAction,
+}: ModalUserType) => {
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
-
-  // Proveedor de la sesión
   const { sessionRequest } = useSession();
 
-  const { handleSubmit, control } = useForm<CrearEditarUsuarioType>({
+  const { handleSubmit, control } = useForm<CRUserType>({
     defaultValues: {
-      id: usuario?.id,
-      username: usuario?.username,
-      names: usuario?.names,
-      phone: usuario?.phone,
-      lastNames: usuario?.lastNames,
-      password: usuario?.password,
-      roles: usuario?.roles.map((rol) => rol.id),
-      status: usuario?.status,
-      email: usuario?.email,
+      id: user?.id,
+      username: user?.username,
+      names: user?.names,
+      phone: user?.phone,
+      lastNames: user?.lastNames,
+      password: user?.password,
+      roles: user?.roles.map((rol) => rol.id),
+      status: user?.status,
+      email: user?.email,
     },
   });
 
-  const guardarActualizarUsuario = async (data: CrearEditarUsuarioType) => {
-    await guardarActualizarUsuariosPeticion(data);
+  const saveUpdateUser = async (data: CRUserType) => {
+    await getSaveUpdateUser(data);
   };
 
-  const guardarActualizarUsuariosPeticion = async (
-    usuario: CrearEditarUsuarioType
-  ) => {
+  const getSaveUpdateUser = async (user: CRUserType) => {
     try {
-      print(usuario);
+      print(user);
 
       setLoadingModal(true);
       await delay(1000);
-      const respuesta = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/users${usuario.id ? `/${usuario.id}` : ""}`,
-        type: !!usuario.id ? "patch" : "post",
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/users${user.id ? `/${user.id}` : ""}`,
+        type: !!user.id ? "patch" : "post",
         body: {
-          ...usuario,
+          ...user,
         },
       });
-      toast.success("Éxito", { description: InterpreteMensajes(respuesta) });
+      toast.success("Éxito", { description: MessagesInterpreter(res) });
 
-      accionCorrecta();
+      correctAction();
     } catch (e) {
-      print(`Error al crear o actualizar usuario: `, e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      print(`Error al crear o actualizar user: `, e);
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoadingModal(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(guardarActualizarUsuario)}>
+    <form onSubmit={handleSubmit(saveUpdateUser)}>
       <DialogContent dividers>
         <Grid container direction={"column"} justifyContent="space-evenly">
           <Box height={"5px"} />
@@ -144,7 +139,7 @@ export const VistaModalUsuario = ({
               sx={{ fontWeight: "medium", textAlign: "center" }}
               variant="h5"
             >
-              Autorización del usuario
+              Autorización del user
             </Typography>
             <Box height={"10px"} />
             <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
@@ -167,17 +162,7 @@ export const VistaModalUsuario = ({
                   disabled={loadingModal}
                 />
               </Grid>
-              {/* </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <FormInputText
-                id={'email'}
-                control={control}
-                name="repassword"
-                type="re"
-                label="Verificar contraseña"
-                disabled={loadingModal}
-              />
-            </Grid> */}
+
               <Grid item xs={12} sm={12} md={12}>
                 <FormInputDropdownMultiple
                   id={"roles"}
@@ -214,7 +199,7 @@ export const VistaModalUsuario = ({
         <Button
           variant={"outlined"}
           disabled={loadingModal}
-          onClick={accionCancelar}
+          onClick={cancelAction}
         >
           Cancelar
         </Button>
