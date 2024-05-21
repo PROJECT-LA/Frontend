@@ -5,7 +5,14 @@ import React, { ReactNode, useEffect, useState } from "react";
 import { delay, MessagesInterpreter, print, titleCase } from "@/utils";
 import { RolType, UserRolCRUDType } from "./types";
 import { useSession } from "@/hooks/useSession";
-import { Button, Chip, Grid, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import { sortFilter, SortTypeCriteria } from "@/types";
 import { CustomMessageState } from "@/components/states";
 import {
@@ -118,78 +125,86 @@ export default function UsersClientPage({
           }
         />
       </Typography>,
-      <Grid key={`${userData.id}-${indexUsuario}-acciones`}>
-        {permissions.update && (
-          <IconTooltip
-            id={`editarEstadoUsuario-${userData.id}`}
-            title={userData.status == "ACTIVO" ? "Inactivar" : "Activar"}
-            color={userData.status == "ACTIVO" ? "success" : "error"}
-            action={async () => {
-              await editUserModalState(userData);
-            }}
-            deactivate={userData.status == "PENDIENTE"}
-            icon={
-              userData.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />
-            }
-            name={
-              userData.status == "ACTIVO"
-                ? "Inactivar Usuario"
-                : "Activar Usuario"
-            }
-          />
-        )}
+      <Box
+        key={`${userData.id}-${indexUsuario}-acciones`}
+        width="100%"
+        display="flex"
+        justifyContent="end"
+        alignItems="end"
+      >
+        <Grid>
+          {permissions.update && (
+            <IconTooltip
+              id={`editarEstadoUsuario-${userData.id}`}
+              title={userData.status == "ACTIVO" ? "Inactivar" : "Activar"}
+              color={userData.status == "ACTIVO" ? "success" : "error"}
+              action={async () => {
+                await editUserModalState(userData);
+              }}
+              deactivate={userData.status == "PENDIENTE"}
+              icon={
+                userData.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />
+              }
+              name={
+                userData.status == "ACTIVO"
+                  ? "Inactivar Usuario"
+                  : "Activar Usuario"
+              }
+            />
+          )}
 
-        {(userData.status == "ACTIVO" || userData.status == "INACTIVO") && (
-          <IconTooltip
-            id={`restablecerContrasena-${userData.id}`}
-            title="Restablecer contraseña"
-            color={"info"}
-            action={async () => {
-              await restoreUserModalPassword(userData);
-            }}
-            icon={<KeyRound />}
-            name={"Restablecer contraseña"}
-          />
-        )}
-        {userData.status == "PENDIENTE" && (
-          <IconTooltip
-            id={`reenviarCorreoActivacion-${userData.id}`}
-            title={"Reenviar correo de activación"}
-            color={"info"}
-            action={async () => {
-              await reenvioCorreoModal(userData);
-            }}
-            icon={<Mails />}
-            name={"Reenviar correo de activación"}
-          />
-        )}
-        {permissions.update && (
-          <IconTooltip
-            id={`editarUsusario-${userData.id}`}
-            title={"Editar"}
-            color={"primary"}
-            action={() => {
-              print(`Editaremos`, userData);
-              editUserModal(userData);
-            }}
-            icon={<Pencil />}
-            name={"Editar usuario"}
-          />
-        )}
-        {permissions.delete && (
-          <IconTooltip
-            id={`eliminarUsuario-${userData.id}`}
-            title={"Eliminar"}
-            color={"secondary"}
-            action={() => {
-              print(`Eliminaremos`, userData);
-              deleteAccount(userData);
-            }}
-            icon={<Trash />}
-            name={"Eliminar cuenta"}
-          />
-        )}
-      </Grid>,
+          {(userData.status == "ACTIVO" || userData.status == "INACTIVO") && (
+            <IconTooltip
+              id={`restablecerContrasena-${userData.id}`}
+              title="Restablecer contraseña"
+              color={"info"}
+              action={async () => {
+                await restoreUserModalPassword(userData);
+              }}
+              icon={<KeyRound />}
+              name={"Restablecer contraseña"}
+            />
+          )}
+          {userData.status == "PENDIENTE" && (
+            <IconTooltip
+              id={`reenviarCorreoActivacion-${userData.id}`}
+              title={"Reenviar correo de activación"}
+              color={"info"}
+              action={async () => {
+                await reenvioCorreoModal(userData);
+              }}
+              icon={<Mails />}
+              name={"Reenviar correo de activación"}
+            />
+          )}
+          {permissions.update && (
+            <IconTooltip
+              id={`editarUsusario-${userData.id}`}
+              title={"Editar"}
+              color={"primary"}
+              action={() => {
+                print(`Editaremos`, userData);
+                editUserModal(userData);
+              }}
+              icon={<Pencil />}
+              name={"Editar usuario"}
+            />
+          )}
+          {permissions.delete && (
+            <IconTooltip
+              id={`eliminarUsuario-${userData.id}`}
+              title={"Eliminar"}
+              color={"secondary"}
+              action={() => {
+                print(`Eliminaremos`, userData);
+                deleteAccount(userData);
+              }}
+              icon={<Trash />}
+              name={"Eliminar cuenta"}
+            />
+          )}
+        </Grid>
+      </Box>,
     ]
   );
 
@@ -499,13 +514,13 @@ export default function UsersClientPage({
 
       <CustomDataTable
         error={!!errorData}
-        cargando={loading}
-        titulo="Usuarios"
-        acciones={actions}
-        columnas={orderCriteria}
-        cambioOrdenCriterios={setOrderCriteria}
-        contenidoTabla={contentTable}
-        filtros={
+        loading={loading}
+        title="Usuarios"
+        actions={actions}
+        columns={orderCriteria}
+        changeOrderCriteria={setOrderCriteria}
+        tableContent={contentTable}
+        filters={
           showUsersFilter && (
             <UsersFilter
               availableRoles={rolesData}
@@ -519,7 +534,7 @@ export default function UsersClientPage({
             />
           )
         }
-        paginacion={
+        pagination={
           <Pagination
             page={page}
             limit={limit}

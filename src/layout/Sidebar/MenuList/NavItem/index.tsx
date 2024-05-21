@@ -28,12 +28,22 @@ interface ListItemProps {
   to?: string;
   target?: string;
 }
-const NavItem = ({ item, level }: { item: Item; level: any }) => {
+const NavItem = ({
+  item,
+  level,
+  isFromCollapse = false,
+}: {
+  item: Item;
+  level: any;
+  isFromCollapse?: boolean;
+}) => {
   const theme = useTheme();
 
   const { cerrarDrawer, openDrawer } = useGlobalStore();
   const pathname = usePathname();
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
+
+  const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
 
   // @ts-expect-error Error en el caption
   const SubMenuCaption = theme.typography.subMenuCaption;
@@ -88,7 +98,6 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       position: "absolute",
       top: 0,
       bottom: 0,
-
       height: "100%",
       zIndex: "-1",
       borderRadius: " 0 24px 24px 0",
@@ -96,7 +105,7 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
       width: "0",
     },
     "&:hover::before": {
-      width: "100%",
+      width: "90%",
       borderRadius: "1rem",
       transition: "all .3s ease",
       backgroundColor:
@@ -149,7 +158,7 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
             fontWeight: "600 !important",
           },
           "&:before": {
-            width: !openDrawer ? "75%" : "100%",
+            width: !openDrawer ? (matchDownMd ? "90%" : "75%") : "100%",
             borderRadius: "1rem",
             transition: "all .2s ease",
             backgroundColor:
@@ -181,10 +190,10 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
           minWidth: !item?.icon ? 18 : 36,
         }}
       >
-        {item.icon ? item.icon : <Home />}
+        {!isFromCollapse && item.icon && item.icon}
       </ListItemIcon>
 
-      {openDrawer && (
+      {(openDrawer || matchDownMd) && (
         <ListItemText
           primary={<Typography variant={"h6"}>{item.title}</Typography>}
           secondary={
@@ -201,7 +210,6 @@ const NavItem = ({ item, level }: { item: Item; level: any }) => {
           }
         />
       )}
-
       {/* 
         El numeral que aparece en la parte superior
       {item.chip && (

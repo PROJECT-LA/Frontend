@@ -19,59 +19,54 @@ import {
 } from "@mui/material";
 
 import { ListSkeleton, TableSkeletonBody } from "./CustomSkeleton";
-
 import { Icono } from "@/components/Icono";
-import { CriterioOrdenType, ToggleOrden } from "@/types";
+import { SortTypeCriteria, ToggleOrden } from "@/types";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { CONSTANTS } from "../../../config";
 
 export interface CustomDataTableType {
-  titulo?: string;
-  tituloPersonalizado?: ReactNode;
+  title?: string;
+  customTitle?: ReactNode;
   error?: boolean;
-  cargando?: boolean;
-  acciones?: Array<ReactNode>;
-  cambioOrdenCriterios?: (nuevosCriterios: Array<CriterioOrdenType>) => void;
-  columnas: Array<CriterioOrdenType>;
-  filtros?: ReactNode;
-  contenidoTabla: Array<Array<ReactNode>>;
-  paginacion?: ReactNode;
-  seleccionable?: boolean;
-  seleccionados?: (indices: Array<number>) => void;
+  loading?: boolean;
+  actions?: Array<ReactNode>;
+  changeOrderCriteria?: (nuevosCriterios: Array<SortTypeCriteria>) => void;
+  columns: Array<SortTypeCriteria>;
+  filters?: ReactNode;
+  tableContent: Array<Array<ReactNode>>;
+  pagination?: ReactNode;
+  isSelectable?: boolean;
+  selected?: (indices: Array<number>) => void;
 }
 
 export const CustomDataTable = ({
-  titulo,
-  tituloPersonalizado,
+  title,
+  customTitle,
   error = false,
-  cargando = false,
-  acciones = [],
-  columnas,
-  cambioOrdenCriterios,
-  filtros,
-  contenidoTabla,
-  paginacion,
-  seleccionable,
-  seleccionados,
+  loading = false,
+  actions = [],
+  columns,
+  changeOrderCriteria,
+  filters,
+  tableContent,
+  pagination,
+  isSelectable,
+  selected,
 }: CustomDataTableType) => {
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
-  const [todoSeleccionado, setTodoSeleccionado] = useState(false);
+  const [allSelected, setAllSelected] = useState(false);
 
-  const cambiarTodoSeleccionado = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setTodoSeleccionado(event.target.checked);
+  const changeAllSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAllSelected(event.target.checked);
   };
 
-  const [indicesSeleccionados, setIndicesSeleccionados] = useState<
-    Array<boolean>
-  >([]);
+  const [selectedIndices, setSelectedIndices] = useState<Array<boolean>>([]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const index = Number(event.target.name);
-    setIndicesSeleccionados((prev) => {
+    setSelectedIndices((prev) => {
       const newState = [...prev];
       newState[index] = event.target.checked;
       return newState;
@@ -80,47 +75,42 @@ export const CustomDataTable = ({
 
   useEffect(
     () => {
-      if (seleccionados) {
-        seleccionados(
-          indicesSeleccionados.reduce(
-            (resulltado: Array<number>, value, index) => {
-              if (value) {
-                resulltado.push(index);
-              }
-              return resulltado;
-            },
-            []
-          )
+      if (selected) {
+        selected(
+          selectedIndices.reduce((resulltado: Array<number>, value, index) => {
+            if (value) {
+              resulltado.push(index);
+            }
+            return resulltado;
+          }, [])
         );
       }
 
       if (
-        indicesSeleccionados.filter((value) => value).length ==
-        indicesSeleccionados.length
+        selectedIndices.filter((value) => value).length ==
+        selectedIndices.length
       )
-        setTodoSeleccionado(true);
+        setAllSelected(true);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(indicesSeleccionados)]
+    [JSON.stringify(selectedIndices)]
   );
 
   useEffect(
     () => {
-      setIndicesSeleccionados(
-        new Array(contenidoTabla.length).fill(todoSeleccionado)
-      );
+      setSelectedIndices(new Array(tableContent.length).fill(allSelected));
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [todoSeleccionado]
+    [allSelected]
   );
 
   useEffect(
     () => {
-      if (!cargando) {
-        setIndicesSeleccionados(new Array(contenidoTabla.length).fill(false));
-        setTodoSeleccionado(false);
+      if (!loading) {
+        setSelectedIndices(new Array(tableContent.length).fill(false));
+        setAllSelected(false);
       }
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [cargando, contenidoTabla.length]
+    [loading, tableContent.length]
   );
 
   return (
@@ -132,12 +122,12 @@ export const CustomDataTable = ({
         justifyContent="space-between"
         alignItems="center"
       >
-        {titulo ? (
+        {title ? (
           <Typography variant={"h4"} sx={{ fontWeight: "medium", pl: 1 }}>
-            {`${titulo}`}
+            {`${title}`}
           </Typography>
-        ) : tituloPersonalizado ? (
-          tituloPersonalizado
+        ) : customTitle ? (
+          customTitle
         ) : (
           <Box />
         )}
@@ -148,17 +138,17 @@ export const CustomDataTable = ({
             justifyContent="space-between"
             alignItems="center"
           >
-            {seleccionable &&
-              indicesSeleccionados.filter((value) => value).length > 0 && (
+            {isSelectable &&
+              selectedIndices.filter((value) => value).length > 0 && (
                 <Box sx={{ mx: 1 }}>
                   <Typography key={"contador"} variant={"subtitle2"}>
                     {`${
-                      indicesSeleccionados.filter((value) => value).length
+                      selectedIndices.filter((value) => value).length
                     } seleccionados`}
                   </Typography>
                 </Box>
               )}
-            {acciones.map((accion, index) => (
+            {actions.map((accion, index) => (
               <div key={`accion-id-${index}`}>{accion}</div>
             ))}
           </Grid>
@@ -167,13 +157,12 @@ export const CustomDataTable = ({
       {/* filtros */}
       <Box
         sx={{
-          pt: filtros ? 1 : 2,
-          pb: filtros ? 3 : 1,
+          pt: filters ? 1 : 2,
+          pb: filters ? 3 : 1,
         }}
       >
-        {filtros}
+        {filters}
       </Box>
-      {/*Contenedor de la tabla*/}
       <Card
         sx={{
           boxShadow: CONSTANTS.boxShadow,
@@ -228,7 +217,7 @@ export const CustomDataTable = ({
                   </TableBody>
                 </Table>
               </TableContainer>
-            ) : contenidoTabla.length == 0 && !cargando ? (
+            ) : tableContent.length == 0 && !loading ? (
               <TableContainer>
                 <Table>
                   <TableBody>
@@ -264,12 +253,12 @@ export const CustomDataTable = ({
             ) : (
               <Box>
                 {xs ? (
-                  cargando ? (
+                  loading ? (
                     <ListSkeleton filas={10} />
                   ) : (
                     <div>
-                      {contenidoTabla.map((contenidoFila, index) => (
-                        <Card // en lugar de CardActionArea para no usar hover en móvil
+                      {tableContent.map((contenidoFila, index) => (
+                        <Card
                           sx={{
                             borderRadius: 3,
                             mb: 2,
@@ -284,7 +273,7 @@ export const CustomDataTable = ({
                             }}
                           >
                             <CardContent sx={{ "&:last-child": { pb: 1 } }}>
-                              {seleccionable && (
+                              {isSelectable && (
                                 <Grid
                                   key={`Grid-id-${index}-seleccionar`}
                                   container
@@ -299,9 +288,9 @@ export const CustomDataTable = ({
                                   >
                                     {"Seleccionar"}
                                   </Typography>
-                                  {indicesSeleccionados.length > index && (
+                                  {selectedIndices.length > index && (
                                     <Checkbox
-                                      checked={indicesSeleccionados[index]}
+                                      checked={selectedIndices[index]}
                                       onChange={handleChange}
                                       name={`${index}`}
                                     />
@@ -323,7 +312,7 @@ export const CustomDataTable = ({
                                       color="text.secondary"
                                       variant={"subtitle2"}
                                     >
-                                      {columnas[indexContenido].name}
+                                      {columns[indexContenido].name}
                                     </Typography>
                                     {contenido}
                                   </Grid>
@@ -340,36 +329,36 @@ export const CustomDataTable = ({
                     <Table>
                       <TableHead>
                         <TableRow>
-                          {seleccionable && (
+                          {isSelectable && (
                             <TableCell key={`cabecera-id-seleccionar`}>
                               <Checkbox
-                                checked={todoSeleccionado}
-                                disabled={cargando}
-                                onChange={cambiarTodoSeleccionado}
+                                checked={allSelected}
+                                disabled={loading}
+                                onChange={changeAllSelected}
                                 indeterminate={
-                                  indicesSeleccionados.filter((value) => value)
-                                    .length != indicesSeleccionados.length &&
-                                  indicesSeleccionados.filter((value) => value)
+                                  selectedIndices.filter((value) => value)
+                                    .length != selectedIndices.length &&
+                                  selectedIndices.filter((value) => value)
                                     .length > 0
                                 }
                               />
                             </TableCell>
                           )}
-                          {columnas.map((columna, index) => (
+                          {columns.map((columna, index) => (
                             <TableCell key={`cabecera-id-${index}`}>
                               {columna.sort ? (
                                 <Button
-                                  disabled={cargando}
+                                  disabled={loading}
                                   style={{
-                                    justifyContent: "flex-start",
+                                    justifyContent: "end",
                                     minWidth: "0",
                                     padding: "0 1",
                                   }}
                                   onClick={() => {
-                                    const nuevosCriterios = [...columnas]; // crea una copia del array original
+                                    const nuevosCriterios = [...columns];
 
-                                    if (cambioOrdenCriterios) {
-                                      cambioOrdenCriterios(
+                                    if (changeOrderCriteria) {
+                                      changeOrderCriteria(
                                         nuevosCriterios.map(
                                           (value, indice) => ({
                                             ...value,
@@ -410,7 +399,11 @@ export const CustomDataTable = ({
                                 <Typography
                                   variant="h4"
                                   fontWeight={"medium"}
-                                  align={"left"}
+                                  align={`${
+                                    columna.field === "acciones"
+                                      ? "right"
+                                      : "left"
+                                  }`}
                                 >
                                   {columna.name}
                                 </Typography>
@@ -419,30 +412,30 @@ export const CustomDataTable = ({
                           ))}
                         </TableRow>
                       </TableHead>
-                      {cargando ? (
+                      {loading ? (
                         <TableSkeletonBody
                           filas={10}
-                          columnas={columnas.length + (seleccionable ? 1 : 0)}
+                          columnas={columns.length + (isSelectable ? 1 : 0)}
                         />
                       ) : (
                         <TableBody>
-                          {contenidoTabla.map(
+                          {tableContent.map(
                             (contenidoFila, indexContenidoTabla) => (
                               <TableRow
                                 key={`row-id-${indexContenidoTabla}`}
                                 hover={true}
                               >
-                                {seleccionable && (
+                                {isSelectable && (
                                   <TableCell
                                     key={`row-id-seleccionar-${indexContenidoTabla}`}
                                   >
-                                    <Fade in={!cargando} timeout={1000}>
+                                    <Fade in={!loading} timeout={1000}>
                                       <Box>
-                                        {indicesSeleccionados.length >
+                                        {selectedIndices.length >
                                           indexContenidoTabla && (
                                           <Checkbox
                                             checked={
-                                              indicesSeleccionados[
+                                              selectedIndices[
                                                 indexContenidoTabla
                                               ]
                                             }
@@ -459,7 +452,7 @@ export const CustomDataTable = ({
                                     <TableCell
                                       key={`celda-id-${indexContenidoTabla}-${indexContenidoFila}`}
                                     >
-                                      <Fade in={!cargando} timeout={1000}>
+                                      <Fade in={!loading} timeout={1000}>
                                         <Box>{contenido}</Box>
                                       </Fade>
                                     </TableCell>
@@ -473,7 +466,7 @@ export const CustomDataTable = ({
                     </Table>
                   </TableContainer>
                 )}
-                {paginacion}
+                {pagination}
               </Box>
             )}
           </Box>

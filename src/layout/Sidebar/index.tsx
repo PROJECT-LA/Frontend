@@ -1,4 +1,3 @@
-// material-ui
 import { useTheme } from "@mui/material/styles";
 import {
   Box,
@@ -9,7 +8,6 @@ import {
   useMediaQuery,
 } from "@mui/material";
 
-// third-party
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { BrowserView, MobileView } from "react-device-detect";
 
