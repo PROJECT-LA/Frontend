@@ -3,6 +3,7 @@ import { ReactNode } from "react";
 export interface Item {
   id: string;
   title?: string;
+  description?: string;
   type: string;
   caption?: string;
   url?: string;
