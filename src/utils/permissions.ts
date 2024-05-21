@@ -1,6 +1,8 @@
+"use server";
 import { notFound } from "next/navigation";
 import { CONSTANTS } from "../../config";
 import { cookies } from "next/headers";
+import { checkToken } from "./token";
 
 export interface PermissionTypes {
   read: boolean;
@@ -29,7 +31,23 @@ export const getFrontendPermissions = async (
   let token = cookie.get("token");
   let tokenValue: string = "";
 
+  if (!token) cookie.delete("token");
+
   if (token) tokenValue = token.value;
+
+  if (!checkToken(tokenValue)) {
+    const resNewToken = await fetch(`${CONSTANTS.baseUrl}/auth/token`, {
+      method: "POST",
+    });
+
+    if (resNewToken.status == 401) {
+      cookie.set("token", "", { maxAge: 0 });
+    }
+    const newToken = await resNewToken.json();
+
+    cookie.set("token", newToken.data.datos);
+    tokenValue = newToken.data.datos;
+  }
 
   const resPermissions = await fetch(
     `${CONSTANTS.baseUrl}/policies/authorization`,
@@ -56,9 +74,6 @@ export const getFrontendPermissions = async (
     notFound();
 
   const data = await resPermissions.json();
-
-  console.log("obtener desde backend");
-  console.log(data);
 
   const dataPermissions: PermissionTypes = getPermissions(data.data.policie);
 

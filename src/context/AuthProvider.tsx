@@ -11,7 +11,7 @@ import {
   readCookie,
   print,
   saveCookie,
-  InterpreteMensajes,
+  MessagesInterpreter,
 } from "@/utils";
 
 import { useSession } from "../hooks/useSession";
@@ -122,7 +122,7 @@ export const AuthProvider = ({ children }: AuthContextType) => {
     } catch (e) {
       print(`Error al iniciar sesión: `, e);
       toast.error("ERROR", {
-        description: `${InterpreteMensajes(e)}`,
+        description: `${MessagesInterpreter(e)}`,
       });
       borrarSesionUsuario();
     } finally {

@@ -3,13 +3,12 @@ import { useForm } from "react-hook-form";
 import { Box, Button, DialogActions, DialogContent, Grid } from "@mui/material";
 import { CrearEditarParametroCRUDType, ParametroCRUDType } from "../types";
 import { useSession } from "@/hooks/useSession";
-import { delay, InterpreteMensajes } from "@/utils/utilidades";
-import { Constantes } from "@/config";
-import { imprimir } from "@/utils/imprimir";
+import { delay, MessagesInterpreter } from "@/utils";
+import { CONSTANTS } from "../../../../../../config";
+import { print } from "@/utils";
 import { FormInputText } from "@/components/forms";
-import { ProgresoLineal } from "@/components/loaders/ProgresoLineal";
 import { toast } from "sonner";
-
+import { LinealLoader } from "@/components/loaders";
 export interface ModalParametroType {
   parametro?: ParametroCRUDType | null;
   accionCorrecta: () => void;
@@ -23,8 +22,7 @@ export const VistaModalParametro = ({
 }: ModalParametroType) => {
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
 
-  // Proveedor de la sesión
-  const { sesionPeticion } = useSession();
+  const { sessionRequest } = useSession();
 
   const { handleSubmit, control } = useForm<CrearEditarParametroCRUDType>({
     defaultValues: {
@@ -48,18 +46,18 @@ export const VistaModalParametro = ({
     try {
       setLoadingModal(true);
       await delay(1000);
-      const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/parameters${
+      const respuesta = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/parameters${
           parametro.id ? `/${parametro.id}` : ""
         }`,
-        tipo: !!parametro.id ? "patch" : "post",
+        type: !!parametro.id ? "patch" : "post",
         body: parametro,
       });
-      toast.success("Éxito", { description: InterpreteMensajes(respuesta) });
+      toast.success("Éxito", { description: MessagesInterpreter(respuesta) });
       accionCorrecta();
     } catch (e) {
-      imprimir(`Error al crear o actualizar parámetro`, e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      print(`Error al crear o actualizar parámetro`, e);
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoadingModal(false);
     }
@@ -115,7 +113,7 @@ export const VistaModalParametro = ({
             </Grid>
           </Grid>
           <Box height={"10px"} />
-          <ProgresoLineal mostrar={loadingModal} />
+          <LinealLoader mostrar={loadingModal} />
           <Box height={"5px"} />
         </Grid>
       </DialogContent>
