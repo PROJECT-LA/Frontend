@@ -45,8 +45,7 @@ export default function UsersClientPage({
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
 
-  const [filtroUsuario, setFiltroUsuario] = useState<string>("");
-  const [filtroRoles, setFiltroRoles] = useState<string[]>([]);
+  const [userFilter, setUserFilter] = useState<string>("");
 
   const [modalUser, setModalUser] = useState(false);
   const [showAlertUserState, setShowAlertUserState] = useState(false);
@@ -238,14 +237,13 @@ export default function UsersClientPage({
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/users`,
         params: {
-          pagina: page,
-          limite: limit,
-          ...(filtroUsuario.length == 0 ? {} : { filtro: filtroUsuario }),
-          ...(filtroRoles.length == 0 ? {} : { rol: filtroRoles.join(",") }),
+          page,
+          limit,
+          ...(userFilter.length == 0 ? {} : { filter: userFilter }),
           ...(ordenFiltrado(orderCriteria).length == 0
             ? {}
             : {
-                orden: ordenFiltrado(orderCriteria).join(","),
+                orderRaw: ordenFiltrado(orderCriteria).join(","),
               }),
         },
       });
@@ -284,7 +282,7 @@ export default function UsersClientPage({
       setLoading(true);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/users/${usuario.id}/${
-          usuario.status == "ACTIVO" ? "inactivacion" : "activacion"
+          usuario.status == "ACTIVO" ? "inactivate" : "activate"
         }`,
         type: "patch",
       });
@@ -438,17 +436,14 @@ export default function UsersClientPage({
   }, [
     page,
     limit,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    JSON.stringify(filtroRoles),
+    userFilter,
     // eslint-disable-next-line react-hooks/exhaustive-deps
     JSON.stringify(orderCriteria),
-    filtroUsuario,
   ]);
 
   useEffect(() => {
     if (!showUsersFilter) {
-      setFiltroUsuario("");
-      setFiltroRoles([]);
+      setUserFilter("");
     }
   }, [showUsersFilter]);
 
@@ -511,13 +506,11 @@ export default function UsersClientPage({
           showUsersFilter && (
             <UsersFilter
               availableRoles={rolesData}
-              rolesFilter={filtroRoles}
-              usersFilter={filtroUsuario}
+              usersFilter={userFilter}
               correctAction={(filtros) => {
                 setPage(1);
                 setLimit(10);
-                setFiltroRoles(filtros.roles);
-                setFiltroUsuario(filtros.user);
+                setUserFilter(filtros.user);
               }}
               closeAction={() => {}}
             />
