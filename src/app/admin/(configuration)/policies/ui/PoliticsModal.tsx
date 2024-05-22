@@ -1,55 +1,50 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import {
-  CrearEditarPoliticaCRUDType,
-  guardarPoliticaCRUDType,
-  PoliticaCRUDType,
+  CUPoliticsCRUDType,
+  PoliticsCRUDType,
+  savePoliticCRUDType,
 } from "../types";
-import { RolType, RolType2 } from "@/types/users";
-import { useSession } from "@/hooks/useSession";
-
-import { delay, InterpreteMensajes } from "@/utils/utilidades";
-import { Constantes } from "@/config";
-
-import { imprimir } from "@/utils/imprimir";
 import { Button, DialogActions, DialogContent, Grid } from "@mui/material";
+import { RolType } from "../../users/types";
+import { useSession } from "@/hooks/useSession";
+import { delay, MessagesInterpreter, print } from "@/utils";
+import { CONSTANTS } from "../../../../../../config";
 import { FormInputDropdown } from "@/components/forms/FormInputDropdown";
 import { FormInputText } from "@/components/forms";
-import { ProgresoLineal } from "@/components/loaders/ProgresoLineal";
+import { LinealLoader } from "@/components/loaders";
 import Box from "@mui/material/Box";
 import { FormInputAutocomplete } from "@/components/forms/FormInputAutocomplete";
 import { toast } from "sonner";
 
-export interface ModalPoliticaType {
-  politica?: PoliticaCRUDType;
-  roles: RolType2[];
+export interface ModalPoliticType {
+  politic?: PoliticsCRUDType;
+  roles: RolType[];
   accionCorrecta: () => void;
   accionCancelar: () => void;
 }
 
-export const VistaModalPolitica = ({
-  politica,
+export const PoliticModalView = ({
+  politic,
   roles,
   accionCorrecta,
   accionCancelar,
-}: ModalPoliticaType) => {
+}: ModalPoliticType) => {
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
+  const { sessionRequest } = useSession();
 
-  // Proveedor de la sesión
-  const { sesionPeticion } = useSession();
+  const ActualPolicie: PoliticsCRUDType | undefined = politic;
 
-  const politicaActual: PoliticaCRUDType | undefined = politica;
+  const appOptions: string[] = ["frontend", "backend"];
 
-  const opcionesApp: string[] = ["frontend", "backend"];
-
-  const opcionesAccionesFrontend: string[] = [
+  const frontendOptionsAction: string[] = [
     "create",
     "read",
     "update",
     "delete",
   ];
 
-  const opcionesAccionesBackend: string[] = [
+  const backendOptionsAction: string[] = [
     "GET",
     "POST",
     "PUT",
@@ -58,58 +53,54 @@ export const VistaModalPolitica = ({
   ];
 
   const { handleSubmit, control, watch, setValue } =
-    useForm<CrearEditarPoliticaCRUDType>({
+    useForm<CUPoliticsCRUDType>({
       defaultValues: {
-        app: politica?.app,
-        action: politica?.action
+        app: politic?.app,
+        action: politic?.action
           .split("|")
           .map((val) => ({ key: val, value: val, label: val })),
-        object: politica?.object,
-        subject: politica?.subject,
+        object: politic?.object,
+        subject: politic?.subject,
       },
     });
 
   const valorApp = watch("app");
 
-  const guardarActualizarPolitica = async (
-    data: CrearEditarPoliticaCRUDType
-  ) => {
-    await guardarActualizarPoliticaPeticion({
+  const saveUpdatePolicy = async (data: CUPoliticsCRUDType) => {
+    await saveUpdatePolicie({
       ...data,
       ...{ action: data.action.map((value) => value.value).join("|") },
     });
   };
 
-  const guardarActualizarPoliticaPeticion = async (
-    politicaNueva: guardarPoliticaCRUDType
-  ) => {
+  const saveUpdatePolicie = async (newPolicy: savePoliticCRUDType) => {
     try {
       setLoadingModal(true);
       await delay(1000);
-      const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/authorization/policies`,
-        tipo: politicaActual ? "patch" : "post",
-        body: politicaNueva,
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/authorization/policies`,
+        type: newPolicy ? "patch" : "post",
+        body: newPolicy,
         params: {
-          sujeto: politicaActual?.subject,
-          objeto: politicaActual?.object,
-          accion: politicaActual?.action,
-          app: politicaActual?.app,
+          sujeto: ActualPolicie?.subject,
+          objeto: ActualPolicie?.object,
+          accion: ActualPolicie?.action,
+          app: ActualPolicie?.app,
         },
       });
-      toast.success("Éxito", { description: InterpreteMensajes(respuesta) });
+      toast.success("Éxito", { description: MessagesInterpreter(res) });
 
       accionCorrecta();
     } catch (e) {
-      imprimir(`Error al crear o actualizar política`, e);
-      toast.error("Error", { description: InterpreteMensajes(e) });
+      print(`Error al crear o actualizar política`, e);
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoadingModal(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(guardarActualizarPolitica)}>
+    <form onSubmit={handleSubmit(saveUpdatePolicy)}>
       <DialogContent dividers>
         <Grid container direction={"column"} justifyContent="space-evenly">
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
@@ -148,13 +139,13 @@ export const VistaModalPolitica = ({
                 control={control}
                 label="App"
                 disabled={loadingModal}
-                options={opcionesApp.map((app) => ({
+                options={appOptions.map((app) => ({
                   key: app,
                   value: app,
                   label: app,
                 }))}
                 onChange={(event) => {
-                  imprimir(event.target.value);
+                  print(event.target.value);
                   setValue("action", []);
                 }}
                 rules={{ required: "Este campo es requerido" }}
@@ -172,14 +163,14 @@ export const VistaModalPolitica = ({
                 newValues
                 disabled={loadingModal}
                 options={(valorApp == "frontend"
-                  ? opcionesAccionesFrontend
+                  ? frontendOptionsAction
                   : valorApp == "backend"
-                  ? opcionesAccionesBackend
+                  ? backendOptionsAction
                   : []
-                ).map((opcionAccion) => ({
-                  key: opcionAccion,
-                  value: opcionAccion,
-                  label: opcionAccion,
+                ).map((actionOption) => ({
+                  key: actionOption,
+                  value: actionOption,
+                  label: actionOption,
                 }))}
                 rules={{ required: "Este campo es requerido" }}
                 getOptionLabel={(option) => option.label}
@@ -191,7 +182,7 @@ export const VistaModalPolitica = ({
             </Grid>
           </Grid>
           <Box height={"20px"} />
-          <ProgresoLineal mostrar={loadingModal} />
+          <LinealLoader mostrar={loadingModal} />
         </Grid>
       </DialogContent>
       <DialogActions
