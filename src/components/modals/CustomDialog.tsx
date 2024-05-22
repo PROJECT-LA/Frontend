@@ -24,6 +24,7 @@ interface Props {
   title?: string;
   fullScreen?: boolean;
   maxWidth?: Breakpoint | undefined;
+  withoutHeader?: boolean;
   paperProps?: Partial<PaperProps>;
   disableBackdropClick?: boolean;
   disableEscapeKeyDown?: boolean;
@@ -37,6 +38,7 @@ export const CustomDialog: FC<PropsWithChildren<Props>> = ({
   isOpen,
   handleClose,
   title,
+  withoutHeader = false,
   children,
   fullScreen = false,
   maxWidth,
@@ -73,30 +75,34 @@ export const CustomDialog: FC<PropsWithChildren<Props>> = ({
       disablePortal={disablePortal}
       disableScrollLock={disableScrollLock}
     >
-      {noTitle ? (
-        <Box />
-      ) : (
-        <DialogTitle>
-          <Grid
-            container
-            direction="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            {title ? (
-              <Typography sx={{ fontWeight: "medium", fontSize: 18 }}>
-                {title}
-              </Typography>
-            ) : (
-              <Box />
-            )}
-            <IconButton onClick={handleClose} color={"primary"}>
-              <Icono color={"primary"}>
-                <CircleX />
-              </Icono>
-            </IconButton>
-          </Grid>
-        </DialogTitle>
+      {!withoutHeader && (
+        <>
+          {noTitle ? (
+            <Box />
+          ) : (
+            <DialogTitle>
+              <Grid
+                container
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                {title ? (
+                  <Typography sx={{ fontWeight: "medium", fontSize: 18 }}>
+                    {title}
+                  </Typography>
+                ) : (
+                  <Box />
+                )}
+                <IconButton onClick={handleClose} color={"primary"}>
+                  <Icono color={"primary"}>
+                    <CircleX />
+                  </Icono>
+                </IconButton>
+              </Grid>
+            </DialogTitle>
+          )}
+        </>
       )}
 
       {children}

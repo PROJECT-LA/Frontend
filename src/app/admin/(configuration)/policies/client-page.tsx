@@ -7,7 +7,12 @@ import { RolType } from "../users/types";
 import { print, MessagesInterpreter, siteName, delay } from "@/utils";
 import { Button, Chip, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { SortTypeCriteria, sortFilter } from "@/types";
-import { IconTooltip, SearchButton, OwnIconButton } from "@/components/buttons";
+import {
+  IconTooltip,
+  SearchButton,
+  OwnIconButton,
+  SortButton,
+} from "@/components/buttons";
 import { CONSTANTS } from "../../../../../config";
 import { AlertDialog, CustomDialog } from "@/components/modals";
 import { UsersModalView } from "../users/ui/UsersModal";
@@ -119,7 +124,7 @@ export default function PoliticsPage({ permissions }: GlobalPermissionsProps) {
       change={setShowPolicyFilter}
     />,
     xs && (
-      <SearchButton
+      <SortButton
         id={"ordenarUsuarios"}
         key={`ordenarUsuarios`}
         label={"Ordenar políticas"}
@@ -157,7 +162,7 @@ export default function PoliticsPage({ permissions }: GlobalPermissionsProps) {
       setLoading(true);
 
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/authorization/policies`,
+        url: `${CONSTANTS.baseUrl}/policies`,
         params: {
           pagina: page,
           limite: limit,
@@ -186,7 +191,7 @@ export default function PoliticsPage({ permissions }: GlobalPermissionsProps) {
     try {
       setLoading(true);
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/authorization/policies`,
+        url: `${CONSTANTS.baseUrl}/policies`,
         type: "delete",
         params: {
           sujeto: politica?.subject,

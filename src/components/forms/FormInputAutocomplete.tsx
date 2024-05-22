@@ -4,7 +4,7 @@ import {
   FieldValues,
   Path,
   PathValue,
-} from 'react-hook-form'
+} from "react-hook-form";
 import {
   Autocomplete,
   AutocompleteValue,
@@ -15,56 +15,56 @@ import {
   InputLabel,
   TextField,
   Typography,
-} from '@mui/material'
-import { RegisterOptions } from 'react-hook-form'
-import React, { Fragment } from 'react'
-import { Variant } from '@mui/material/styles/createTypography'
-import { AutocompleteInputChangeReason } from '@mui/base/useAutocomplete/useAutocomplete'
+} from "@mui/material";
+import { RegisterOptions } from "react-hook-form";
+import React, { Fragment } from "react";
+import { Variant } from "@mui/material/styles/createTypography";
+import { AutocompleteInputChangeReason } from "@mui/base/useAutocomplete/useAutocomplete";
 
-import { OutlinedInputProps } from '@mui/material/OutlinedInput'
-import { Icono } from '@/components/Icono'
-import { imprimir } from '@/utils/imprimir'
-import { optionType } from '@/components/forms/FormInputDropdown'
+import { OutlinedInputProps } from "@mui/material/OutlinedInput";
+import { Icono } from "@/components/Icono";
+import { print } from "@/utils";
+import { optionType } from "@/components/forms/FormInputDropdown";
 
-export type CustomOptionType<K> = K & { key: string }
+export type CustomOptionType<K> = K & { key: string };
 
 type FormInputDropdownAutocompleteProps<K, T extends FieldValues> = {
-  id: string
-  name: Path<T>
-  control: Control<T, object>
-  label: string
-  multiple?: boolean
-  freeSolo?: boolean
-  forcePopupIcon?: boolean
-  searchIcon?: boolean
-  size?: 'small' | 'medium'
-  rules?: RegisterOptions
-  disabled?: boolean
-  onChange?: (keys: AutocompleteValue<unknown, false, false, false>) => void
-  InputProps?: Partial<OutlinedInputProps>
+  id: string;
+  name: Path<T>;
+  control: Control<T, object>;
+  label: string;
+  multiple?: boolean;
+  freeSolo?: boolean;
+  forcePopupIcon?: boolean;
+  searchIcon?: boolean;
+  size?: "small" | "medium";
+  rules?: RegisterOptions;
+  disabled?: boolean;
+  onChange?: (keys: AutocompleteValue<unknown, false, false, false>) => void;
+  InputProps?: Partial<OutlinedInputProps>;
   filterOptions?: (
     options: CustomOptionType<K>[],
     state: FilterOptionsState<CustomOptionType<K>>
-  ) => CustomOptionType<K>[]
+  ) => CustomOptionType<K>[];
   onInputChange?: (
     event: React.SyntheticEvent,
     value: string,
     reason: AutocompleteInputChangeReason
-  ) => void
+  ) => void;
   isOptionEqualToValue?: (
     option: CustomOptionType<K>,
     value: CustomOptionType<K>
-  ) => boolean
-  getOptionLabel: (option: CustomOptionType<K>) => string
-  renderOption: (option: CustomOptionType<K>) => React.ReactNode
-  newValues?: boolean
-  clearable?: boolean
-  bgcolor?: string
-  loading?: boolean
-  selectOnFocus?: boolean
-  options: CustomOptionType<K>[]
-  labelVariant?: Variant
-}
+  ) => boolean;
+  getOptionLabel: (option: CustomOptionType<K>) => string;
+  renderOption: (option: CustomOptionType<K>) => React.ReactNode;
+  newValues?: boolean;
+  clearable?: boolean;
+  bgcolor?: string;
+  loading?: boolean;
+  selectOnFocus?: boolean;
+  options: CustomOptionType<K>[];
+  labelVariant?: Variant;
+};
 
 export const FormInputAutocomplete = <K, T extends FieldValues>({
   id,
@@ -75,7 +75,7 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
   freeSolo,
   forcePopupIcon,
   searchIcon,
-  size = 'small',
+  size = "small",
   rules,
   disabled,
   onChange,
@@ -90,16 +90,16 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
   bgcolor,
   loading,
   selectOnFocus,
-  labelVariant = 'subtitle2',
+  labelVariant = "subtitle2",
 }: FormInputDropdownAutocompleteProps<K, T>) => {
-  const [value, setValue] = React.useState<string>('')
+  const [value, setValue] = React.useState<string>("");
 
   return (
     <>
       <InputLabel htmlFor={id}>
         <Typography
           variant={labelVariant}
-          sx={{ pb: 0, fontWeight: 'fontWeightMedium', color: 'text.primary' }}
+          sx={{ pb: 0, fontWeight: "fontWeightMedium", color: "text.primary" }}
         >
           {label}
         </Typography>
@@ -124,79 +124,79 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
               inputValue={value}
               onInputChange={(event, newInputValue, reason) => {
                 if (onInputChange) {
-                  onInputChange(event, newInputValue, reason)
+                  onInputChange(event, newInputValue, reason);
                 }
-                setValue(newInputValue)
+                setValue(newInputValue);
               }}
               isOptionEqualToValue={isOptionEqualToValue}
               onChange={(event, newValue) => {
                 if (onChange) {
-                  onChange(newValue)
+                  onChange(newValue);
                 }
-                field.onChange(newValue)
+                field.onChange(newValue);
               }}
               getOptionLabel={(option) => {
-                if (typeof option == 'string') return option
-                return getOptionLabel(option) ?? ''
+                if (typeof option == "string") return option;
+                return getOptionLabel(option) ?? "";
               }}
               renderOption={(props, option) => {
-                return <li {...props}>{renderOption(option)}</li>
+                return <li {...props}>{renderOption(option)}</li>;
               }}
               renderInput={(params) => {
                 params.inputProps.onKeyDown = (
                   event: React.KeyboardEvent<HTMLInputElement>
                 ) => {
                   if (!newValues) {
-                    event.stopPropagation()
-                    return
+                    event.stopPropagation();
+                    return;
                   }
                   switch (event.key) {
-                    case 'Enter':
-                    case ',': {
-                      event.stopPropagation()
-                      event.preventDefault()
-                      const inputValue = event.currentTarget.value
+                    case "Enter":
+                    case ",": {
+                      event.stopPropagation();
+                      event.preventDefault();
+                      const inputValue = event.currentTarget.value;
 
                       const newOption: optionType = {
                         key: inputValue.trim(),
                         label: inputValue.trim(),
                         value: inputValue.trim(),
-                      }
+                      };
 
-                      imprimir(`newOption: `, newOption)
+                      print(`newOption: `, newOption);
 
                       if (!multiple) {
-                        const opcionTemp = field.value as optionType
-                        field.onChange(opcionTemp)
-                        setValue('')
+                        const opcionTemp = field.value as optionType;
+                        field.onChange(opcionTemp);
+                        setValue("");
                       } else {
-                        const opcionesTemp = field.value as Array<optionType>
+                        const opcionesTemp = field.value as Array<optionType>;
 
                         const registrado = opcionesTemp.some(
                           (value1) => value1.value == newOption.value
-                        )
+                        );
 
-                        imprimir(`registrado: `, registrado)
+                        print(`registrado: `, registrado);
 
-                        if (!registrado && ![''].includes(newOption.value)) {
+                        if (!registrado && ![""].includes(newOption.value)) {
                           // Se agregara sí es que no fue agregado antes
-                          field.onChange([...field.value, newOption])
+                          field.onChange([...field.value, newOption]);
                         }
-                        setValue('')
+                        setValue("");
                       }
 
-                      break
+                      break;
                     }
                     default:
                   }
-                }
+                };
                 return (
                   <TextField
                     {...params}
                     error={!!error}
                     inputRef={field.ref}
                     sx={{
-                      width: '100%',
+                      width: "100%",
                       bgcolor: bgcolor,
                     }}
                     InputProps={{
@@ -214,9 +214,9 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
                           {searchIcon && (
                             <Box
                               sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                alignItems: 'center',
+                                display: "flex",
+                                flexDirection: "row",
+                                alignItems: "center",
                                 pl: 1,
                               }}
                             >
@@ -231,7 +231,7 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
                       ...InputProps,
                     }}
                   />
-                )
+                );
               }}
             />
             {!!error && <FormHelperText error>{error?.message}</FormHelperText>}
@@ -241,5 +241,5 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
         rules={rules}
       />
     </>
-  )
-}
+  );
+};

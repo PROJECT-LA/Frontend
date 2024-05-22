@@ -58,25 +58,6 @@ const Header = ({
       <Stack spacing={!matchDownMd ? 2 : 1} direction="row" alignItems="center">
         <Hidden mdDown={true}>
           <SearchSection />
-
-          {/* <Button
-            endIcon={<Search />}
-            sx={{
-              paddingBottom: 1,
-              paddingTop: 1,
-              transition: "all .3s ease",
-              color: theme.palette.text.primary,
-              borderColor: theme.palette.divider,
-              backgroundColor:
-                theme.palette.mode === "light"
-                  ? theme.palette.background.paper
-                  : "transparent",
-            }}
-            variant="outlined"
-          >
-            <Typography>Buscar</Typography>
-            <Box width={20} />
-          </Button> */}
         </Hidden>
 
         <NotificationSection />
