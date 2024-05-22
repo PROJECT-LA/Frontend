@@ -2,38 +2,37 @@
 import Typography from "@mui/material/Typography";
 import { ReactNode, useEffect, useState } from "react";
 import { useSession } from "@/hooks/useSession";
-import { ParametroCRUDType } from "./types";
+import { ParameterCRUDType } from "./types";
 import { Button, Grid, useMediaQuery, useTheme } from "@mui/material";
-import {
-  delay,
-  MessagesInterpreter,
-  siteName,
-  titleCase,
-  print,
-} from "@/utils";
+import { delay, MessagesInterpreter, titleCase, print } from "@/utils";
 import { CONSTANTS } from "../../../../../config";
-import { CriterioOrdenType } from "@/types";
-import CustomMensajeEstado from "@/components/states/CustomMensajeEstado";
-import { IconoTooltip } from "@/components/buttons/IconTooltip";
-import { SearchButton, SortButton } from "@/components/buttons";
-import { IconoBoton } from "@/components/buttons/IconoBoton";
-import { ordenFiltrado } from "@/types";
-import { Paginacion } from "@/components/datatable/Paginacion";
-import { AlertDialog } from "@/components/modals/AlertDialog";
-import { CustomDialog } from "@/components/modals/CustomDialog";
+import { SortTypeCriteria, sortFilter } from "@/types";
+import { CustomMessageState } from "@/components/states";
+import {
+  SearchButton,
+  SortButton,
+  IconTooltip,
+  OwnIconButton,
+} from "@/components/buttons";
+import { Pagination } from "@/components/datatable";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
-import { FiltroParametros } from "./ui/FiltroParametros";
-import { VistaModalParametro } from "./ui/ModalParametros";
+import { AlertDialog, CustomDialog } from "@/components/modals";
+import { FilterParameter, ParameterModalView } from "./ui";
 import { toast } from "sonner";
-import { Edit, RotateCcw, ToggleLeft, ToggleRight } from "lucide-react";
+import {
+  CirclePlus,
+  Edit,
+  RotateCcw,
+  ToggleLeft,
+  ToggleRight,
+} from "lucide-react";
 import { GlobalPermissionsProps } from "@/utils/permissions";
 
 export default function ParametersClient({
   permissions,
 }: GlobalPermissionsProps) {
-  const [parametersData, setParametersData] = useState<ParametroCRUDType[]>([]);
+  const [parametersData, setParametersData] = useState<ParameterCRUDType[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
   const [errorParametersData, setErrorParametersData] = useState<any>();
 
   const [modalParametro, setModalParametro] = useState(false);
@@ -42,7 +41,7 @@ export default function ParametersClient({
     useState(false);
 
   const [parametroEdicion, setParametroEdicion] = useState<
-    ParametroCRUDType | undefined | null
+    ParameterCRUDType | undefined | null
   >();
 
   const [limit, setLimit] = useState<number>(10);
@@ -57,7 +56,7 @@ export default function ParametersClient({
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
-  const editarEstadoParametroModal = (parametro: ParametroCRUDType) => {
+  const editarEstadoParametroModal = (parametro: ParameterCRUDType) => {
     setParametroEdicion(parametro);
     setMostrarAlertaEstadoParametro(true);
   };
@@ -77,7 +76,7 @@ export default function ParametersClient({
   };
 
   const cambiarEstadoParametroPeticion = async (
-    parametro: ParametroCRUDType
+    parametro: ParameterCRUDType
   ) => {
     try {
       setLoading(true);
@@ -98,7 +97,7 @@ export default function ParametersClient({
     }
   };
 
-  const [orderCriteria, setOrderCriteria] = useState<Array<CriterioOrdenType>>([
+  const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
     { field: "codigo", name: "Código", sort: true },
     { field: "name", name: "Nombre", sort: true },
     { field: "descripcion", name: "Descripción", sort: true },
@@ -128,10 +127,10 @@ export default function ParametersClient({
         variant={"body2"}
       >{`${parametroData.group}`}</Typography>,
 
-      <CustomMensajeEstado
+      <CustomMessageState
         key={`${parametroData.id}-${indexParametro}-estado`}
-        titulo={parametroData.status}
-        descripcion={parametroData.status}
+        title={parametroData.status}
+        description={parametroData.status}
         color={
           parametroData.status == "ACTIVO"
             ? "success"
@@ -143,15 +142,15 @@ export default function ParametersClient({
 
       <Grid key={`${parametroData.id}-${indexParametro}-acciones`}>
         {permissions.update && (
-          <IconoTooltip
+          <IconTooltip
             id={`cambiarEstadoParametro-${parametroData.id}`}
-            titulo={parametroData.status == "ACTIVO" ? "Inactivar" : "Activar"}
+            title={parametroData.status == "ACTIVO" ? "Inactivar" : "Activar"}
             color={parametroData.status == "ACTIVO" ? "success" : "error"}
-            accion={async () => {
+            action={async () => {
               await editarEstadoParametroModal(parametroData);
             }}
-            desactivado={parametroData.status == "PENDIENTE"}
-            icono={
+            deactivate={parametroData.status == "PENDIENTE"}
+            icon={
               parametroData.status == "ACTIVO" ? (
                 <ToggleRight />
               ) : (
@@ -167,16 +166,16 @@ export default function ParametersClient({
         )}
 
         {permissions.update && (
-          <IconoTooltip
+          <IconTooltip
             id={`editarParametros-${parametroData.id}`}
             name={"Parámetros"}
-            titulo={"Editar"}
+            title={"Editar"}
             color={"primary"}
-            accion={() => {
+            action={() => {
               print(`Editaremos`, parametroData);
               editarParametroModal(parametroData);
             }}
-            icono={<Edit />}
+            icon={<Edit />}
           />
         )}
       </Grid>,
@@ -199,25 +198,25 @@ export default function ParametersClient({
         cambioCriterios={setOrderCriteria}
       />
     ),
-    <IconoTooltip
+    <IconTooltip
       id={"actualizarParametro"}
-      titulo={"Actualizar"}
+      title={"Actualizar"}
       key={`accionActualizarParametro`}
-      accion={async () => {
+      action={async () => {
         await obtenerParametrosPeticion();
       }}
-      icono={<RotateCcw />}
+      icon={<RotateCcw />}
       name={"Actualizar lista de parámetros"}
     />,
     permissions.create && (
-      <IconoBoton
+      <OwnIconButton
         id={"agregarParametro"}
         key={"agregarParametro"}
-        texto={"Agregar"}
-        variante={xs ? "icono" : "boton"}
-        icono={"add_circle_outline"}
-        descripcion={"Agregar parámetro"}
-        accion={() => {
+        text={"Agregar"}
+        alter={xs ? "icono" : "boton"}
+        icon={<CirclePlus />}
+        description={"Agregar parámetro"}
+        action={() => {
           agregarParametroModal();
         }}
       />
@@ -235,10 +234,10 @@ export default function ParametersClient({
           page,
           limit,
           ...(filtroParametro.length == 0 ? {} : { filter: filtroParametro }),
-          ...(ordenFiltrado(orderCriteria).length == 0
+          ...(sortFilter(orderCriteria).length == 0
             ? {}
             : {
-                orderRaw: ordenFiltrado(orderCriteria).join(","),
+                orderRaw: sortFilter(orderCriteria).join(","),
               }),
         },
       });
@@ -258,7 +257,7 @@ export default function ParametersClient({
     setParametroEdicion(undefined);
     setModalParametro(true);
   };
-  const editarParametroModal = (parametro: ParametroCRUDType) => {
+  const editarParametroModal = (parametro: ParameterCRUDType) => {
     setParametroEdicion(parametro);
     setModalParametro(true);
   };
@@ -287,22 +286,21 @@ export default function ParametersClient({
   }, [mostrarFiltroParametros]);
 
   const paginacion = (
-    <Paginacion
-      pagina={page}
-      limite={limit}
+    <Pagination
+      page={page}
+      limit={limit}
       total={total}
-      cambioPagina={setPage}
-      cambioLimite={setLimit}
+      changePage={setPage}
+      changeLimit={setLimit}
     />
   );
 
   return (
     <>
-      <title>{`Parámetros - ${siteName()}`}</title>
       <AlertDialog
         isOpen={mostrarAlertaEstadoParametro}
-        titulo={"Alerta"}
-        texto={`¿Está seguro de ${
+        title={"Alerta"}
+        text={`¿Está seguro de ${
           parametroEdicion?.status == "ACTIVO" ? "inactivar" : "activar"
         } el parámetro: ${titleCase(parametroEdicion?.name ?? "")} ?`}
       >
@@ -314,34 +312,34 @@ export default function ParametersClient({
         handleClose={cerrarModalParametro}
         title={parametroEdicion ? "Editar parámetro" : "Nuevo parámetro"}
       >
-        <VistaModalParametro
-          parametro={parametroEdicion}
-          accionCorrecta={() => {
+        <ParameterModalView
+          parameter={parametroEdicion}
+          correctAction={() => {
             cerrarModalParametro().finally();
             obtenerParametrosPeticion().finally();
           }}
-          accionCancelar={cerrarModalParametro}
+          cancelAction={cerrarModalParametro}
         />
       </CustomDialog>
       <CustomDataTable
-        titulo="Parámetros"
+        title="Parámetros"
         error={!!errorParametersData}
-        cargando={loading}
-        acciones={acciones}
-        columnas={orderCriteria}
-        cambioOrdenCriterios={setOrderCriteria}
-        paginacion={paginacion}
-        contenidoTabla={contenidoTabla}
-        filtros={
+        loading={loading}
+        actions={acciones}
+        columns={orderCriteria}
+        changeOrderCriteria={setOrderCriteria}
+        pagination={paginacion}
+        tableContent={contenidoTabla}
+        filters={
           mostrarFiltroParametros && (
-            <FiltroParametros
-              filtroParametro={filtroParametro}
-              accionCorrecta={(filtros) => {
+            <FilterParameter
+              filterParameter={filtroParametro}
+              correctAction={(filters) => {
                 setPage(1);
                 setLimit(10);
-                setFiltroParametro(filtros.parametro);
+                setFiltroParametro(filters.parameter);
               }}
-              accionCerrar={() => {
+              closeAction={() => {
                 print(`👀 cerrar`);
               }}
             />

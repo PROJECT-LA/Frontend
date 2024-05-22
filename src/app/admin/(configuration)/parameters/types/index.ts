@@ -1,6 +1,4 @@
-/// CRUD de parametros
-
-export interface ParametroCRUDType {
+export interface ParameterCRUDType {
   id: string;
   code: string;
   name: string;
@@ -9,7 +7,7 @@ export interface ParametroCRUDType {
   status: string;
 }
 
-export interface CrearEditarParametroCRUDType {
+export interface CUParameterCRUDType {
   id?: string;
   code: string;
   name: string;

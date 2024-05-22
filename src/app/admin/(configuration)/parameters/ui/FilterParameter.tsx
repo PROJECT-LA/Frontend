@@ -1,44 +1,43 @@
 import { Box, Grid } from "@mui/material";
-
 import { useForm } from "react-hook-form";
 import { useDebouncedCallback } from "use-debounce";
 import { useEffect } from "react";
 import { FormInputText } from "@/components/forms";
 
-export interface FiltroType {
-  parametro: string;
+export interface FilterType {
+  parameter: string;
 }
 
-export interface FiltroParametrosType {
-  filtroParametro: string;
-  accionCorrecta: (filtros: FiltroType) => void;
-  accionCerrar: () => void;
+export interface FilterParameterType {
+  filterParameter: string;
+  correctAction: (filters: FilterType) => void;
+  closeAction: () => void;
 }
 
-export const FiltroParametros = ({
-  filtroParametro,
-  accionCorrecta,
-}: FiltroParametrosType) => {
-  const { control, watch } = useForm<FiltroType>({
+export const FilterParameter = ({
+  filterParameter,
+  correctAction,
+}: FilterParameterType) => {
+  const { control, watch } = useForm<FilterType>({
     defaultValues: {
-      parametro: filtroParametro,
+      parameter: filterParameter,
     },
   });
 
-  const parametroFiltro: string | undefined = watch("parametro");
+  const newParameterFilter: string | undefined = watch("parameter");
 
   useEffect(() => {
-    actualizacionFiltros({
-      parametro: parametroFiltro,
+    filterUpdate({
+      parameter: newParameterFilter,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [parametroFiltro]);
+  }, [newParameterFilter]);
 
-  const debounced = useDebouncedCallback((filtros: FiltroType) => {
-    accionCorrecta(filtros);
+  const debounced = useDebouncedCallback((filtros: FilterType) => {
+    correctAction(filtros);
   }, 1000);
 
-  const actualizacionFiltros = (filtros: FiltroType) => {
+  const filterUpdate = (filtros: FilterType) => {
     debounced(filtros);
   };
 
@@ -47,8 +46,8 @@ export const FiltroParametros = ({
       <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
         <Grid item xs={12} sm={12} md={6}>
           <FormInputText
-            id={"parametro"}
-            name={"parametro"}
+            id={"parameter"}
+            name={"parameter"}
             control={control}
             label={"Buscar parámetro"}
             bgcolor={"background.paper"}

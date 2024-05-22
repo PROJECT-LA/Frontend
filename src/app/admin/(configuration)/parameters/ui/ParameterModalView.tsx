@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Box, Button, DialogActions, DialogContent, Grid } from "@mui/material";
-import { CrearEditarParametroCRUDType, ParametroCRUDType } from "../types";
+import { CUParameterCRUDType, ParameterCRUDType } from "../types";
 import { useSession } from "@/hooks/useSession";
 import { delay, MessagesInterpreter } from "@/utils";
 import { CONSTANTS } from "../../../../../../config";
@@ -9,52 +9,49 @@ import { print } from "@/utils";
 import { FormInputText } from "@/components/forms";
 import { toast } from "sonner";
 import { LinealLoader } from "@/components/loaders";
-export interface ModalParametroType {
-  parametro?: ParametroCRUDType | null;
-  accionCorrecta: () => void;
-  accionCancelar: () => void;
+
+export interface ModalParameterType {
+  parameter?: ParameterCRUDType | null;
+  correctAction: () => void;
+  cancelAction: () => void;
 }
 
-export const VistaModalParametro = ({
-  parametro,
-  accionCorrecta,
-  accionCancelar,
-}: ModalParametroType) => {
+export const ParameterModalView = ({
+  parameter,
+  correctAction,
+  cancelAction,
+}: ModalParameterType) => {
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
 
   const { sessionRequest } = useSession();
 
-  const { handleSubmit, control } = useForm<CrearEditarParametroCRUDType>({
+  const { handleSubmit, control } = useForm<CUParameterCRUDType>({
     defaultValues: {
-      id: parametro?.id,
-      code: parametro?.code,
-      description: parametro?.description,
-      name: parametro?.name,
-      group: parametro?.group,
+      id: parameter?.id,
+      code: parameter?.code,
+      description: parameter?.description,
+      name: parameter?.name,
+      group: parameter?.group,
     },
   });
 
-  const guardarActualizarParametro = async (
-    data: CrearEditarParametroCRUDType
-  ) => {
-    await guardarActualizarParametrosPeticion(data);
+  const saveUpdateParameter = async (data: CUParameterCRUDType) => {
+    await requestSaveUpdateParameter(data);
   };
 
-  const guardarActualizarParametrosPeticion = async (
-    parametro: CrearEditarParametroCRUDType
-  ) => {
+  const requestSaveUpdateParameter = async (parameter: CUParameterCRUDType) => {
     try {
       setLoadingModal(true);
       await delay(1000);
-      const respuesta = await sessionRequest({
+      const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/parameters${
-          parametro.id ? `/${parametro.id}` : ""
+          parameter.id ? `/${parameter.id}` : ""
         }`,
-        type: !!parametro.id ? "patch" : "post",
-        body: parametro,
+        type: !!parameter.id ? "patch" : "post",
+        body: parameter,
       });
-      toast.success("Éxito", { description: MessagesInterpreter(respuesta) });
-      accionCorrecta();
+      toast.success("Éxito", { description: MessagesInterpreter(res) });
+      correctAction();
     } catch (e) {
       print(`Error al crear o actualizar parámetro`, e);
       toast.error("Error", { description: MessagesInterpreter(e) });
@@ -64,7 +61,7 @@ export const VistaModalParametro = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(guardarActualizarParametro)}>
+    <form onSubmit={handleSubmit(saveUpdateParameter)}>
       <DialogContent dividers>
         <Grid container direction={"column"} justifyContent="space-evenly">
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
@@ -132,7 +129,7 @@ export const VistaModalParametro = ({
         <Button
           variant={"outlined"}
           disabled={loadingModal}
-          onClick={accionCancelar}
+          onClick={cancelAction}
         >
           Cancelar
         </Button>
