@@ -4,7 +4,6 @@ import { ReactNode, useEffect, useState } from "react";
 import { PoliticsCRUDType } from "./types";
 import { useSession } from "@/hooks/useSession";
 import { RolType } from "../users/types";
-import { useAuth } from "@/context/AuthProvider";
 import { print, MessagesInterpreter, siteName, delay } from "@/utils";
 import { Button, Chip, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { SortTypeCriteria, sortFilter } from "@/types";
@@ -57,38 +56,38 @@ export default function PoliticsPage({ permissions }: GlobalPermissionsProps) {
     ]
   );
 
-  const contenidoTabla: Array<Array<ReactNode>> = politicasData.map(
-    (politicaData, indexPolitica) => [
+  const contenidoTabla: Array<Array<ReactNode>> = policiesData.map(
+    (policyData, indexPolicy) => [
       <Typography
-        key={`${politicaData.subject}-${indexPolitica}-sujeto`}
+        key={`${policyData.subject}-${indexPolicy}-sujeto`}
         variant={"body2"}
-      >{`${politicaData.subject}`}</Typography>,
+      >{`${policyData.subject}`}</Typography>,
       <Typography
-        key={`${politicaData.object}-${indexPolitica}-objeto`}
+        key={`${policyData.object}-${indexPolicy}-objeto`}
         variant={"body2"}
-      >{`${politicaData.object}`}</Typography>,
-      <Grid key={`${politicaData.action}-${indexPolitica}-accion`}>
-        {politicaData.action.split("|").map((itemAccion, indexAccion) => (
+      >{`${policyData.object}`}</Typography>,
+      <Grid key={`${policyData.action}-${indexPolicy}-accion`}>
+        {policyData.action.split("|").map((itemAccion, indexAccion) => (
           <Chip
-            key={`accion-${indexPolitica}-${indexAccion}`}
+            key={`accion-${indexPolicy}-${indexAccion}`}
             label={itemAccion}
           />
         ))}
       </Grid>,
       <Typography
-        key={`${politicaData.action}-${indexPolitica}-app`}
+        key={`${policyData.action}-${indexPolicy}-app`}
         variant={"body2"}
-      >{`${politicaData.app}`}</Typography>,
+      >{`${policyData.app}`}</Typography>,
 
-      <Grid key={`${politicaData.action}-${indexPolitica}-acciones`}>
+      <Grid key={`${policyData.action}-${indexPolicy}-acciones`}>
         {permissions.update && (
           <IconTooltip
-            id={`editarPolitica-${indexPolitica}`}
+            id={`editarPolitica-${indexPolicy}`}
             title={"Editar"}
             color={"primary"}
             action={() => {
-              print(`Editaremos`, politicaData);
-              editarPoliticaModal(politicaData);
+              print(`Editaremos`, policyData);
+              editarPoliticaModal(policyData);
             }}
             icon={<Pencil />}
             name={"Editar política"}
@@ -97,12 +96,12 @@ export default function PoliticsPage({ permissions }: GlobalPermissionsProps) {
 
         {permissions.delete && (
           <IconTooltip
-            id={`eliminarPolitica-${indexPolitica}`}
+            id={`eliminarPolitica-${indexPolicy}`}
             title={"Eliminar"}
             color={"error"}
             action={() => {
-              print(`Eliminaremos`, politicaData);
-              eliminarPoliticaModal(politicaData);
+              print(`Eliminaremos`, policyData);
+              eliminarPoliticaModal(policyData);
             }}
             icon={<Trash2 />}
             name={"Eliminar política"}

@@ -77,7 +77,7 @@ export const useSession = () => {
 
       deleteCookie("token");
 
-      const response = await Services.get({
+      const response = await Services.post({
         headers: {
           accept: "application/json",
           Authorization: `Bearer ${token}`,
