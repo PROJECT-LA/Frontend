@@ -5,7 +5,7 @@ import React from "react";
 import ModulesClient from "./client-page";
 
 const ModulesPage = async () => {
-  const permissions = await getFrontendPermissions("/admin/policies");
+  const permissions = await getFrontendPermissions("/admin/modules");
 
   return (
     permissions && (

@@ -1,67 +1,58 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { RolCRUDType } from "@/types/roles";
+import { RolCRUDType } from "../types";
 import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
-import { delay, InterpreteMensajes } from "@/utils/utilidades";
-import { Constantes } from "@/config";
-
-import { imprimir } from "@/utils/imprimir";
-import { Button, DialogActions, DialogContent, Grid } from "@mui/material";
+import { delay, MessagesInterpreter, print } from "@/utils";
+import { CONSTANTS } from "../../../../../../config";
+import { Button, Box, DialogActions, DialogContent, Grid } from "@mui/material";
 import { FormInputText } from "@/components/forms";
+import { LinealLoader } from "@/components/loaders";
 
-import Box from "@mui/material/Box";
-import { ProgresoLineal } from "@/components/loaders/ProgresoLineal";
-
-export interface ModalRolType {
-  rol?: RolCRUDType;
-  accionCorrecta: () => void;
-  accionCancelar: () => void;
+export interface ModalRoleType {
+  role?: RolCRUDType;
+  correctAction: () => void;
+  cancelAction: () => void;
 }
 
-export const VistaModalRol = ({
-  rol,
-  accionCorrecta,
-  accionCancelar,
-}: ModalRolType) => {
+export const RoleModalView = ({
+  role,
+  correctAction,
+  cancelAction,
+}: ModalRoleType) => {
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
-
-  // Proveedor de la sesión
-  const { sesionPeticion } = useSession();
-
+  const { sessionRequest } = useSession();
   const { handleSubmit, control } = useForm<RolCRUDType>({
     defaultValues: {
-      id: rol?.id,
-      name: rol?.name,
-      description: rol?.description,
+      id: role?.id,
+      name: role?.name,
+      description: role?.description,
     },
   });
 
-  const guardarActualizarRol = async (data: RolCRUDType) => {
-    await guardarActualizarRolesPeticion(data);
+  const saveUpdateRole = async (data: RolCRUDType) => {
+    await saveUpdateRolesRequest(data);
   };
 
-  const guardarActualizarRolesPeticion = async (Rol: RolCRUDType) => {
+  const saveUpdateRolesRequest = async (role: RolCRUDType) => {
     try {
       setLoadingModal(true);
-      await delay(1000);
-      const respuesta = await sesionPeticion({
-        url: `${Constantes.baseUrl}/roles${Rol.id ? `/${Rol.id}` : ""}`,
-        tipo: !!Rol.id ? "patch" : "post",
-        body: Rol,
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/roles${role.id ? `/${role.id}` : ""}`,
+        type: !!role.id ? "patch" : "post",
+        body: role,
       });
-      toast.success(InterpreteMensajes(respuesta));
-      accionCorrecta();
+      toast.success(MessagesInterpreter(res));
+      correctAction();
     } catch (e) {
-      imprimir(`Error al crear o actualizar rol`, e);
-      toast.error(InterpreteMensajes(e));
+      toast.error(MessagesInterpreter(e));
     } finally {
       setLoadingModal(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(guardarActualizarRol)}>
+    <form onSubmit={handleSubmit(saveUpdateRole)}>
       <DialogContent dividers>
         <Grid container direction={"column"} justifyContent="space-evenly">
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
@@ -87,7 +78,7 @@ export const VistaModalRol = ({
             </Grid>
           </Grid>
           <Box height={"20px"} />
-          <ProgresoLineal mostrar={loadingModal} />
+          <LinealLoader mostrar={loadingModal} />
         </Grid>
       </DialogContent>
       <DialogActions
@@ -105,7 +96,7 @@ export const VistaModalRol = ({
         <Button
           variant={"outlined"}
           disabled={loadingModal}
-          onClick={accionCancelar}
+          onClick={cancelAction}
         >
           Cancelar
         </Button>
