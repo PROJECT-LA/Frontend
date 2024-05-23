@@ -1,49 +1,34 @@
-import { create } from 'zustand'
-import { imprimir } from '../utils/imprimir'
-import { ThemeMode } from '@/types/temaTypes'
-import { CasbinTypes, PermisosCasbin } from '@/types/utils/casbin'
+import { create } from "zustand";
+import { print } from "@/utils";
+import { ThemeMode } from "@/theme/types";
 
 interface GlobalState {
-  openDrawer: boolean
-  toggleDrawer: () => void
-  themeMode: ThemeMode
-  cerrarDrawer: () => void
-  permisos: PermisosCasbin
-  setPermisos: (ruta: string, permisos: CasbinTypes) => void
+  openDrawer: boolean;
+  toggleDrawer: () => void;
+  themeMode: ThemeMode;
+  cerrarDrawer: () => void;
 }
 
 export const useGlobalStore = create<GlobalState>((set) => ({
-  themeMode: 'primary-light',
+  themeMode: "primary-light",
   openDrawer: true,
   permisos: {
-    ruta: '/',
+    ruta: "/",
     permisos: {
       create: false,
       read: false,
-      update: false, 
-      delete: false
-    }
-  },
-  setPermisos: (ruta: string, permisos: CasbinTypes)=>{
-    set((state) => {
-      return {
-        ...state, 
-        permisos: {
-          ruta: ruta, 
-          permisos: permisos
-        }
-      }
-    })
+      update: false,
+      delete: false,
+    },
   },
   toggleDrawer: () => {
     set((state) => {
-      imprimir(state.openDrawer)
-      return { openDrawer: !state.openDrawer }
-    })
+      return { openDrawer: !state.openDrawer };
+    });
   },
   cerrarDrawer: () => {
     set((state) => {
-      return { ...state, openDrawer: false }
-    })
+      return { ...state, openDrawer: false };
+    });
   },
-}))
+}));

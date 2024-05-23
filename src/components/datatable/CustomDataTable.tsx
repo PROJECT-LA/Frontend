@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import React, { ReactNode, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -16,116 +16,105 @@ import {
   Typography,
   useMediaQuery,
   useTheme,
-} from '@mui/material'
+} from "@mui/material";
 
-import { ListSkeleton, TableSkeletonBody } from './CustomSkeleton'
-
-import { Icono } from '@/components/Icono'
-import { CriterioOrdenType } from '@/types/ordenTypes'
-import { ToggleOrden } from '@/utils/orden'
-import { ArrowDown, ArrowUp } from 'lucide-react'
-import { Constantes } from '@/config'
+import { ListSkeleton, TableSkeletonBody } from "./CustomSkeleton";
+import { Icono } from "@/components/Icono";
+import { SortTypeCriteria, ToggleOrden } from "@/types";
+import { ArrowDown, ArrowUp } from "lucide-react";
+import { CONSTANTS } from "../../../config";
 
 export interface CustomDataTableType {
-  titulo?: string
-  tituloPersonalizado?: ReactNode
-  error?: boolean
-  cargando?: boolean
-  acciones?: Array<ReactNode>
-  cambioOrdenCriterios?: (nuevosCriterios: Array<CriterioOrdenType>) => void
-  columnas: Array<CriterioOrdenType>
-  filtros?: ReactNode
-  contenidoTabla: Array<Array<ReactNode>>
-  paginacion?: ReactNode
-  seleccionable?: boolean
-  seleccionados?: (indices: Array<number>) => void
+  title?: string;
+  customTitle?: ReactNode;
+  error?: boolean;
+  loading?: boolean;
+  actions?: Array<ReactNode>;
+  changeOrderCriteria?: (nuevosCriterios: Array<SortTypeCriteria>) => void;
+  columns: Array<SortTypeCriteria>;
+  filters?: ReactNode;
+  tableContent: Array<Array<ReactNode>>;
+  pagination?: ReactNode;
+  isSelectable?: boolean;
+  selected?: (indices: Array<number>) => void;
 }
 
 export const CustomDataTable = ({
-  titulo,
-  tituloPersonalizado,
+  title,
+  customTitle,
   error = false,
-  cargando = false,
-  acciones = [],
-  columnas,
-  cambioOrdenCriterios,
-  filtros,
-  contenidoTabla,
-  paginacion,
-  seleccionable,
-  seleccionados,
+  loading = false,
+  actions = [],
+  columns,
+  changeOrderCriteria,
+  filters,
+  tableContent,
+  pagination,
+  isSelectable,
+  selected,
 }: CustomDataTableType) => {
-  const theme = useTheme()
-  const xs = useMediaQuery(theme.breakpoints.only('xs'))
+  const theme = useTheme();
+  const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
-  const [todoSeleccionado, setTodoSeleccionado] = useState(false)
+  const [allSelected, setAllSelected] = useState(false);
 
-  const cambiarTodoSeleccionado = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setTodoSeleccionado(event.target.checked)
-  }
+  const changeAllSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setAllSelected(event.target.checked);
+  };
 
-  const [indicesSeleccionados, setIndicesSeleccionados] = useState<
-    Array<boolean>
-  >([])
+  const [selectedIndices, setSelectedIndices] = useState<Array<boolean>>([]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const index = Number(event.target.name)
-    setIndicesSeleccionados((prev) => {
-      const newState = [...prev]
-      newState[index] = event.target.checked
-      return newState
-    })
-  }
+    const index = Number(event.target.name);
+    setSelectedIndices((prev) => {
+      const newState = [...prev];
+      newState[index] = event.target.checked;
+      return newState;
+    });
+  };
 
   useEffect(
     () => {
-      if (seleccionados) {
-        seleccionados(
-          indicesSeleccionados.reduce(
-            (resulltado: Array<number>, value, index) => {
-              if (value) {
-                resulltado.push(index)
-              }
-              return resulltado
-            },
-            []
-          )
-        )
+      if (selected) {
+        selected(
+          selectedIndices.reduce((resulltado: Array<number>, value, index) => {
+            if (value) {
+              resulltado.push(index);
+            }
+            return resulltado;
+          }, [])
+        );
       }
 
       if (
-        indicesSeleccionados.filter((value) => value).length ==
-        indicesSeleccionados.length
+        selectedIndices.filter((value) => value).length ==
+        selectedIndices.length
       )
-        setTodoSeleccionado(true)
+        setAllSelected(true);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [JSON.stringify(indicesSeleccionados)]
-  )
+    [JSON.stringify(selectedIndices)]
+  );
 
   useEffect(
     () => {
-      setIndicesSeleccionados(
-        new Array(contenidoTabla.length).fill(todoSeleccionado)
-      )
+      setSelectedIndices(new Array(tableContent.length).fill(allSelected));
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [todoSeleccionado]
-  )
+    [allSelected]
+  );
 
   useEffect(
     () => {
-      if (!cargando) {
-        setIndicesSeleccionados(new Array(contenidoTabla.length).fill(false))
-        setTodoSeleccionado(false)
+      if (!loading) {
+        setSelectedIndices(new Array(tableContent.length).fill(false));
+        setAllSelected(false);
       }
     }, // eslint-disable-next-line react-hooks/exhaustive-deps
-    [cargando, contenidoTabla.length]
-  )
+    [loading, tableContent.length]
+  );
 
   return (
-    <Box sx={{ pb: 2}}>
+    <Box sx={{ pb: 2 }}>
       {/*título y acciones*/}
       <Grid
         container
@@ -133,12 +122,12 @@ export const CustomDataTable = ({
         justifyContent="space-between"
         alignItems="center"
       >
-        {titulo ? (
-          <Typography variant={'h5'} sx={{ fontWeight: 'medium', pl: 1 }}>
-            {`${titulo}`}
+        {title ? (
+          <Typography variant={"h4"} sx={{ fontWeight: "medium", pl: 1 }}>
+            {`${title}`}
           </Typography>
-        ) : tituloPersonalizado ? (
-          tituloPersonalizado
+        ) : customTitle ? (
+          customTitle
         ) : (
           <Box />
         )}
@@ -149,17 +138,17 @@ export const CustomDataTable = ({
             justifyContent="space-between"
             alignItems="center"
           >
-            {seleccionable &&
-              indicesSeleccionados.filter((value) => value).length > 0 && (
+            {isSelectable &&
+              selectedIndices.filter((value) => value).length > 0 && (
                 <Box sx={{ mx: 1 }}>
-                  <Typography key={'contador'} variant={'subtitle2'}>
+                  <Typography key={"contador"} variant={"subtitle2"}>
                     {`${
-                      indicesSeleccionados.filter((value) => value).length
+                      selectedIndices.filter((value) => value).length
                     } seleccionados`}
                   </Typography>
                 </Box>
               )}
-            {acciones.map((accion, index) => (
+            {actions.map((accion, index) => (
               <div key={`accion-id-${index}`}>{accion}</div>
             ))}
           </Grid>
@@ -168,18 +157,18 @@ export const CustomDataTable = ({
       {/* filtros */}
       <Box
         sx={{
-          pt: filtros ? 1 : 2,
-          pb: filtros ? 3 : 1,
+          pt: filters ? 1 : 2,
+          pb: filters ? 3 : 1,
         }}
       >
-        {filtros}
+        {filters}
       </Box>
-      {/*Contenedor de la tabla*/}
       <Card
         sx={{
-          boxShadow: Constantes.boxShadow,
+          boxShadow: CONSTANTS.boxShadow,
           borderRadius: 2,
-          border: 1, borderColor: theme.palette.divider,
+          border: 1,
+          borderColor: theme.palette.divider,
           pt: 0,
           pl: { sm: 3, md: 3, xl: 3 },
           pr: { sm: 3, md: 3, xl: 3 },
@@ -187,8 +176,8 @@ export const CustomDataTable = ({
           mb: { sm: 3, md: 3, xl: 3 },
           backgroundColor: xs
             ? {
-                sm: 'inherit',
-                xs: 'inherit',
+                sm: "inherit",
+                xs: "inherit",
               }
             : {},
         }}
@@ -210,14 +199,14 @@ export const CustomDataTable = ({
                           direction="column"
                           alignItems="center"
                           justifyContent="center"
-                          justifyItems={'center'}
+                          justifyItems={"center"}
                         >
                           <Grid item xs={3} xl={4}>
                             <Typography
-                              variant={'body1'}
+                              variant={"body1"}
                               component="h1"
                               noWrap={true}
-                              alignItems={'center'}
+                              alignItems={"center"}
                             >
                               {`Error obteniendo información`}
                             </Typography>
@@ -228,7 +217,7 @@ export const CustomDataTable = ({
                   </TableBody>
                 </Table>
               </TableContainer>
-            ) : contenidoTabla.length == 0 && !cargando ? (
+            ) : tableContent.length == 0 && !loading ? (
               <TableContainer>
                 <Table>
                   <TableBody>
@@ -243,14 +232,14 @@ export const CustomDataTable = ({
                           direction="column"
                           alignItems="center"
                           justifyContent="center"
-                          justifyItems={'center'}
+                          justifyItems={"center"}
                         >
                           <Grid item xs={3} xl={4}>
                             <Typography
-                              variant={'body1'}
+                              variant={"body1"}
                               component="h1"
                               noWrap={true}
-                              alignItems={'center'}
+                              alignItems={"center"}
                             >
                               {`Sin registros`}
                             </Typography>
@@ -264,18 +253,18 @@ export const CustomDataTable = ({
             ) : (
               <Box>
                 {xs ? (
-                  cargando ? (
+                  loading ? (
                     <ListSkeleton filas={10} />
                   ) : (
                     <div>
-                      {contenidoTabla.map((contenidoFila, index) => (
-                        <Card // en lugar de CardActionArea para no usar hover en móvil
+                      {tableContent.map((contenidoFila, index) => (
+                        <Card
                           sx={{
                             borderRadius: 3,
                             mb: 2,
                           }}
                           key={`row-id-${index}`}
-                          variant={'outlined'}
+                          variant={"outlined"}
                         >
                           <Card
                             key={`celda-id-${index}`}
@@ -283,25 +272,25 @@ export const CustomDataTable = ({
                               borderRadius: 3,
                             }}
                           >
-                            <CardContent sx={{ '&:last-child': { pb: 1 } }}>
-                              {seleccionable && (
+                            <CardContent sx={{ "&:last-child": { pb: 1 } }}>
+                              {isSelectable && (
                                 <Grid
                                   key={`Grid-id-${index}-seleccionar`}
                                   container
                                   direction="row"
-                                  paddingBottom={'0px'}
+                                  paddingBottom={"0px"}
                                   justifyContent="space-between"
                                   alignItems="center"
                                 >
                                   <Typography
                                     color="text.secondary"
-                                    variant={'subtitle2'}
+                                    variant={"subtitle2"}
                                   >
-                                    {'Seleccionar'}
+                                    {"Seleccionar"}
                                   </Typography>
-                                  {indicesSeleccionados.length > index && (
+                                  {selectedIndices.length > index && (
                                     <Checkbox
-                                      checked={indicesSeleccionados[index]}
+                                      checked={selectedIndices[index]}
                                       onChange={handleChange}
                                       name={`${index}`}
                                     />
@@ -314,16 +303,16 @@ export const CustomDataTable = ({
                                     key={`Grid-id-${index}-${indexContenido}`}
                                     container
                                     direction="row"
-                                    paddingTop={'5px'}
-                                    paddingBottom={'0px'}
+                                    paddingTop={"5px"}
+                                    paddingBottom={"0px"}
                                     justifyContent="space-between"
                                     alignItems="center"
                                   >
                                     <Typography
                                       color="text.secondary"
-                                      variant={'subtitle2'}
+                                      variant={"subtitle2"}
                                     >
-                                      {columnas[indexContenido].nombre}
+                                      {columns[indexContenido].name}
                                     </Typography>
                                     {contenido}
                                   </Grid>
@@ -338,109 +327,115 @@ export const CustomDataTable = ({
                 ) : (
                   <TableContainer>
                     <Table>
-                      <TableHead >
+                      <TableHead>
                         <TableRow>
-                          {seleccionable && (
+                          {isSelectable && (
                             <TableCell key={`cabecera-id-seleccionar`}>
                               <Checkbox
-                                checked={todoSeleccionado}
-                                disabled={cargando}
-                                onChange={cambiarTodoSeleccionado}
+                                checked={allSelected}
+                                disabled={loading}
+                                onChange={changeAllSelected}
                                 indeterminate={
-                                  indicesSeleccionados.filter((value) => value)
-                                    .length != indicesSeleccionados.length &&
-                                  indicesSeleccionados.filter((value) => value)
+                                  selectedIndices.filter((value) => value)
+                                    .length != selectedIndices.length &&
+                                  selectedIndices.filter((value) => value)
                                     .length > 0
                                 }
                               />
                             </TableCell>
                           )}
-                          {columnas.map((columna, index) => (
+                          {columns.map((columna, index) => (
                             <TableCell key={`cabecera-id-${index}`}>
-                              {columna.ordenar ? (
+                              {columna.sort ? (
                                 <Button
-                                  disabled={cargando}
+                                  disabled={loading}
                                   style={{
-                                    justifyContent: 'flex-start',
-                                    minWidth: '0',
-                                    padding: '0 1',
+                                    justifyContent: "end",
+                                    minWidth: "0",
+                                    padding: "0 1",
                                   }}
                                   onClick={() => {
-                                    const nuevosCriterios = [...columnas] // crea una copia del array original
+                                    const nuevosCriterios = [...columns];
 
-                                    if (cambioOrdenCriterios) {
-                                      cambioOrdenCriterios(
+                                    if (changeOrderCriteria) {
+                                      changeOrderCriteria(
                                         nuevosCriterios.map(
                                           (value, indice) => ({
                                             ...value,
                                             ...{
                                               orden:
                                                 index == indice
-                                                  ? ToggleOrden(value.orden)
+                                                  ? ToggleOrden(value.order)
                                                   : undefined,
                                             },
                                           })
                                         )
-                                      )
+                                      );
                                     }
                                   }}
                                 >
                                   <Typography
                                     variant="h4"
-                                    fontWeight={'medium'}
-                                    align={'left'}
+                                    fontWeight={"medium"}
+                                    align={"left"}
                                   >
-                                    {columna.nombre}
+                                    {columna.name}
                                   </Typography>
-                                  {columna.orden && <Box width={'10px'} />}
-                                  {columna.orden && (
+                                  {columna.order && <Box width={"10px"} />}
+                                  {columna.order && (
                                     <Icono
-                                      fontSize={'inherit'}
-                                      color={'secondary'}
+                                      fontSize={"inherit"}
+                                      color={"secondary"}
                                     >
-                                      {columna.orden == 'asc'
-                                        ? <ArrowUp/>
-                                        : <ArrowDown/>}
+                                      {columna.order == "asc" ? (
+                                        <ArrowUp />
+                                      ) : (
+                                        <ArrowDown />
+                                      )}
                                     </Icono>
                                   )}
                                 </Button>
                               ) : (
                                 <Typography
                                   variant="h4"
-                                  fontWeight={'medium'}
-                                  align={'left'}
+                                  fontWeight={"medium"}
+                                  align={`${
+                                    columna.field === "acciones"
+                                      ? "right"
+                                      : "left"
+                                  }`}
                                 >
-                                  {columna.nombre}
+                                  {columna.name}
                                 </Typography>
                               )}
                             </TableCell>
                           ))}
                         </TableRow>
                       </TableHead>
-                      {cargando ? (
+                      {loading ? (
                         <TableSkeletonBody
                           filas={10}
-                          columnas={columnas.length + (seleccionable ? 1 : 0)}
+                          columnas={columns.length + (isSelectable ? 1 : 0)}
                         />
                       ) : (
                         <TableBody>
-                          {contenidoTabla.map(
+                          {tableContent.map(
                             (contenidoFila, indexContenidoTabla) => (
                               <TableRow
                                 key={`row-id-${indexContenidoTabla}`}
                                 hover={true}
                               >
-                                {seleccionable && (
+                                {isSelectable && (
                                   <TableCell
                                     key={`row-id-seleccionar-${indexContenidoTabla}`}
                                   >
-                                    <Fade in={!cargando} timeout={1000}>
+                                    <Fade in={!loading} timeout={1000}>
                                       <Box>
-                                        {indicesSeleccionados.length >
+                                        {selectedIndices.length >
                                           indexContenidoTabla && (
                                           <Checkbox
                                             checked={
-                                              indicesSeleccionados[
+                                              selectedIndices[
                                                 indexContenidoTabla
                                               ]
                                             }
@@ -457,7 +452,7 @@ export const CustomDataTable = ({
                                     <TableCell
                                       key={`celda-id-${indexContenidoTabla}-${indexContenidoFila}`}
                                     >
-                                      <Fade in={!cargando} timeout={1000}>
+                                      <Fade in={!loading} timeout={1000}>
                                         <Box>{contenido}</Box>
                                       </Fade>
                                     </TableCell>
@@ -471,12 +466,12 @@ export const CustomDataTable = ({
                     </Table>
                   </TableContainer>
                 )}
-                {paginacion}
+                {pagination}
               </Box>
             )}
           </Box>
         }
       </Card>
     </Box>
-  )
-}
+  );
+};

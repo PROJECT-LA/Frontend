@@ -1,4 +1,4 @@
-import { Constantes } from '@/config'
+import { CONSTANTS } from "../../../../../config";
 import {
   Box,
   Button,
@@ -7,16 +7,15 @@ import {
   Stack,
   Typography,
   useTheme,
-} from '@mui/material'
-import { ArrowRight } from 'lucide-react'
-import { CustomCardProps, MinusCardProps } from '../types'
-import Grafico from './Grafico'
+} from "@mui/material";
+import { ArrowRight } from "lucide-react";
+import { CustomCardProps, MinusCardProps } from "../types";
 
 const BackgroundColor = [
-  { principal: '#E5EDE8', secundario: '#84B898' },
-  { principal: '#E4D6F3', secundario: '#A686C4' },
-  { principal: '#F5DDC8', secundario: '#E9AE79' },
-]
+  { principal: "#E5EDE8", secundario: "#84B898" },
+  { principal: "#E4D6F3", secundario: "#A686C4" },
+  { principal: "#F5DDC8", secundario: "#E9AE79" },
+];
 
 export const CustomCard = ({
   name,
@@ -24,119 +23,104 @@ export const CustomCard = ({
   color,
   detallesUrl,
 }: CustomCardProps) => {
-  const theme = useTheme()
+  const theme = useTheme();
 
-  const indice = color === 'green' ? 0 : color === 'orange' ? 2 : 1
+  const indice = color === "green" ? 0 : color === "orange" ? 2 : 1;
 
   return (
     <>
       <Grid container>
         <Grid
           item
-          xs={6}
+          xs={7}
           padding={3}
           sx={{
             backgroundColor: BackgroundColor[indice].principal,
-            borderTopLeftRadius: '1.4rem',
-            borderBottomLeftRadius: '1.4rem',
-            position: 'relative',
-            minHeight: '200px',
+            borderTopLeftRadius: "1.4rem",
+            borderBottomLeftRadius: "1.4rem",
+            position: "relative",
+            minHeight: "120px",
           }}
         >
           <Stack direction="row" justifyContent="space-between">
-            <Stack spacing={2} color={theme.palette.grey[800]}>
-              <Typography color="inherit" variant="h3">
+            <Stack color={theme.palette.grey[800]}>
+              <Typography color="inherit" variant="h5">
                 {name}
               </Typography>
-              <Typography color="inherit" variant="h2">
+              <Box height={5} />
+              <Typography color="inherit" variant="h4">
                 {value}
               </Typography>
             </Stack>
-            <Hidden mdDown={true}>
-              <Box
-                sx={{
-                  height: '250px',
-                  width: '300px',
-                  position: 'absolute',
-                  display: 'flex',
-                  alignItems: 'baseline',
-                  bottom: -50,
-                  right: -100,
-                }}
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 10,
+                right: 10,
+                color: theme.palette.grey[700],
+              }}
+            >
+              <Button
+                variant="outlined"
+                color="inherit"
+                endIcon={<ArrowRight />}
               >
-                <Grafico />
-              </Box>
-            </Hidden>
+                <Typography variant="h5" color="inherit">
+                  Detalles
+                </Typography>
+              </Button>
+            </Box>
           </Stack>
         </Grid>
         <Grid
           item
-          xs={6}
+          xs={5}
           sx={{
-            position: 'relative',
-            overflow: 'hidden',
+            position: "relative",
+            overflow: "hidden",
             backgroundColor: BackgroundColor[indice].secundario,
-            borderBottomRightRadius: '1.4rem',
-            borderTopRightRadius: '1.4rem',
-            '&:after': {
+            borderBottomRightRadius: "1.4rem",
+            borderTopRightRadius: "1.4rem",
+            "&:after": {
               border: 1.5,
               content: '""',
               borderColor: theme.palette.divider,
-              borderTopRightRadius: '1.4rem',
-              position: 'absolute',
+              borderTopRightRadius: "1.4rem",
+              position: "absolute",
               width: 210,
               height: 210,
-              borderRadius: '50%',
+              borderRadius: "50%",
               zIndex: 1,
               top: -85,
               right: -95,
-              [theme.breakpoints.down('sm')]: {
+              [theme.breakpoints.down("sm")]: {
                 top: -105,
                 right: -140,
               },
             },
-            '&:before': {
+            "&:before": {
               border: 1.5,
               content: '""',
               borderColor: theme.palette.divider,
-              position: 'absolute',
+              position: "absolute",
               zIndex: 1,
               width: 210,
               height: 210,
-              borderRadius: '50%',
+              borderRadius: "50%",
               top: -125,
               right: -15,
               opacity: 0.5,
-              [theme.breakpoints.down('sm')]: {
+              [theme.breakpoints.down("sm")]: {
                 top: -155,
                 right: -50,
               },
             },
           }}
-        >
-          <Box
-            sx={{
-              position: 'absolute',
-              bottom: 10,
-              left: 10,
-            }}
-          >
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: '#fff',
-                color: theme.palette.primary.dark,
-              }}
-              endIcon={<ArrowRight />}
-            >
-              Detalles
-            </Button>
-          </Box>
-        </Grid>
+        ></Grid>
       </Grid>
     </>
-  )
-}
+  );
+};
 
 export const MinusCard = ({ name, value, icon, color }: MinusCardProps) => {
   return (
@@ -144,23 +128,23 @@ export const MinusCard = ({ name, value, icon, color }: MinusCardProps) => {
       direction="row"
       justifyContent="center"
       alignItems="center"
-      spacing={Constantes.gridSpacing}
+      spacing={CONSTANTS.gridSpacing}
     >
       <Box
         padding={1}
         sx={{
           backgroundColor: color,
-          borderRadius: '1.2rem',
+          borderRadius: "1.2rem",
           padding: 1.5,
-          color: '#000',
+          color: "#000",
         }}
       >
         {icon}
       </Box>
       <Stack>
         <Typography variant="h5">{name}</Typography>
-        <Typography variant="h3">{value}</Typography>
+        <Typography variant="h4">{value}</Typography>
       </Stack>
     </Stack>
-  )
-}
+  );
+};

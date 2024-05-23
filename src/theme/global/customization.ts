@@ -1,16 +1,16 @@
-import { Constantes } from '@/config'
-import { BaseTema, EsquemaColor } from '@/types/temaTypes'
+import { CONSTANTS } from "../../../config";
+import { BaseTema, EsquemaColor } from "../types";
 
-export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
-  if (modo === 'light') {
+export const customization = (modo: BaseTema, color: EsquemaColor): any => {
+  if (modo === "light") {
     return {
       MuiButton: {
         styleOverrides: {
           root: {
             // color: color.grey100,
             fontWeight: 500,
-            fontSize: '1rem',
-            borderRadius: `${Constantes.borderRadius}rem`,
+            fontSize: "1rem",
+            borderRadius: `${CONSTANTS.borderRadius}rem`,
           },
         },
       },
@@ -20,24 +20,24 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
         },
         styleOverrides: {
           root: {
-            backgroundImage: 'none',
+            backgroundImage: "none",
           },
           rounded: {
-            borderRadius: `${Constantes.borderRadius}px`,
+            borderRadius: `${CONSTANTS.borderRadius}px`,
           },
         },
       },
       MuiCardContent: {
         styleOverrides: {
           root: {
-            padding: '24px',
+            padding: "24px",
           },
         },
       },
       MuiCardActions: {
         styleOverrides: {
           root: {
-            padding: '24px',
+            padding: "24px",
           },
         },
       },
@@ -47,9 +47,9 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
           color: color.grey900,
           input: {
             color: color.grey900,
-            '&::placeholder': {
+            "&::placeholder": {
               color: color.darkTextSecondary,
-              fontSize: '0.875rem',
+              fontSize: "0.875rem",
             },
           },
         },
@@ -57,13 +57,13 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
       MuiSlider: {
         styleOverrides: {
           root: {
-            '&.Mui-disabled': {
+            "&.Mui-disabled": {
               color: color.grey300,
             },
           },
           mark: {
             backgroundColor: color.paper,
-            width: '4px',
+            width: "4px",
           },
           valueLabel: {
             color: color.primaryLight,
@@ -74,8 +74,8 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
       MuiChip: {
         styleOverrides: {
           root: {
-            '&.MuiChip-deletable .MuiChip-deleteIcon': {
-              color: 'inherit',
+            "&.MuiChip-deletable .MuiChip-deleteIcon": {
+              color: "inherit",
             },
           },
         },
@@ -88,15 +88,15 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
           },
         },
       },
-    }
+    };
   } else {
     return {
       MuiButton: {
         styleOverrides: {
           root: {
             fontWeight: 500,
-            fontSize: '1rem',
-            borderRadius: `${Constantes.borderRadius}rem`,
+            fontSize: "1rem",
+            borderRadius: `${CONSTANTS.borderRadius}rem`,
           },
         },
       },
@@ -106,24 +106,24 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
         },
         styleOverrides: {
           root: {
-            backgroundImage: 'none',
+            backgroundImage: "none",
           },
           rounded: {
-            borderRadius: `${Constantes.borderRadius}px`,
+            borderRadius: `${CONSTANTS.borderRadius}px`,
           },
         },
       },
       MuiCardContent: {
         styleOverrides: {
           root: {
-            padding: '24px',
+            padding: "24px",
           },
         },
       },
       MuiCardActions: {
         styleOverrides: {
           root: {
-            padding: '24px',
+            padding: "24px",
           },
         },
       },
@@ -133,9 +133,9 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
           color: color.grey200,
           input: {
             color: color.grey200,
-            '&::placeholder': {
+            "&::placeholder": {
               color: color.darkTextSecondary,
-              fontSize: '0.875rem',
+              fontSize: "0.875rem",
             },
           },
         },
@@ -143,13 +143,13 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
       MuiSlider: {
         styleOverrides: {
           root: {
-            '&.Mui-disabled': {
+            "&.Mui-disabled": {
               color: color.grey300,
             },
           },
           mark: {
             backgroundColor: color.paper,
-            width: '4px',
+            width: "4px",
           },
           valueLabel: {
             color: color.primaryLight,
@@ -160,8 +160,8 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
       MuiChip: {
         styleOverrides: {
           root: {
-            '&.MuiChip-deletable .MuiChip-deleteIcon': {
-              color: 'inherit',
+            "&.MuiChip-deletable .MuiChip-deleteIcon": {
+              color: "inherit",
             },
           },
         },
@@ -174,6 +174,6 @@ export const customizacion = (modo: BaseTema, color: EsquemaColor): any => {
           },
         },
       },
-    }
+    };
   }
-}
+};

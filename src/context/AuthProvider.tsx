@@ -1,187 +1,181 @@
-'use client'
-import { createContext, ReactNode, useContext, useState } from 'react'
-import { useFullScreenLoading } from './FullScreenLoadingProvider'
-import { Constantes } from '../config'
-import { imprimir } from '../utils/imprimir'
-import { Enforcer } from 'casbin'
-import { useRouter } from 'next/navigation'
-import { leerCookie, guardarCookie } from '../utils/cookies'
-import { delay, InterpreteMensajes } from '../utils/utilidades'
-import { CasbinTypes } from '../types/utils/casbin'
-import { idRolType, LoginType, RoleType, UsuarioType } from '@/types/login'
+"use client";
+import { CONSTANTS } from "../../config";
+import { createContext, ReactNode, useContext, useState } from "react";
+import { useFullScreenLoading } from "./FullScreenLoadingProvider";
+import { useRouter } from "next/navigation";
+import { idRolType, LoginType, RoleType, UsuarioType } from "@/app/login/types";
+import { Services } from "../services";
+import { toast } from "sonner";
+import {
+  delay,
+  readCookie,
+  print,
+  saveCookie,
+  MessagesInterpreter,
+} from "@/utils";
 
-import { Servicios } from '../services'
-
-import { useSession } from '../hooks/useSession'
-import { useCasbinEnforcer } from '@/hooks/useCasbinEnforcer'
-
-import { toast } from 'sonner'
-import axios from 'axios'
+import { useSession } from "../hooks/useSession";
 
 interface ContextProps {
-  cargarUsuarioManual: () => Promise<void>
-  inicializarUsuario: () => Promise<void>
-  estaAutenticado: boolean
-  usuario: UsuarioType | null
-  rolUsuario: RoleType | undefined
-  setRolUsuario: ({ idRol }: idRolType) => Promise<void>
-  ingresar: ({ usuario, contrasena }: LoginType) => Promise<void>
-  progresoLogin: boolean
-  permisoUsuario: (routerName: string) => Promise<CasbinTypes>
-  permisoAccion: (objeto: string, accion: string) => Promise<boolean>
+  cargarUsuarioManual: () => Promise<void>;
+  inicializarUsuario: () => Promise<void>;
+  estaAutenticado: boolean;
+  usuario: UsuarioType | null;
+  rolUsuario: RoleType | undefined;
+  setRolUsuario: ({ idRol }: idRolType) => Promise<void>;
+  ingresar: ({ usuario, contrasena }: LoginType) => Promise<void>;
+  progresoLogin: boolean;
+  // permisoUsuario: (routerName: string) => Promise<CasbinTypes>;
+  // permisoAccion: (objeto: string, accion: string) => Promise<boolean>;
 }
 
-const AuthContext = createContext<ContextProps>({} as ContextProps)
+const AuthContext = createContext<ContextProps>({} as ContextProps);
 
 interface AuthContextType {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export const AuthProvider = ({ children }: AuthContextType) => {
-  const [user, setUser] = useState<UsuarioType | null>(null)
-  const [loading, setLoading] = useState<boolean>(false)
+  const [user, setUser] = useState<UsuarioType | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { showFullScreen, hideFullScreen } = useFullScreenLoading();
 
-  const { mostrarFullScreen, ocultarFullScreen } = useFullScreenLoading()
+  const router = useRouter();
 
-  const router = useRouter()
-
-  const { sesionPeticion, borrarCookiesSesion } = useSession()
-  const { inicializarCasbin, interpretarPermiso, permisoSobreAccion } =
-    useCasbinEnforcer()
-  const [enforcer, setEnforcer] = useState<Enforcer>()
+  const { sessionRequest, deleteSessionCookie } = useSession();
 
   const inicializarUsuario = async () => {
-    const token = leerCookie('token')
+    const token = readCookie("token");
 
     if (!token) {
-      setLoading(false)
-      return
+      setLoading(false);
+      return;
     }
 
     try {
-      mostrarFullScreen()
-      await obtenerUsuarioRol()
-      await obtenerPermisos()
+      showFullScreen();
+      await obtenerUsuarioRol();
+      await obtenerPermisos();
 
-      await delay(1000)
+      await delay(1000);
     } catch (error: Error | any) {
-      imprimir(`Error durante inicializarUsuario 🚨`, typeof error, error)
-      borrarSesionUsuario()
-      router.push('/login')
-      throw error
+      print(`Error durante inicializarUsuario 🚨`, typeof error, error);
+      borrarSesionUsuario();
+      router.push("/login");
+      throw error;
     } finally {
-      setLoading(false)
-      ocultarFullScreen()
+      setLoading(false);
+      hideFullScreen();
     }
-  }
+  };
 
   const borrarSesionUsuario = () => {
-    setUser(null)
-    borrarCookiesSesion()
-  }
+    setUser(null);
+    deleteSessionCookie();
+  };
 
   const cargarUsuarioManual = async () => {
     try {
-      await obtenerUsuarioRol()
-      await obtenerPermisos()
+      await obtenerUsuarioRol();
+      await obtenerPermisos();
 
-      mostrarFullScreen()
-      await delay(1000)
+      showFullScreen();
+      await delay(1000);
 
-      router.push('/admin/home')
+      router.push("/admin/home");
     } catch (error: Error | any) {
-      imprimir(`Error durante cargarUsuarioManual 🚨`, error)
-      borrarSesionUsuario()
+      print(`Error durante cargarUsuarioManual 🚨`, error);
+      borrarSesionUsuario();
 
-      imprimir(`🚨 -> login`)
-      router.push('/login')
-      throw error
+      print(`🚨 -> login`);
+      router.push("/login");
+      throw error;
     } finally {
-      ocultarFullScreen()
+      hideFullScreen();
     }
-  }
+  };
 
   const login = async ({ usuario, contrasena }: LoginType) => {
     try {
-      setLoading(true)
-      await delay(1000)
+      setLoading(true);
+      await delay(1000);
 
-      const respuesta = await Servicios.post({
-        url: `${Constantes.baseUrl}/auth/login`,
+      const respuesta = await Services.post({
+        url: `${CONSTANTS.baseUrl}/auth/login`,
         body: { username: usuario, password: contrasena },
         headers: {},
-      })
+      });
 
-      imprimir(respuesta.data.token)
-      guardarCookie('token', respuesta.data.token)
+      print(respuesta.data.token);
+      saveCookie("token", respuesta.data.token);
 
-      setUser(respuesta.data)
-      imprimir(`Usuarios ✅`, respuesta.data)
+      setUser(respuesta.data);
+      print(`Usuarios ✅`, respuesta.data);
 
       // await obtenerPermisos()
 
-      mostrarFullScreen()
-      await delay(1000)
-      router.push('/admin/home')
+      showFullScreen();
+      await delay(1000);
+      router.push("/admin/home");
 
-      await delay(1000)
+      await delay(1000);
     } catch (e) {
-      imprimir(`Error al iniciar sesión: `, e)
-      toast.error(Constantes.error, {
-        description: `${InterpreteMensajes(e)}`,
-      })
-      borrarSesionUsuario()
+      print(`Error al iniciar sesión: `, e);
+      toast.error("ERROR", {
+        description: `${MessagesInterpreter(e)}`,
+      });
+      borrarSesionUsuario();
     } finally {
-      setLoading(false)
-      ocultarFullScreen()
+      setLoading(false);
+      hideFullScreen();
     }
-  }
+  };
 
   const CambiarRol = async ({ idRol }: idRolType) => {
-    imprimir(`Cambiando rol 👮‍♂️: ${idRol}`)
-    await actualizarRol(Number(idRol))
+    print(`Cambiando rol 👮‍♂️: ${idRol}`);
+    await actualizarRol(Number(idRol));
     //await obtenerPermisos()
-    router.push('/admin/home')
-  }
+    router.push("/admin/home");
+  };
 
   const actualizarRol = async (idRol: number) => {
-    const respuestaUsuario = await sesionPeticion({
-      tipo: 'patch',
-      url: `${Constantes.baseUrl}/auth/change-rol`,
+    const respuestaUsuario = await sessionRequest({
+      type: "patch",
+      url: `${CONSTANTS.baseUrl}/auth/change-rol`,
       body: {
-        idRole: idRol + '',
+        idRole: idRol + "",
       },
-    })
+    });
 
-    guardarCookie('token', respuestaUsuario.datos.token)
-    imprimir(`Token ✅: ${respuestaUsuario.datos.token}`)
+    saveCookie("token", respuestaUsuario.datos.token);
+    print(`Token ✅: ${respuestaUsuario.datos.token}`);
 
-    setUser(respuestaUsuario.datos)
-    imprimir(
+    setUser(respuestaUsuario.datos);
+    print(
       `rol definido en obtenerUsuarioRol 👨‍💻: ${respuestaUsuario.datos.idRole}`
-    )
-  }
+    );
+  };
 
   const obtenerPermisos = async () => {
-    const respuestaPermisos = await sesionPeticion({
-      url: `${Constantes.baseUrl}/autorizacion/permisos`,
-    })
+    const respuestaPermisos = await sessionRequest({
+      url: `${CONSTANTS.baseUrl}/autorizacion/permisos`,
+    });
 
-    setEnforcer(await inicializarCasbin(respuestaPermisos.datos))
-  }
+    // setEnforcer(await inicializarCasbin(respuestaPermisos.datos));
+  };
 
   const obtenerUsuarioRol = async () => {
-    const respuestaUsuario = await sesionPeticion({
-      url: `${Constantes.baseUrl}/usuarios/cuenta/perfil`,
-    })
+    const respuestaUsuario = await sessionRequest({
+      url: `${CONSTANTS.baseUrl}/usuarios/cuenta/perfil`,
+    });
 
-    setUser(respuestaUsuario.datos)
-    imprimir(
+    setUser(respuestaUsuario.datos);
+    print(
       `rol definido en obtenerUsuarioRol 👨‍💻: ${respuestaUsuario.datos.idRol}`
-    )
-  }
+    );
+  };
 
-  const rolUsuario = () => user?.roles.find((rol) => rol.id == user?.idRole)
+  const rolUsuario = () => user?.roles.find((rol) => rol.id == user?.idRole);
 
   return (
     <AuthContext.Provider
@@ -194,20 +188,20 @@ export const AuthProvider = ({ children }: AuthContextType) => {
         setRolUsuario: CambiarRol,
         ingresar: login,
         progresoLogin: loading,
-        permisoUsuario: (routerName: string) =>
-          interpretarPermiso({ routerName, enforcer, rol: rolUsuario()?.rol }),
-        permisoAccion: (objeto: string, accion: string) =>
-          permisoSobreAccion({
-            objeto,
-            enforcer,
-            rol: rolUsuario()?.rol ?? '',
-            accion,
-          }),
+        // permisoUsuario: (routerName: string) =>
+        //   interpretarPermiso({ routerName, enforcer, rol: rolUsuario()?.rol }),
+        // permisoAccion: (objeto: string, accion: string) =>
+        //   permisoSobreAccion({
+        //     objeto,
+        //     enforcer,
+        //     rol: rolUsuario()?.rol ?? "",
+        //     accion,
+        //   }),
       }}
     >
       {children}
     </AuthContext.Provider>
-  )
-}
+  );
+};
 
-export const useAuth = () => useContext(AuthContext)
+export const useAuth = () => useContext(AuthContext);
