@@ -1,64 +1,71 @@
-'use client'
-import { useTheme } from '@mui/material/styles'
-import { Box, Stack, Button, Typography } from '@mui/material'
+"use client";
+import { useTheme } from "@mui/material/styles";
+import {
+  Box,
+  Stack,
+  Button,
+  Typography,
+  Hidden,
+  useMediaQuery,
+} from "@mui/material";
 
 // project imports
-import ProfileSection from './ProfileSection'
-import NotificationSection from './NotificationSection'
-
+import ProfileSection from "./ProfileSection";
+import NotificationSection from "./NotificationSection";
+import { IconTooltip } from "@/components/buttons";
 // assets
-import { Search } from 'lucide-react'
-import { BotonCambioTema } from '@/components/botones'
-import { useEffect, useState } from 'react'
+import { CONSTANTS } from "../../../config";
+import { Menu, Search } from "lucide-react";
+import { ThemeToggler } from "@/components/buttons";
+import { usePathname } from "next/navigation";
+import { useGlobalStore } from "@/store";
+import SearchSection from "./SearchSection";
 
 const Header = ({
   handleLeftDrawerToggle,
   scrolled,
 }: {
-  handleLeftDrawerToggle: () => void
-  scrolled: boolean
+  handleLeftDrawerToggle: () => void;
+  scrolled: boolean;
 }) => {
-  const theme = useTheme()
+  const theme = useTheme();
+  const { toggleDrawer } = useGlobalStore();
+  const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
     <>
-      <Stack spacing={1} alignItems={scrolled ? 'center' : 'end'}>
-        <Typography
-          sx={{ transition: 'all .3s ease' }}
-          variant={scrolled ? 'h3' : 'h1'}
+      <Box>
+        <Stack
+          direction="row"
+          justifyContent="center"
+          spacing={CONSTANTS.gridSpacing}
+          alignItems="center"
         >
-          Dashboard
-        </Typography>
-      </Stack>
+          <IconTooltip
+            action={toggleDrawer}
+            title="Abrir menú"
+            name="menu"
+            id="menu-hamburguesa"
+            icon={<Menu />}
+          />
+
+          <Typography variant="h5">ADMINISTRADOR</Typography>
+        </Stack>
+      </Box>
 
       <Box sx={{ flexGrow: 1 }} />
-      <Box sx={{ flexGrow: 1 }} />
 
-      <Stack spacing={2} direction="row" alignItems="center">
-        <Button
-          endIcon={<Search />}
-          sx={{
-            paddingBottom: 1,
-            paddingTop: 1,
-            transition: 'all .3s ease',
-            color: theme.palette.text.primary,
-            borderColor: theme.palette.divider,
-            backgroundColor:
-              theme.palette.mode === 'light'
-                ? theme.palette.background.paper
-                : 'transparent',
-          }}
-          variant="outlined"
-        >
-          <Typography>Búsqueda rápida</Typography>
-        </Button>
+      <Stack spacing={!matchDownMd ? 2 : 1} direction="row" alignItems="center">
+        <Hidden mdDown={true}>
+          <SearchSection />
+        </Hidden>
 
         <NotificationSection />
-        <BotonCambioTema />
+        <ThemeToggler />
         <ProfileSection />
       </Stack>
     </>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

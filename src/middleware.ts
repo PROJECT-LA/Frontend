@@ -1,53 +1,53 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { imprimir } from '@/utils/imprimir'
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { print } from "./utils";
 
 export const middleware = (req: NextRequest) => {
-  const token = req.cookies.get('token')
-  imprimir(`token middleware 🔐️: ${token?.value}`, req.nextUrl.pathname)
+  const token = req.cookies.get("token");
+  print(`token middleware 🔐️: ${token?.value}`, req.nextUrl.pathname);
 
   try {
-    if (req.nextUrl.pathname == '/') {
+    if (req.nextUrl.pathname == "/") {
       if (token?.value) {
-        const url = req.nextUrl.clone()
-        url.pathname = '/admin/home'
-        return NextResponse.redirect(url)
+        const url = req.nextUrl.clone();
+        url.pathname = "/admin/home";
+        return NextResponse.redirect(url);
       } else {
-        const url = req.nextUrl.clone()
-        url.pathname = '/login'
-        return NextResponse.redirect(url)
+        const url = req.nextUrl.clone();
+        url.pathname = "/login";
+        return NextResponse.redirect(url);
       }
     }
 
-    if (req.nextUrl.pathname == '/login') {
+    if (req.nextUrl.pathname == "/login") {
       if (token?.value) {
-        const url = req.nextUrl.clone()
-        url.pathname = '/admin/home'
-        return NextResponse.redirect(url)
+        const url = req.nextUrl.clone();
+        url.pathname = "/admin/home";
+        return NextResponse.redirect(url);
       } else {
-        return NextResponse.next()
+        return NextResponse.next();
       }
     }
 
-    if (req.nextUrl.pathname.startsWith('/admin/home')) {
+    if (req.nextUrl.pathname.startsWith("/admin")) {
       if (token?.value) {
-        return NextResponse.next()
+        return NextResponse.next();
       } else {
-        const url = req.nextUrl.clone()
-        url.pathname = '/login'
-        return NextResponse.redirect(url)
+        const url = req.nextUrl.clone();
+        url.pathname = "/login";
+        return NextResponse.redirect(url);
       }
     }
 
-    return NextResponse.next()
+    return NextResponse.next();
   } catch (e) {
-    imprimir(`Error verificando token en middleware`, e)
-    const url = req.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+    print(`Error verificando token en middleware`, e);
+    const url = req.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
-}
+};
 
 export const config = {
-  matcher: ['/', '/login', '/admin/home/:path*'],
-}
+  matcher: ["/", "/login", "/admin/home/:path*"],
+};

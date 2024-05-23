@@ -1,49 +1,62 @@
-import { create } from 'zustand'
-import { imprimir } from '../utils/imprimir'
-import { ThemeMode } from '@/types/temaTypes'
-import { CasbinTypes, PermisosCasbin } from '@/types/utils/casbin'
+"use client";
+import { UserType, LoginType } from "@/types/auth";
+import { useRouter } from "next/router";
+import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface GlobalState {
-  openDrawer: boolean
-  toggleDrawer: () => void
-  themeMode: ThemeMode
-  cerrarDrawer: () => void
-  permisos: PermisosCasbin
-  setPermisos: (ruta: string, permisos: CasbinTypes) => void
+  openDrawer: boolean;
+  toggleDrawer: () => void;
+  cerrarDrawer: () => void;
+}
+interface AuthState {
+  user: UserType | undefined;
+  setUserData: (userData: UserType) => void;
+  deleteUserInfo: () => void;
+  loginLoader: boolean;
+  setLoginLoader: (changeLogin: boolean) => void;
+  setUserRole: (idRol: string) => Promise<void>;
 }
 
-export const useGlobalStore = create<GlobalState>((set) => ({
-  themeMode: 'primary-light',
-  openDrawer: true,
-  permisos: {
-    ruta: '/',
-    permisos: {
-      create: false,
-      read: false,
-      update: false, 
-      delete: false
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: undefined,
+      setUserData: (userData: UserType) => {
+        set((state) => {
+          return { ...state, user: userData };
+        });
+      },
+      deleteUserInfo: () => {
+        set((state) => {
+          return { ...state, user: undefined };
+        });
+      },
+      loginLoader: false,
+      setLoginLoader: (changeLogin: boolean) => {
+        set((state) => {
+          return { ...state, loginLoader: changeLogin };
+        });
+      },
+      setUserRole: async (idRol: string) => {},
+    }),
+    {
+      name: "auth-information",
+      storage: createJSONStorage(() => sessionStorage),
     }
-  },
-  setPermisos: (ruta: string, permisos: CasbinTypes)=>{
-    set((state) => {
-      return {
-        ...state, 
-        permisos: {
-          ruta: ruta, 
-          permisos: permisos
-        }
-      }
-    })
-  },
+  )
+);
+
+export const useGlobalStore = create<GlobalState>((set) => ({
+  openDrawer: true,
   toggleDrawer: () => {
     set((state) => {
-      imprimir(state.openDrawer)
-      return { openDrawer: !state.openDrawer }
-    })
+      return { openDrawer: !state.openDrawer };
+    });
   },
   cerrarDrawer: () => {
     set((state) => {
-      return { ...state, openDrawer: false }
-    })
+      return { ...state, openDrawer: false };
+    });
   },
-}))
+}));

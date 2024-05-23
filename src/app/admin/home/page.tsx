@@ -1,8 +1,7 @@
-'use client'
-import { Icono } from '@/components/Icono'
-import Icon from '@/components/LucideIcon'
-import MainCard from '@/components/cards/MainCard'
-import { Constantes } from '@/config'
+"use client";
+import { Icono } from "@/components/Icono";
+import MainCard from "@/components/cards/MainCard";
+import { CONSTANTS } from "../../../../config";
 import {
   Box,
   Typography,
@@ -10,180 +9,135 @@ import {
   Grid,
   IconButton,
   useTheme,
-} from '@mui/material'
-import { Calendar, Ellipsis } from 'lucide-react'
-import React from 'react'
-import { CustomCard, MinusCard } from './ui/CustomCard'
-import { MinusArray, MinusCardProps } from './types'
-
-import { CustomCardProps } from './types'
+} from "@mui/material";
+import { Calendar, Ellipsis } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { CustomCard, MinusCard } from "./ui/CustomCard";
+import { MinusArray, MinusCardProps } from "./types";
+import { RoleType } from "@/types/auth";
+import { CustomCardProps } from "./types";
+import { useAuthStore } from "@/store";
 
 const CARDS: CustomCardProps[] = [
   {
-    color: 'green',
-    detallesUrl: '/',
-    name: 'Balance actual',
-    value: 'Bs. 2.400,00',
+    color: "green",
+    detallesUrl: "/",
+    name: "Balance actual",
+    value: "Bs. 2.400,00",
   },
   {
-    color: 'orange',
-    detallesUrl: '/',
-    name: 'Crédito',
-    value: 'Bs. 3.150,00',
+    color: "orange",
+    detallesUrl: "/",
+    name: "Crédito",
+    value: "Bs. 3.150,00",
   },
-  {
-    color: 'purple',
-    detallesUrl: '/',
-    name: 'Débito',
-    value: 'Bs. 4.020,00',
-  },
-  {
-    color: 'green',
-    detallesUrl: '/',
-    name: 'prueba 4',
-    value: 'Bs. 2.400,00',
-  },
-]
+];
 
 const Home = () => {
-  const theme = useTheme()
+  const theme = useTheme();
+  const { user } = useAuthStore();
+  const [roles, setRoles] = useState<RoleType[]>([]);
+
+  const interpretarRoles = () => {
+    if (user?.roles && user?.roles.length > 0) {
+      setRoles(user?.roles);
+    }
+  };
+  useEffect(() => {
+    interpretarRoles();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
   return (
     <Stack>
-      <Stack>
-        <Typography variant="h2">Bienvenid@ Alexander Nina</Typography>
+      <Stack color={theme.palette.text.primary}>
+        <Typography variant="h3" color="inherit">
+          Bienvenid@ Alexander Nina
+        </Typography>
         <Box height={5} />
-        <Typography variant="h4">Administrador</Typography>
+        <Typography variant="h6" color="inherit">
+          ADMINISTRADOR
+        </Typography>
       </Stack>
 
       <Box height={20} />
 
       <MainCard>
-        <Stack spacing={Constantes.gridSpacing}>
-          <Stack direction="row" justifyContent="space-between">
-            <Typography variant="h3">Detalles de uso</Typography>
-            <Stack direction="row" spacing={2}>
-              <IconButton
-                sx={{
-                  border: 1,
-                  borderRadius: '50%',
-                  borderColor: theme.palette.divider,
-                }}
-              >
-                <Icono>
-                  <Calendar />
-                </Icono>
-              </IconButton>
-              <IconButton
-                sx={{
-                  border: 1,
-                  borderRadius: '50%',
-                  borderColor: theme.palette.divider,
-                }}
-              >
-                <Icono>
-                  <Ellipsis />
-                </Icono>
-              </IconButton>
+        <Grid container spacing={CONSTANTS.gridSpacing}>
+          <Grid item xs={12}>
+            <Stack direction="row" justifyContent="space-between">
+              <Typography variant="h3">Detalles de uso</Typography>
+              <Stack direction="row" spacing={2}>
+                <IconButton
+                  sx={{
+                    border: 1,
+                    borderRadius: "50%",
+                    borderColor: theme.palette.divider,
+                  }}
+                >
+                  <Icono>
+                    <Calendar />
+                  </Icono>
+                </IconButton>
+                <IconButton
+                  sx={{
+                    border: 1,
+                    borderRadius: "50%",
+                    borderColor: theme.palette.divider,
+                  }}
+                >
+                  <Icono>
+                    <Ellipsis />
+                  </Icono>
+                </IconButton>
+              </Stack>
             </Stack>
-          </Stack>
+          </Grid>
 
-          <Box>
-            <Grid container spacing={Constantes.gridSpacing}>
+          <Grid item xs={12}>
+            <Grid container spacing={CONSTANTS.gridSpacing}>
               {CARDS.map((elem, index) => (
-                <CustomCard
-                  key={`${elem.name}-${index}`}
-                  name={elem.name}
-                  value={elem.value}
-                  color={elem.color}
-                  detallesUrl={elem.detallesUrl}
-                />
+                <Grid item xs={12} lg={6} key={`${elem.name}-${index}`}>
+                  <CustomCard
+                    name={elem.name}
+                    value={elem.value}
+                    color={elem.color}
+                    detallesUrl={elem.detallesUrl}
+                  />
+                </Grid>
               ))}
             </Grid>
-          </Box>
-        </Stack>
+          </Grid>
+        </Grid>
       </MainCard>
 
       <Box height={20} />
 
       <MainCard>
-        <Stack
-          direction="row"
-          justifyContent="space-around"
-          alignItems="center"
-        >
+        <Grid container spacing={CONSTANTS.gridSpacing}>
           {MinusArray.map((elem: MinusCardProps, index: number) => (
-            <MinusCard
+            <Grid
+              item
+              xs={12}
+              md={6}
+              lg={4}
               key={`${elem.icon}-${index}`}
-              color={elem.color}
-              icon={elem.icon}
-              name={elem.name}
-              value={elem.value}
-            />
+              alignContent="center"
+            >
+              <MinusCard
+                color={elem.color}
+                icon={elem.icon}
+                name={elem.name}
+                value={elem.value}
+              />
+            </Grid>
           ))}
-        </Stack>
+        </Grid>
       </MainCard>
 
       <Box height={20} />
-
-      <MainCard>
-        <Stack
-          direction="row"
-          justifyContent="space-around"
-          alignItems="center"
-        >
-          {MinusArray.map((elem: MinusCardProps, index: number) => (
-            <MinusCard
-              key={`${elem.icon}-${index}`}
-              color={elem.color}
-              icon={elem.icon}
-              name={elem.name}
-              value={elem.value}
-            />
-          ))}
-        </Stack>
-      </MainCard>
-
-      <Box height={20} />
-
-      <MainCard>
-        <Stack
-          direction="row"
-          justifyContent="space-around"
-          alignItems="center"
-        >
-          {MinusArray.map((elem: MinusCardProps, index: number) => (
-            <MinusCard
-              key={`${elem.icon}-${index}`}
-              color={elem.color}
-              icon={elem.icon}
-              name={elem.name}
-              value={elem.value}
-            />
-          ))}
-        </Stack>
-      </MainCard>
-
-      <Box height={20} />
-
-      <MainCard>
-        <Stack
-          direction="row"
-          justifyContent="space-around"
-          alignItems="center"
-        >
-          {MinusArray.map((elem: MinusCardProps, index: number) => (
-            <MinusCard
-              key={`${elem.icon}-${index}`}
-              color={elem.color}
-              icon={elem.icon}
-              name={elem.name}
-              value={elem.value}
-            />
-          ))}
-        </Stack>
-      </MainCard>
     </Stack>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

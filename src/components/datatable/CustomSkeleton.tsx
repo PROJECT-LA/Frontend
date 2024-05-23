@@ -5,10 +5,10 @@ import {
   TableCell,
   TableContainer,
   TableRow,
-} from '@mui/material'
+} from "@mui/material";
 
 export interface ListSkeletonType {
-  filas: number
+  filas: number;
 }
 
 export const ListSkeleton = ({ filas }: ListSkeletonType) => {
@@ -17,15 +17,15 @@ export const ListSkeleton = ({ filas }: ListSkeletonType) => {
       {Array(filas)
         .fill(0)
         .map((e, i) => (
-          <Skeleton key={`$skeleton-${i}`} height={'120px'} />
+          <Skeleton key={`$skeleton-${i}`} height={"120px"} />
         ))}
     </>
-  )
-}
+  );
+};
 
 export interface TableSkeletonType {
-  filas: number
-  columnas: number
+  filas: number;
+  columnas: number;
 }
 
 export const TableSkeleton = ({ filas, columnas }: TableSkeletonType) => {
@@ -37,8 +37,8 @@ export const TableSkeleton = ({ filas, columnas }: TableSkeletonType) => {
         </Table>
       </TableContainer>
     </>
-  )
-}
+  );
+};
 
 export const TableSkeletonBody = ({ filas, columnas }: TableSkeletonType) => {
   return (
@@ -49,7 +49,7 @@ export const TableSkeletonBody = ({ filas, columnas }: TableSkeletonType) => {
           .map((e, fila) => (
             <TableRow
               key={`skeleton-row-${fila}`}
-              sx={{ '& > *': { borderBottom: 'unset' } }}
+              sx={{ "& > *": { borderBottom: "unset" } }}
             >
               {Array(columnas)
                 .fill(0)
@@ -57,9 +57,9 @@ export const TableSkeletonBody = ({ filas, columnas }: TableSkeletonType) => {
                   <TableCell key={`skeleton-cell-${columna}`}>
                     <Skeleton
                       key={`$skeleton-${fila}-${columna}`}
-                      variant={'text'}
-                      height={'30px'}
-                      animation={'wave'}
+                      variant={"text"}
+                      height={"30px"}
+                      animation={"wave"}
                     />
                   </TableCell>
                 ))}
@@ -67,5 +67,5 @@ export const TableSkeletonBody = ({ filas, columnas }: TableSkeletonType) => {
           ))}
       </TableBody>
     </>
-  )
-}
+  );
+};

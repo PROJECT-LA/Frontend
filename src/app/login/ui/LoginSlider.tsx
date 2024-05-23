@@ -1,10 +1,10 @@
-// Librerías
-import Slider from 'react-slick'
-import { Settings as SettingsSlider } from 'react-slick'
-import { Grid, useTheme, Box, Typography } from '@mui/material'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
-import Image from 'next/image'
+"use client";
+import Slider from "react-slick";
+import { Settings as SettingsSlider } from "react-slick";
+import { Grid, useTheme, Box, Typography } from "@mui/material";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import Image from "next/image";
 
 // Constantes
 const configuracionSlider: SettingsSlider = {
@@ -15,14 +15,14 @@ const configuracionSlider: SettingsSlider = {
   slidesToShow: 1,
   slidesToScroll: 1,
   arrows: false,
-}
+};
 
 export const LoginSlider = () => {
-  const theme = useTheme()
+  const theme = useTheme();
 
   return (
     <Grid
-      sx={{ position: 'relative' }}
+      sx={{ position: "relative" }}
       alignItems="center"
       item
       width="100%"
@@ -31,7 +31,7 @@ export const LoginSlider = () => {
       md={6}
       minHeight="100vh"
       bgcolor={
-        theme.palette.mode === 'light'
+        theme.palette.mode === "light"
           ? theme.palette.background.paper
           : theme.palette.background.default
       }
@@ -42,22 +42,22 @@ export const LoginSlider = () => {
         width={300}
         height={400}
         style={{
-          position: 'absolute',
+          position: "absolute",
           bottom: 0,
           left: 0,
-          width: '100%',
-          height: '70%',
+          width: "100%",
+          height: "70%",
         }}
       />
       <Box paddingY={10}>
         <Grid container direction="column" alignContent="center">
           <Grid item xs={4} alignContent="center" width="80%">
             <Slider {...configuracionSlider}>
-              <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h2"
                   sx={{
-                    fontWeight: 'semi-bold',
+                    fontWeight: "semi-bold",
                   }}
                 >
                   Genera reportes gráficos
@@ -69,11 +69,11 @@ export const LoginSlider = () => {
                 </Typography>
               </Box>
 
-              <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h2"
                   sx={{
-                    fontWeight: 'semi-bold',
+                    fontWeight: "semi-bold",
                   }}
                 >
                   Mejora continua
@@ -85,11 +85,11 @@ export const LoginSlider = () => {
                 </Typography>
               </Box>
 
-              <Box sx={{ textAlign: 'center' }}>
+              <Box sx={{ textAlign: "center" }}>
                 <Typography
                   variant="h2"
                   sx={{
-                    fontWeight: 'semi-bold',
+                    fontWeight: "semi-bold",
                   }}
                 >
                   Evalúa el rendimiento
@@ -109,16 +109,16 @@ export const LoginSlider = () => {
               width={300}
               height={400}
               style={{
-                position: 'absolute',
+                position: "absolute",
                 bottom: 50,
                 left: 0,
-                width: '100%',
-                height: '60%',
+                width: "100%",
+                height: "60%",
               }}
             />
           </Grid>
         </Grid>
       </Box>
     </Grid>
-  )
-}
+  );
+};
