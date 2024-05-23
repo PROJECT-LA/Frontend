@@ -7,6 +7,7 @@ export interface RoleType {
 
 export interface UserData {
   idUser: string;
+  username: string;
   names: string;
   lastNames: string;
   email: string;
