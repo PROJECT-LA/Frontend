@@ -193,9 +193,9 @@ const ProfileSection = () => {
                         variant="h4"
                         sx={{ fontWeight: 400 }}
                       >
-                        Alexander Nina
+                        {user?.userData.names}
                       </Typography>
-                      <Typography variant="h6">ADMINISTRADOR</Typography>
+                      <Typography variant="h6">{user?.roleName}</Typography>
                     </Stack>
                   </ButtonBase>
 
@@ -223,7 +223,7 @@ const ProfileSection = () => {
                                   value={rol.id}
                                   control={
                                     <Radio
-                                      checked={user?.id === rol.id}
+                                      checked={user?.idRole === rol.id}
                                       onChange={cambiarRol}
                                       color={"success"}
                                       size="small"

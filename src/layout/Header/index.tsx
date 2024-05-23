@@ -18,7 +18,7 @@ import { CONSTANTS } from "../../../config";
 import { Menu, Search } from "lucide-react";
 import { ThemeToggler } from "@/components/buttons";
 import { usePathname } from "next/navigation";
-import { useGlobalStore } from "@/store";
+import { useAuthStore, useGlobalStore } from "@/store";
 import SearchSection from "./SearchSection";
 
 const Header = ({
@@ -28,6 +28,7 @@ const Header = ({
   handleLeftDrawerToggle: () => void;
   scrolled: boolean;
 }) => {
+  const { user } = useAuthStore();
   const theme = useTheme();
   const { toggleDrawer } = useGlobalStore();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
@@ -48,8 +49,7 @@ const Header = ({
             id="menu-hamburguesa"
             icon={<Menu />}
           />
-
-          <Typography variant="h5">ADMINISTRADOR</Typography>
+          <Typography variant="h5">{user?.roleName}</Typography>
         </Stack>
       </Box>
 

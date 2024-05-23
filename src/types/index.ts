@@ -7,8 +7,8 @@ export interface Item {
   type: string;
   caption?: string;
   url?: string;
-  children?: Array<Item>;
-  icon?: ReactNode;
+  subModule?: Array<Item>;
+  icon?: string;
   breadcrumbs?: boolean;
   external?: boolean;
   target?: boolean | string;

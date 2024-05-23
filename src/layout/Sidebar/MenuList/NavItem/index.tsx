@@ -19,6 +19,7 @@ import {
 
 import { useGlobalStore } from "@/store";
 import { Home } from "lucide-react";
+import { getIconLucide } from "@/types/icons";
 
 interface ListItemProps {
   component:
@@ -190,7 +191,7 @@ const NavItem = ({
           minWidth: !item?.icon ? 18 : 36,
         }}
       >
-        {!isFromCollapse && item.icon && item.icon}
+        {!isFromCollapse && item.icon && getIconLucide(item.icon)}
       </ListItemIcon>
 
       {(openDrawer || matchDownMd) && (
