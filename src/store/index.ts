@@ -1,26 +1,54 @@
+"use client";
+import { UserType, LoginType } from "@/types/auth";
+import { useRouter } from "next/router";
 import { create } from "zustand";
-import { print } from "@/utils";
-import { ThemeMode } from "@/theme/types";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 interface GlobalState {
   openDrawer: boolean;
   toggleDrawer: () => void;
-  themeMode: ThemeMode;
   cerrarDrawer: () => void;
 }
+interface AuthState {
+  user: UserType | undefined;
+  setUserData: (userData: UserType) => void;
+  deleteUserInfo: () => void;
+  loginLoader: boolean;
+  setLoginLoader: (changeLogin: boolean) => void;
+  setUserRole: (idRol: string) => Promise<void>;
+}
+
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      user: undefined,
+      setUserData: (userData: UserType) => {
+        set((state) => {
+          return { ...state, user: userData };
+        });
+      },
+      deleteUserInfo: () => {
+        set((state) => {
+          return { ...state, user: undefined };
+        });
+      },
+      loginLoader: false,
+      setLoginLoader: (changeLogin: boolean) => {
+        set((state) => {
+          return { ...state, loginLoader: changeLogin };
+        });
+      },
+      setUserRole: async (idRol: string) => {},
+    }),
+    {
+      name: "auth-information",
+      storage: createJSONStorage(() => sessionStorage),
+    }
+  )
+);
 
 export const useGlobalStore = create<GlobalState>((set) => ({
-  themeMode: "primary-light",
   openDrawer: true,
-  permisos: {
-    ruta: "/",
-    permisos: {
-      create: false,
-      read: false,
-      update: false,
-      delete: false,
-    },
-  },
   toggleDrawer: () => {
     set((state) => {
       return { openDrawer: !state.openDrawer };

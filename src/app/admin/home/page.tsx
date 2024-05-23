@@ -14,10 +14,9 @@ import { Calendar, Ellipsis } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { CustomCard, MinusCard } from "./ui/CustomCard";
 import { MinusArray, MinusCardProps } from "./types";
-import { RoleType } from "@/app/login/types";
+import { RoleType } from "@/types/auth";
 import { CustomCardProps } from "./types";
-import { useAuth } from "@/context/AuthProvider";
-import { useThemeContext } from "@/theme";
+import { useAuthStore } from "@/store";
 
 const CARDS: CustomCardProps[] = [
   {
@@ -36,21 +35,18 @@ const CARDS: CustomCardProps[] = [
 
 const Home = () => {
   const theme = useTheme();
-  const { themeMode } = useThemeContext();
-  const { usuario, setRolUsuario, rolUsuario } = useAuth();
+  const { user } = useAuthStore();
   const [roles, setRoles] = useState<RoleType[]>([]);
 
   const interpretarRoles = () => {
-    if (usuario?.roles && usuario?.roles.length > 0) {
-      setRoles(usuario?.roles);
+    if (user?.roles && user?.roles.length > 0) {
+      setRoles(user?.roles);
     }
   };
-  /// Interpretando roles desde estado
   useEffect(() => {
     interpretarRoles();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [usuario]);
+  }, [user]);
 
   return (
     <Stack>

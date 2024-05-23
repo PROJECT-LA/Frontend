@@ -14,24 +14,24 @@ import {
 import { useForm } from "react-hook-form";
 
 import { FormInputText } from "@/components/forms";
-
-// Componentes y hooks
-import { useAuth } from "../../../context/AuthProvider";
+import { useAuth } from "@/hooks/useAuth";
 import { LinealLoader } from "@/components/loaders";
 
 // Constantes y tipos
 import { CONSTANTS } from "../../../../config";
-import { LoginType } from "../types";
+import { LoginType } from "@/types/auth";
 import { print } from "@/utils";
+import { useAuthStore } from "@/store";
 
 export const LoginForm = () => {
   const theme = useTheme();
-  const { ingresar, progresoLogin } = useAuth();
+  const { login } = useAuth();
+  const { loginLoader } = useAuthStore();
   const { handleSubmit, control } = useForm<LoginType>();
   const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
 
-  const iniciarSesion = async ({ usuario, contrasena }: LoginType) => {
-    await ingresar({ usuario, contrasena });
+  const loginSesion = async ({ username, password }: LoginType) => {
+    await login({ username, password });
   };
 
   return (
@@ -52,7 +52,7 @@ export const LoginForm = () => {
       }}
     >
       <Stack direction="column" alignItems="center">
-        <form onSubmit={handleSubmit(iniciarSesion)}>
+        <form onSubmit={handleSubmit(loginSesion)}>
           <Grid item xs={12}>
             <Grid
               container
@@ -81,25 +81,25 @@ export const LoginForm = () => {
 
           <Stack width="100%">
             <FormInputText
-              id={"usuario"}
+              id={"username"}
               control={control}
-              name="usuario"
+              name="username"
               label="Usuario"
               size={"medium"}
               labelVariant={"subtitle1"}
-              disabled={progresoLogin}
+              disabled={loginLoader}
               rules={{ required: "Este campo es requerido" }}
             />
             <Box sx={{ mt: 1, mb: 1 }}></Box>
             <FormInputText
-              id={"contrasena"}
+              id={"password"}
               control={control}
-              name="contrasena"
+              name="password"
               label="Contraseña"
               size={"medium"}
               labelVariant={"subtitle1"}
               type={"password"}
-              disabled={progresoLogin}
+              disabled={loginLoader}
               rules={{
                 required: "Este campo es requerido",
                 minLength: {
@@ -109,7 +109,7 @@ export const LoginForm = () => {
               }}
             />
             <Box sx={{ mt: 1, mb: 1 }}>
-              <LinealLoader mostrar={progresoLogin} />
+              <LinealLoader mostrar={loginLoader} />
             </Box>
           </Stack>
 

@@ -1,6 +1,5 @@
 import { useState, useRef, useEffect } from "react";
 import { useTheme } from "@mui/material/styles";
-
 import {
   Box,
   Button,
@@ -18,30 +17,29 @@ import {
   Typography,
 } from "@mui/material";
 import Transitions from "@/components/Transitions";
-
 import { LogOut, CircleUser, Users } from "lucide-react";
 import { CONSTANTS } from "../../../../config";
-import { print } from "@/utils";
-import { useAuth } from "@/context/AuthProvider";
-import { RoleType } from "@/app/login/types";
-import { Icono } from "@/components/Icono";
-import { delay } from "@/utils";
+import { delay, print } from "@/utils";
+import { useAuthStore } from "@/store";
+import { RoleType } from "@/types/auth";
 import { useRouter } from "next/navigation";
 import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
 import { AlertDialog } from "@/components/modals/AlertDialog";
 import { useSession } from "@/hooks/useSession";
+import { useAuth } from "@/hooks/useAuth";
 
 const ProfileSection = () => {
   const router = useRouter();
   const [roles, setRoles] = useState<RoleType[]>([]);
-  const { usuario, setRolUsuario, rolUsuario } = useAuth();
+  const { user } = useAuthStore();
+  const { changeRole } = useAuth();
   const { logoutSession } = useSession();
   const { showFullScreen, hideFullScreen } = useFullScreenLoading();
 
   const interpretarRoles = () => {
-    print(`Cambio en roles 📜`, usuario?.roles);
-    if (usuario?.roles && usuario?.roles.length > 0) {
-      setRoles(usuario?.roles);
+    print(`Cambio en roles 📜`, user?.roles);
+    if (user?.roles && user?.roles.length > 0) {
+      setRoles(user?.roles);
     }
   };
 
@@ -51,17 +49,15 @@ const ProfileSection = () => {
     showFullScreen(`Cambiando de rol..`);
     await delay(1000);
     router.push("/admin/home");
-    await setRolUsuario({ idRol: `${event.target.value}` });
+    await changeRole(`${event.target.value}`);
     hideFullScreen();
   };
 
-  /// Interpretando roles desde estado
   useEffect(() => {
-    print(usuario);
+    print(user);
     interpretarRoles();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [, usuario]);
+  }, [, user]);
 
   const theme = useTheme();
 
@@ -227,7 +223,7 @@ const ProfileSection = () => {
                                   value={rol.id}
                                   control={
                                     <Radio
-                                      checked={rolUsuario?.id === rol.id}
+                                      checked={user?.id === rol.id}
                                       onChange={cambiarRol}
                                       color={"success"}
                                       size="small"

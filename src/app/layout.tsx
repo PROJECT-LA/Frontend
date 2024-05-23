@@ -4,7 +4,6 @@ import "./globals.css";
 import { StyledEngineProvider } from "@mui/material";
 import ThemeRegistry from "@/theme";
 import { FullScreenLoadingProvider } from "@/context/FullScreenLoadingProvider";
-import { AuthProvider } from "@/context/AuthProvider";
 import Responsive from "@/components/Responsive";
 
 export const metadata: Metadata = {
@@ -21,9 +20,7 @@ export default function RootLayout({
       <body style={{ position: "relative" }}>
         <StyledEngineProvider injectFirst>
           <ThemeRegistry>
-            <FullScreenLoadingProvider>
-              <AuthProvider>{children}</AuthProvider>
-            </FullScreenLoadingProvider>
+            <FullScreenLoadingProvider>{children}</FullScreenLoadingProvider>
           </ThemeRegistry>
         </StyledEngineProvider>
         <Toaster richColors closeButton expand />
