@@ -10,3 +10,4 @@ export {
   siteName,
 } from "./utilities";
 export { checkToken } from "./token";
+export { validateDateFormat } from "./dates";

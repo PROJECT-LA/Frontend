@@ -1,3 +1,4 @@
+"use client";
 import { GlobalPermissionsProps } from "@/utils/permissions";
 import React, { ReactNode, useState } from "react";
 import { ModuleCRUDType } from "./types";
