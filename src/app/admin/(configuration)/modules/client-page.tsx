@@ -1,6 +1,6 @@
 "use client";
 import { GlobalPermissionsProps } from "@/utils/permissions";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { ModuleCRUDType } from "./types";
 import { useSession } from "@/hooks/useSession";
 import { Box, Button, Grid, Typography, useTheme } from "@mui/material";
@@ -12,16 +12,25 @@ import {
   SearchButton,
   SortButton,
 } from "@/components/buttons";
-import { CirclePlus, List, Menu, Pencil, RotateCw } from "lucide-react";
+import {
+  CirclePlus,
+  List,
+  Menu,
+  Pencil,
+  RotateCw,
+  ToggleLeft,
+  ToggleRight,
+} from "lucide-react";
 import { Pagination } from "@/components/datatable";
 import { CONSTANTS } from "../../../../../config";
 import { toast } from "sonner";
-import { MessagesInterpreter, delay, titleCase } from "@/utils";
+import { MessagesInterpreter, delay, print, titleCase } from "@/utils";
 import { Icono } from "@/components/Icono";
 import { CustomMessageState } from "@/components/states";
 import { AlertDialog, CustomDialog } from "@/components/modals";
 import { FilterModules, ModulesModalView } from "./ui";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
+import { getIconLucide } from "@/types/icons";
 
 const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
   const theme = useTheme();
@@ -49,8 +58,9 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
 
   /*****************************************************/
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
-    { field: "label", name: "Label", sort: true },
-    { field: "nombre", name: "Nombre", sort: true },
+    { field: "order", name: "Orden" },
+    { field: "icon", name: "Icono", sort: true },
+    { field: "name", name: "Nombre", sort: true },
     { field: "descripcion", name: "Descripción" },
     { field: "url", name: "URL", sort: true },
     { field: "estado", name: "Estado", sort: true },
@@ -132,7 +142,7 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
         key={`${moduleData.id}-${indexModule}-orden`}
         variant={"body2"}
       >
-        {moduleData.properties.sort}
+        {moduleData.order}
       </Typography>,
       <Box
         key={`${moduleData.id}-${indexModule}-nombre`}
@@ -143,34 +153,22 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
           alignItems: "center",
         }}
       >
-        {moduleData.module === null ? (
+        {moduleData.idModule === null ? (
           <></>
         ) : (
-          <Icono
-            sx={{ mr: 1 }}
-            color="inherit"
-          >{`${moduleData.properties.icon}`}</Icono>
+          <Icono sx={{ mr: 1 }} color="inherit">
+            {getIconLucide(moduleData.icon as string)}
+          </Icono>
         )}
-        <Typography
-          key={`${moduleData.id}-${indexModule}-nombre`}
-          component={"span"}
-          variant={"body2"}
-        >
-          {`${moduleData.label}`}
-        </Typography>
       </Box>,
       <Typography
         key={`${moduleData.id}-${indexModule}-label`}
         variant={"body2"}
-      >{`${moduleData.name}`}</Typography>,
+      >{`${moduleData.title}`}</Typography>,
       <Typography
         key={`${moduleData.id}-${indexModule}-descripcion`}
         variant={"body2"}
-      >{`${
-        moduleData.properties?.description
-          ? moduleData.properties.description
-          : ""
-      }`}</Typography>,
+      >{`${moduleData.description ? moduleData.description : ""}`}</Typography>,
 
       <Typography key={`${moduleData.id}-${indexModule}-url`} variant={"body2"}>
         {`${moduleData.url}`}
@@ -178,12 +176,12 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
 
       <CustomMessageState
         key={`${moduleData.id}-${indexModule}-estado`}
-        title={moduleData.state}
-        description={moduleData.state}
+        title={moduleData.status}
+        description={moduleData.status}
         color={
-          moduleData.state == "ACTIVO"
+          moduleData.status == "ACTIVO"
             ? "success"
-            : moduleData.state == "INACTIVO"
+            : moduleData.status == "INACTIVO"
             ? "error"
             : "info"
         }
@@ -193,18 +191,20 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
           {permissions.update && (
             <IconTooltip
               id={`cambiarEstadoModulo-${moduleData.id}`}
-              title={moduleData.state == "ACTIVO" ? "Inactivar" : "Activar"}
-              color={moduleData.state == "ACTIVO" ? "success" : "error"}
+              title={moduleData.status == "ACTIVO" ? "Inactivar" : "Activar"}
+              color={moduleData.status == "ACTIVO" ? "success" : "error"}
               action={() => {
                 editStateModuleModal({
                   ...moduleData,
-                  ...{ esSeccion: moduleData?.module == null },
+                  ...{ esSeccion: moduleData?.idModule == null },
                 });
               }}
-              deactivate={moduleData.state == "PENDIENTE"}
-              icon={moduleData.state == "ACTIVO" ? "toggle_on" : "toggle_off"}
+              deactivate={moduleData.status == "PENDIENTE"}
+              icon={
+                moduleData.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />
+              }
               name={
-                moduleData.state == "ACTIVO"
+                moduleData.status == "ACTIVO"
                   ? "Inactivar Módulo"
                   : "Activar Módulo"
               }
@@ -219,7 +219,7 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
               action={() => {
                 editStateModuleModal({
                   ...moduleData,
-                  ...{ esSeccion: moduleData?.module == null },
+                  ...{ esSeccion: moduleData?.idModule == null },
                 });
               }}
               icon={<Pencil />}
@@ -273,8 +273,10 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
               }),
         },
       });
-      setModulesData(res.datos?.rows);
-      setTotal(res.datos?.total);
+      print(res.data?.rows);
+
+      setModulesData(res.data?.rows);
+      setTotal(res.data?.total);
       setErrorModulesData(null);
     } catch (e) {
       setErrorModulesData(e);
@@ -294,7 +296,7 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
           section: true,
         },
       });
-      setSectionsData(res.datos?.rows);
+      setSectionsData(res.data?.rows);
     } catch (e) {
       setErrorModulesData(e);
       toast.error(MessagesInterpreter(e));
@@ -308,7 +310,7 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
       setLoading(true);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/modules/${module.id}/${
-          module.state == "ACTIVO" ? "inactivacion" : "activacion"
+          module.status == "ACTIVO" ? "inactivacion" : "activacion"
         }`,
         type: "patch",
       });
@@ -327,14 +329,33 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
     setShowAlertModuleState(true);
   };
 
+  useEffect(() => {
+    getSectionsRequest().then(() => {
+      getModulesRequest().finally(() => {});
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    page,
+    limit,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    JSON.stringify(orderCriteria),
+    filterSearch,
+  ]);
+
+  useEffect(() => {
+    if (!showFilterModule) {
+      setFilterSearch("");
+    }
+  }, [showFilterModule]);
+
   return (
     <>
       <AlertDialog
         isOpen={showAlertModuleState}
         title={"Alerta"}
         text={`¿Está seguro de ${
-          moduleEdition?.state == "ACTIVO" ? "inactivar" : "activar"
-        } el módulo: ${titleCase(moduleEdition?.name ?? "")} ?`}
+          moduleEdition?.status == "ACTIVO" ? "inactivar" : "activar"
+        } el módulo: ${titleCase(moduleEdition?.title ?? "")} ?`}
       >
         <Button onClick={cancelAlertModuleState}>Cancelar</Button>
         <Button onClick={acceptAlertModuleState}>Aceptar</Button>

@@ -40,3 +40,7 @@ export const icons: IconMapper[] = [
     icon: <ShieldQuestion />,
   },
 ];
+
+export const getIconLucide = (name: string): ReactNode => {
+  return icons.find((elem) => elem.name === name)?.icon;
+};

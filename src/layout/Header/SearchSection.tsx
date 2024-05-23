@@ -183,6 +183,7 @@ const SearchSection = () => {
                   </InputAdornment>
                 ),
               }}
+              autoComplete="off"
               fullWidth
               placeholder="Buscar..."
               variant="outlined"

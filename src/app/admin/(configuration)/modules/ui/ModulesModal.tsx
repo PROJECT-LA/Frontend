@@ -1,19 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { DialogContent, Grid, Box, DialogActions, Button } from "@mui/material";
 import {
   FormInputDropdown,
   FormInputAutocomplete,
   FormInputText,
 } from "@/components/forms";
-import { CUModuleType, ModulesModalType, SaveModulesType } from "../types";
+import { CUModuleType, ModuleCRUDType, NewCUModuleType } from "../types";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
 import { useForm } from "react-hook-form";
 import { CONSTANTS } from "../../../../../../config";
-import { MessagesInterpreter } from "@/utils";
+import { MessagesInterpreter, print } from "@/utils";
 import { Icono } from "@/components/Icono";
 import { LinealLoader } from "@/components/loaders";
+import { getIconLucide, icons } from "@/types/icons";
+
+interface ModulesModalType {
+  module?: ModuleCRUDType | undefined | null;
+  correctAction: () => void;
+  cancelAction: () => void;
+  modules: ModuleCRUDType[];
+}
 
 export const ModulesModalView = ({
   module,
@@ -22,35 +30,24 @@ export const ModulesModalView = ({
   modules,
 }: ModulesModalType) => {
   const { sessionRequest } = useSession();
-  const { control, watch, handleSubmit } = useForm<CUModuleType>({
+  const { control, watch, handleSubmit } = useForm<NewCUModuleType>({
     defaultValues: {
       id: module?.id,
-      label: module?.label,
+      title: module?.title,
       url: module?.url,
-      name: module?.name,
-      properties: {
-        sort: module?.properties?.sort,
-        description: module?.properties?.description,
-        icon: module?.properties?.icon
-          ? {
-              value: module?.properties?.icon,
-              label: module?.properties?.icon,
-              key: module?.properties?.icon,
-            }
-          : undefined,
-      },
-      state: module?.state,
-      idModule: module?.module?.id,
-      isSection: module?.isSection,
+      icon: module?.icon,
+      order: module?.order,
+      description: module?.description,
+      idModule: module?.idModule,
     },
   });
   const checked = watch("isSection");
-  const icon = watch("properties.icon");
+  const iconWatch = watch("icon");
 
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
   const [options, setOptions] = useState<Array<optionType>>([]);
 
-  const requestSaveUpdateModule = async (module: SaveModulesType) => {
+  const saveUpdateModule = async (module: NewCUModuleType) => {
     try {
       setLoadingModal(true);
       const res = await sessionRequest({
@@ -58,10 +55,6 @@ export const ModulesModalView = ({
         type: !!module.id ? "patch" : "post",
         body: {
           ...module,
-          properties: {
-            ...module.properties,
-            ...{ orden: Number(module.properties.sort) },
-          },
         },
       });
       toast.success(MessagesInterpreter(res));
@@ -73,21 +66,25 @@ export const ModulesModalView = ({
     }
   };
 
-  const saveUpdateModule = async (data: CUModuleType) => {
-    await requestSaveUpdateModule({
-      idModule: data.idModule,
-      label: data.label,
-      url: data.url,
-      state: data.state,
-      name: data.name,
-      id: data.id,
-      properties: {
-        icon: data.properties.icon?.value,
-        sort: data.properties.sort,
-        description: data.properties.description,
-      },
-    });
+  const getIcons = async () => {
+    const newOptions: optionType[] = [];
+    for (const icon of icons) {
+      newOptions.push({
+        key: icon.name,
+        label: icon.name,
+        value: icon.icon,
+      });
+    }
+
+    setOptions(newOptions);
   };
+
+  useEffect(() => {
+    getIcons().finally(() => {});
+
+    print(options);
+    // eslint-disable-next-line
+  }, []);
 
   return (
     <form onSubmit={handleSubmit(saveUpdateModule)}>
@@ -107,7 +104,7 @@ export const ModulesModalView = ({
                   options={modules.map((lm) => ({
                     key: lm.id,
                     value: lm.id,
-                    label: lm.label,
+                    label: lm.title,
                   }))}
                   rules={{ required: "Este campo es requerido" }}
                 />
@@ -116,7 +113,7 @@ export const ModulesModalView = ({
                 <FormInputAutocomplete
                   id={"icon"}
                   control={control}
-                  name="properties.icon"
+                  name="icon"
                   label="Icono"
                   disabled={loadingModal || checked}
                   rules={
@@ -127,9 +124,9 @@ export const ModulesModalView = ({
                   forcePopupIcon
                   options={options}
                   InputProps={{
-                    startAdornment: icon?.value && (
+                    startAdornment: iconWatch && (
                       <Icono sx={{ ml: 1 }} color={"inherit"}>
-                        {icon?.value}
+                        {getIconLucide(iconWatch)}
                       </Icono>
                     ),
                   }}
@@ -145,38 +142,10 @@ export const ModulesModalView = ({
               <FormInputText
                 id={"name"}
                 control={control}
-                name="name"
+                name="title"
                 label="Nombre"
                 disabled={loadingModal}
                 rules={{ required: "Este campo es requerido" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <FormInputText
-                id={"label"}
-                control={control}
-                name="label"
-                label="Label"
-                disabled={loadingModal}
-                rules={{ required: "Este campo es requerido" }}
-              />
-            </Grid>
-          </Grid>
-          <Box height={"15px"} />
-          <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Grid item xs={12} sm={12} md={6}>
-              <FormInputText
-                id={"url"}
-                control={control}
-                name="url"
-                label="URL"
-                disabled={loadingModal}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "Este campo es requerido",
-                  },
-                }}
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
@@ -185,7 +154,7 @@ export const ModulesModalView = ({
                 control={control}
                 type={"number"}
                 inputProps={{ type: "number" }}
-                name="properties.sort"
+                name="order"
                 label="Orden"
                 disabled={loadingModal}
                 rules={{
@@ -195,13 +164,36 @@ export const ModulesModalView = ({
             </Grid>
           </Grid>
           <Box height={"15px"} />
+          {!checked && (
+            <>
+              <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
+                <Grid item xs={12} sm={12} md={12}>
+                  <FormInputText
+                    id={"url"}
+                    control={control}
+                    name="url"
+                    label="URL"
+                    disabled={loadingModal}
+                    rules={{
+                      required: {
+                        value: true,
+                        message: "Este campo es requerido",
+                      },
+                    }}
+                  />
+                </Grid>
+              </Grid>
+              <Box height={"15px"} />
+            </>
+          )}
+
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Box height={"20px"} />
             <Grid item xs={12} sm={12} md={12}>
               <FormInputText
                 id={"descripcion"}
                 control={control}
-                name="properties.description"
+                name="description"
                 label="Descripción"
                 multiline
                 rows={2}

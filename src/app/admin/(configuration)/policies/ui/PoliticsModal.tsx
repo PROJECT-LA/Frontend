@@ -78,14 +78,14 @@ export const PoliticModalView = ({
       setLoadingModal(true);
       await delay(1000);
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/authorization/policies`,
-        type: newPolicy ? "patch" : "post",
+        url: `${CONSTANTS.baseUrl}/policies`,
+        type: ActualPolicie ? "patch" : "post",
         body: newPolicy,
         params: {
-          sujeto: ActualPolicie?.subject,
-          objeto: ActualPolicie?.object,
-          accion: ActualPolicie?.action,
-          app: ActualPolicie?.app,
+          subject: newPolicy?.subject,
+          object: newPolicy?.object,
+          action: newPolicy?.action,
+          app: newPolicy?.app,
         },
       });
       toast.success("Éxito", { description: MessagesInterpreter(res) });

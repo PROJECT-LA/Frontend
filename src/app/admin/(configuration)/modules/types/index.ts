@@ -1,5 +1,27 @@
 import { optionType } from "@/components/forms/FormInputDropdown";
 
+export interface ModuleCRUDType {
+  id: string;
+  isSection: boolean;
+  title: string;
+  url?: string;
+  icon?: string;
+  order: string;
+  description?: string;
+  idModule?: string;
+  status: string;
+}
+export interface NewCUModuleType {
+  id: string;
+  title: string;
+  url?: string;
+  icon?: string;
+  order: string;
+  description?: string;
+  idModule?: string;
+  isSection: boolean;
+}
+
 export interface Properties {
   icon?: string;
   description?: string;
@@ -8,17 +30,6 @@ export interface Properties {
 
 export interface Module {
   id: string;
-}
-
-export interface ModuleCRUDType {
-  id: string;
-  label: string;
-  url: string;
-  name: string;
-  isSection: boolean;
-  properties: Properties;
-  state: string;
-  module?: Module | undefined;
 }
 
 export interface CUModuleType {
@@ -34,22 +45,4 @@ export interface CUModuleType {
   };
   state: string;
   idModule?: string;
-}
-
-export interface SaveModulesType {
-  id: string;
-  label: string;
-  url: string;
-  name: string;
-  properties: Properties;
-  state: string;
-  idModule?: string;
-}
-
-/// UI Types
-export interface ModulesModalType {
-  module?: ModuleCRUDType | undefined | null;
-  correctAction: () => void;
-  cancelAction: () => void;
-  modules: ModuleCRUDType[];
 }
