@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { DialogContent, Grid, Box, DialogActions, Button } from "@mui/material";
 import {
   FormInputDropdown,
   FormInputAutocomplete,
   FormInputText,
 } from "@/components/forms";
-import { CUModuleType, ModuleCRUDType, NewCUModuleType } from "../types";
+import { ModuleCRUDType, CUModuleType } from "../types/modulesTypes";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
@@ -15,22 +15,23 @@ import { MessagesInterpreter, print } from "@/utils";
 import { Icono } from "@/components/Icono";
 import { LinealLoader } from "@/components/loaders";
 import { getIconLucide, icons } from "@/types/icons";
-
 interface ModulesModalType {
   module?: ModuleCRUDType | undefined | null;
   correctAction: () => void;
   cancelAction: () => void;
-  modules: ModuleCRUDType[];
+  sections: ModuleCRUDType[];
+  isSection: boolean;
 }
 
 export const ModulesModalView = ({
   module,
   correctAction,
   cancelAction,
-  modules,
+  sections,
+  isSection,
 }: ModulesModalType) => {
   const { sessionRequest } = useSession();
-  const { control, watch, handleSubmit } = useForm<NewCUModuleType>({
+  const { control, watch, handleSubmit } = useForm<ModuleCRUDType>({
     defaultValues: {
       id: module?.id,
       title: module?.title,
@@ -38,25 +39,47 @@ export const ModulesModalView = ({
       icon: module?.icon,
       order: module?.order,
       description: module?.description,
-      idModule: module?.idModule,
-      isSection: module?.isSection,
+      module: {
+        id: module?.module?.id,
+        order: module?.module?.order,
+        title: module?.module?.title,
+      },
     },
   });
-  const checked = watch("isSection");
+
   const iconWatch = watch("icon");
 
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
   const [options, setOptions] = useState<Array<optionType>>([]);
 
-  const saveUpdateModule = async (module: NewCUModuleType) => {
+  const saveUpdateModule = async (module: ModuleCRUDType) => {
+    print(module);
+
+    let sendModule: CUModuleType | null = null;
+    if (isSection) {
+      sendModule = {
+        title: module.title,
+        order: Number(module.order),
+        description: module.description,
+      };
+    } else {
+      sendModule = {
+        title: module.title,
+        url: module.url,
+        // @ts-ignore error en el tipo value
+        icon: module.icon ? module.icon.value : "home",
+        order: Number(module.order),
+        idModule: module.module ? module.module.id : "",
+        description: module.description,
+      };
+    }
+
     try {
       setLoadingModal(true);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/modules${module.id ? `/${module.id}` : ""}`,
         type: !!module.id ? "patch" : "post",
-        body: {
-          ...module,
-        },
+        body: sendModule,
       });
       toast.success(MessagesInterpreter(res));
       correctAction();
@@ -73,10 +96,9 @@ export const ModulesModalView = ({
       newOptions.push({
         key: icon.name,
         label: icon.name,
-        value: icon.icon,
+        value: icon.name,
       });
     }
-
     setOptions(newOptions);
   };
 
@@ -85,38 +107,52 @@ export const ModulesModalView = ({
     // eslint-disable-next-line
   }, []);
 
+  const [actualIcon, setActualIcon] = useState<ReactNode | undefined | null>(
+    getIconLucide(module?.icon ? module?.icon : "")
+  );
+  useEffect(() => {
+    if (iconWatch) {
+      // @ts-expect-error Value en iconWatch
+      setActualIcon(getIconLucide(iconWatch.value));
+    }
+  }, [iconWatch]);
+
   return (
     <form onSubmit={handleSubmit(saveUpdateModule)}>
       <DialogContent dividers>
         <Grid container direction={"column"} justifyContent="space-evenly">
-          {checked !== null ? (
-            <></>
-          ) : (
+          {!isSection && (
             <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
               <Grid item xs={12} sm={12} md={6}>
                 <FormInputDropdown
                   id={"idModule"}
-                  name="idModule"
+                  name="module.id"
                   control={control}
                   label="Sección"
                   disabled={loadingModal}
-                  options={modules.map((lm) => ({
+                  options={sections.map((lm) => ({
                     key: lm.id,
                     value: lm.id,
                     label: lm.title,
                   }))}
-                  rules={{ required: "Este campo es requerido" }}
+                  rules={
+                    isSection ? {} : { required: "Este campo es requerido" }
+                  }
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={6}>
+              <Grid item xs={12} sm={12} md={6} alignContent="end">
                 <FormInputAutocomplete
                   id={"icon"}
                   control={control}
                   name="icon"
                   label="Icono"
-                  disabled={loadingModal || checked}
+                  disabled={loadingModal}
                   rules={
-                    !checked ? { required: "Este campo es requerido" } : {}
+                    isSection
+                      ? {}
+                      : {
+                          required: "Este campo es requerido",
+                        }
                   }
                   freeSolo
                   newValues
@@ -124,9 +160,7 @@ export const ModulesModalView = ({
                   options={options}
                   InputProps={{
                     startAdornment: iconWatch && (
-                      <Icono sx={{ ml: 1 }} color={"inherit"}>
-                        {getIconLucide(iconWatch)}
-                      </Icono>
+                      <Icono sx={{ ml: 1 }}>{actualIcon}</Icono>
                     ),
                   }}
                   getOptionLabel={(option) => option.label}
@@ -163,7 +197,7 @@ export const ModulesModalView = ({
             </Grid>
           </Grid>
           <Box height={"15px"} />
-          {checked !== null && (
+          {!isSection && (
             <>
               <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
                 <Grid item xs={12} sm={12} md={12}>
