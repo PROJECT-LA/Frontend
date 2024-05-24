@@ -62,5 +62,7 @@ export const icons: IconMapper[] = [
 ];
 
 export const getIconLucide = (name: string): ReactNode => {
+  console.log(name);
+
   return icons.find((elem) => elem.name === name)?.icon;
 };

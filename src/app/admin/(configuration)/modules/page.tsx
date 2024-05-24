@@ -2,7 +2,7 @@
 import { siteName } from "@/utils";
 import { getFrontendPermissions } from "@/utils/permissions";
 import React from "react";
-import ModulesClient from "./client-page";
+import ModulesClient2 from "./client-page-2";
 
 const ModulesPage = async () => {
   const permissions = await getFrontendPermissions("/admin/modules");
@@ -11,7 +11,7 @@ const ModulesPage = async () => {
     permissions && (
       <>
         <title>{`Módulos - ${siteName()}`}</title>
-        <ModulesClient permissions={permissions} />
+        <ModulesClient2 permissions={permissions} />
       </>
     )
   );

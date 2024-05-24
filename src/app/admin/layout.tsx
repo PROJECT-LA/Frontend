@@ -95,7 +95,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
           sx={{
             paddingY: scrolled ? 1 : 2,
             transition: "all .3s ease",
-            marginTop: "0.5rem",
+            marginTop: !scrolled ? "0.5rem" : "0rem",
             marginLeft: matchUpXl
               ? openDrawer
                 ? "21rem"

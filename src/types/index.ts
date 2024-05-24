@@ -4,7 +4,6 @@ export interface Item {
   id: string;
   title?: string;
   description?: string;
-  type: string;
   caption?: string;
   url?: string;
   subModule?: Array<Item>;
@@ -12,6 +11,8 @@ export interface Item {
   breadcrumbs?: boolean;
   external?: boolean;
   target?: boolean | string;
+
+  status?: string;
 }
 
 export enum SortEnum {

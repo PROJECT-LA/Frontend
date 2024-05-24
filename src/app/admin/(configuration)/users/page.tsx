@@ -26,7 +26,7 @@ const UsersPage = async ({
     permissions && (
       <>
         <title>{`Usuarios - ${siteName()}`}</title>
-        <UsersClientPage permissions={permissions} />;
+        <UsersClientPage permissions={permissions} />
       </>
     )
   );

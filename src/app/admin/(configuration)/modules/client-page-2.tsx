@@ -1,11 +1,14 @@
 "use client";
-import { GlobalPermissionsProps } from "@/utils/permissions";
-import React, { ReactNode, useEffect, useState } from "react";
-import { ModuleCRUDType } from "./types";
 import { useSession } from "@/hooks/useSession";
-import { Box, Button, Grid, Typography, useTheme } from "@mui/material";
-import { useMediaQuery } from "@mui/material";
+import { GlobalPermissionsProps } from "@/utils/permissions";
+import { Box, Grid, Typography, useMediaQuery, useTheme } from "@mui/material";
+import React, { ReactNode, useEffect, useState } from "react";
+import { ModuleCRUDType } from "./types/modulesTypes";
 import { SortTypeCriteria, sortFilter } from "@/types";
+import { Pagination } from "@/components/datatable";
+import { Icono } from "@/components/Icono";
+import { getIconLucide } from "@/types/icons";
+import { CustomMessageState } from "@/components/states";
 import {
   ActionsButton,
   IconTooltip,
@@ -21,24 +24,144 @@ import {
   ToggleLeft,
   ToggleRight,
 } from "lucide-react";
-import { Pagination } from "@/components/datatable";
 import { CONSTANTS } from "../../../../../config";
 import { toast } from "sonner";
-import { MessagesInterpreter, delay, print, titleCase } from "@/utils";
-import { Icono } from "@/components/Icono";
-import { CustomMessageState } from "@/components/states";
-import { AlertDialog, CustomDialog } from "@/components/modals";
-import { FilterModules, ModulesModalView } from "./ui";
+import { MessagesInterpreter } from "@/utils";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
-import { getIconLucide } from "@/types/icons";
+import { FilterModules } from "./ui";
+import { CustomDialog } from "@/components/modals";
+import { ModulesModalViewAlter } from "./ui/ModulesModalAlter";
 
-const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
+const getData: ModuleCRUDType[] = [
+  {
+    id: "1",
+    status: "ACTIVO",
+    title: "Principal",
+    description: "Sección principal",
+    icon: null,
+    order: 1,
+    url: "/principal",
+    module: null,
+  },
+  {
+    id: "2",
+    status: "ACTIVO",
+    title: "Inicio",
+    description: "Vista de bienvenida con características del sistema",
+    icon: "home",
+    order: 1,
+    url: "/admin/home",
+    module: {
+      id: "1",
+      title: "Principal",
+      order: 1,
+    },
+  },
+  {
+    id: "3",
+    status: "ACTIVO",
+    title: "Perfil",
+    description: "Información del perfil de usuario que inicio sesión",
+    icon: "user",
+    order: 2,
+    url: "/admin/profile",
+    module: {
+      id: "1",
+      title: "Principal",
+      order: 1,
+    },
+  },
+  {
+    id: "4",
+    status: "ACTIVO",
+    title: "Configuración",
+    description: "Sección de configuraciones",
+    icon: null,
+    order: 2,
+    url: "/configuraciones",
+    module: null,
+  },
+  {
+    id: "5",
+    status: "ACTIVO",
+    title: "Usuarios",
+    description: "Control de usuarios del sistema",
+    icon: "users",
+    order: 1,
+    url: "/admin/users",
+    module: {
+      id: "4",
+      title: "Configuración",
+      order: 2,
+    },
+  },
+  {
+    id: "6",
+    status: "ACTIVO",
+    title: "Parámetros",
+    description: "Parámetros generales del sistema",
+    icon: "settings-2",
+    order: 2,
+    url: "/admin/parameters",
+    module: {
+      id: "4",
+      title: "Configuración",
+      order: 2,
+    },
+  },
+  {
+    id: "7",
+    status: "ACTIVO",
+    title: "Módulos",
+    description: "Gestión de módulos",
+    icon: "package-open",
+    order: 3,
+    url: "/admin/modules",
+    module: {
+      id: "4",
+      title: "Configuración",
+      order: 2,
+    },
+  },
+  {
+    id: "8",
+    status: "ACTIVO",
+    title: "Permisos",
+    description: "Control de permisos para los usuarios",
+    icon: "lock",
+    order: 4,
+    url: "/admin/policies",
+    module: {
+      id: "4",
+      title: "Configuración",
+      order: 2,
+    },
+  },
+  {
+    id: "9",
+    status: "ACTIVO",
+    title: "Roles",
+    description: "Control de roles para los usuarios",
+    icon: "notebook",
+    order: 5,
+    url: "/admin/roles",
+    module: {
+      id: "4",
+      title: "Configuración",
+      order: 2,
+    },
+  },
+];
+
+const ModulesClient2 = ({ permissions }: GlobalPermissionsProps) => {
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.only("xs"));
-
   const { sessionRequest } = useSession();
-
   const [modulesData, setModulesData] = useState<ModuleCRUDType[]>([]);
+  const [moduleEdition, setModuleEdition] = useState<
+    ModuleCRUDType | undefined | null
+  >();
+
   const [sectionsData, setSectionsData] = useState<ModuleCRUDType[]>([]);
   const [errorModulesData, setErrorModulesData] = useState<any>();
   const [loading, setLoading] = useState<boolean>(true);
@@ -47,14 +170,15 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
   const [filterSearch, setFilterSearch] = useState<string>("");
-
-  const [moduleEdition, setModuleEdition] = useState<
-    ModuleCRUDType | undefined | null
-  >();
   const [showFilterModule, setShowFilterModule] = useState<boolean>(false);
-  const [modalModule, setModalModule] = useState<boolean>(false);
-  const [showAlertModuleState, setShowAlertModuleState] =
-    useState<boolean>(false);
+
+  const [modalModule, setModalModule] = useState<{
+    state: boolean;
+    isSection: boolean;
+  }>({
+    isSection: false,
+    state: false,
+  });
 
   /*****************************************************/
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
@@ -75,7 +199,7 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
       changeLimit={setLimit}
     />
   );
-  const acciones: Array<ReactNode> = [
+  const actions: Array<ReactNode> = [
     <SearchButton
       id={"accionFiltrarModuloToggle"}
       key={"accionFiltrarModuloToggle"}
@@ -153,9 +277,7 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
           alignItems: "center",
         }}
       >
-        {moduleData.idModule === null ? (
-          <></>
-        ) : (
+        {moduleData.module !== null && (
           <Icono sx={{ mr: 1 }} color="inherit">
             {getIconLucide(moduleData.icon as string)}
           </Icono>
@@ -193,12 +315,7 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
               id={`cambiarEstadoModulo-${moduleData.id}`}
               title={moduleData.status == "ACTIVO" ? "Inactivar" : "Activar"}
               color={moduleData.status == "ACTIVO" ? "success" : "error"}
-              action={() => {
-                editStateModuleModal({
-                  ...moduleData,
-                  ...{ esSeccion: moduleData?.idModule == null },
-                });
-              }}
+              action={() => {}}
               deactivate={moduleData.status == "PENDIENTE"}
               icon={
                 moduleData.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />
@@ -217,10 +334,7 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
               title={"Editar"}
               color={"primary"}
               action={() => {
-                editStateModuleModal({
-                  ...moduleData,
-                  ...{ esSeccion: moduleData?.idModule == null },
-                });
+                editModuleModal(moduleData, moduleData.module === null);
               }}
               icon={<Pencil />}
               name={"Editar módulo"}
@@ -230,31 +344,6 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
       </Grid>,
     ]
   );
-
-  /********************************************************/
-
-  const addModuleModal = (isSection: boolean) => {
-    setModuleEdition({ isSection } as ModuleCRUDType);
-    setModalModule(true);
-  };
-  const cancelAlertModuleState = async () => {
-    setShowAlertModuleState(false);
-    await delay(500);
-    setModuleEdition(null);
-  };
-  const closeModalModule = async () => {
-    setModalModule(false);
-    await delay(500);
-    setModuleEdition(undefined);
-  };
-
-  const acceptAlertModuleState = async () => {
-    setShowAlertModuleState(false);
-    if (moduleEdition) {
-      await changeModuleStateRequest(moduleEdition);
-    }
-    setModuleEdition(null);
-  };
 
   /********************** REQUESTS *******************************/
   const getModulesRequest = async () => {
@@ -284,54 +373,12 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
       setLoading(false);
     }
   };
-  const getSectionsRequest = async () => {
-    try {
-      setLoading(true);
-      const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/modules`,
-        params: {
-          page: 1,
-          limit: 20,
-          section: true,
-        },
-      });
-      setSectionsData(res.data?.rows);
-    } catch (e) {
-      setErrorModulesData(e);
-      toast.error(MessagesInterpreter(e));
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const changeModuleStateRequest = async (module: ModuleCRUDType) => {
-    try {
-      setLoading(true);
-      const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/modules/${module.id}/${
-          module.status == "ACTIVO" ? "inactivacion" : "activacion"
-        }`,
-        type: "patch",
-      });
-      toast.success(MessagesInterpreter(res));
-      await getModulesRequest();
-    } catch (e) {
-      toast.error(MessagesInterpreter(e));
-    } finally {
-      setLoading(false);
-    }
-  };
-  /**********************************************************/
-
-  const editStateModuleModal = (module: ModuleCRUDType) => {
-    setModuleEdition(module);
-    setShowAlertModuleState(true);
-  };
 
   useEffect(() => {
-    getSectionsRequest().then(() => {
-      getModulesRequest().finally(() => {});
-    });
+    getModulesRequest();
+    // getSectionsRequest().then(() => {
+    //   getModulesRequest().finally(() => {});
+    // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     page,
@@ -347,49 +394,63 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
     }
   }, [showFilterModule]);
 
+  /**************************************************************+ */
+  const addModuleModal = (isSection: boolean) => {
+    setModalModule({
+      state: true,
+      isSection,
+    });
+  };
+
+  const editModuleModal = (module: ModuleCRUDType, isSection: boolean) => {
+    setModalModule({
+      state: true,
+      isSection,
+    });
+    setModuleEdition(module);
+  };
+  const closeModalModule = async () => {
+    setModalModule({
+      state: false,
+      isSection: false,
+    });
+    setModuleEdition(undefined);
+  };
+
   return (
     <>
-      <AlertDialog
-        isOpen={showAlertModuleState}
-        title={"Alerta"}
-        text={`¿Está seguro de ${
-          moduleEdition?.status == "ACTIVO" ? "inactivar" : "activar"
-        } el módulo: ${titleCase(moduleEdition?.title ?? "")} ?`}
-      >
-        <Button onClick={cancelAlertModuleState}>Cancelar</Button>
-        <Button onClick={acceptAlertModuleState}>Aceptar</Button>
-      </AlertDialog>
       <CustomDialog
-        isOpen={modalModule}
+        isOpen={modalModule.state}
         handleClose={closeModalModule}
         title={
           moduleEdition?.id
-            ? moduleEdition.isSection
+            ? modalModule.isSection
               ? "Editar Sección"
               : "Editar Módulo"
-            : moduleEdition?.isSection
+            : modalModule?.isSection
             ? "Nueva Sección"
             : "Nuevo Módulo"
         }
       >
-        <ModulesModalView
+        <ModulesModalViewAlter
           module={moduleEdition}
+          isSection={modalModule.isSection}
           correctAction={() => {
             closeModalModule().finally();
-            getSectionsRequest().then(() => {
-              getModulesRequest().finally();
-            });
+            getModulesRequest().finally();
+            // getSectionsRequest().then(() => {
+            //   getModulesRequest().finally();
+            // });
           }}
           cancelAction={closeModalModule}
-          modules={sectionsData}
+          sections={sectionsData}
         />
       </CustomDialog>
-
       <CustomDataTable
         title={"Módulos"}
         error={!!errorModulesData}
         loading={loading}
-        actions={acciones}
+        actions={actions}
         columns={orderCriteria}
         changeOrderCriteria={setOrderCriteria}
         pagination={paginacion}
@@ -412,4 +473,4 @@ const ModulesClient = ({ permissions }: GlobalPermissionsProps) => {
   );
 };
 
-export default ModulesClient;
+export default ModulesClient2;

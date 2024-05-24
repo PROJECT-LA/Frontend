@@ -226,12 +226,12 @@ export default function PoliticsPage({ permissions }: GlobalPermissionsProps) {
     setPolicyEdition(undefined);
   };
 
-  const obtenerRolesPeticion = async () => {
+  const getRolesRequest = async () => {
     try {
-      const respuesta = await sessionRequest({
+      const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/roles`,
       });
-      setRolesData(respuesta.data.rows);
+      setRolesData(res.data.rows);
       setErrorData(null);
     } catch (e) {
       print(`Error al obtener roles`, e);
@@ -242,7 +242,7 @@ export default function PoliticsPage({ permissions }: GlobalPermissionsProps) {
   };
 
   useEffect(() => {
-    obtenerRolesPeticion().then(() => {
+    getRolesRequest().then(() => {
       obtenerPoliticasPeticion().finally(() => {});
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
