@@ -142,7 +142,7 @@ const ProfileSection = () => {
           <Stack direction="row" alignItems="center" gap={1}>
             <Stack>
               <Typography variant="h5" color={theme.palette.text.primary}>
-                Alexander
+                {user?.userData.username}
               </Typography>
             </Stack>
           </Stack>

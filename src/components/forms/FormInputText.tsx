@@ -1,54 +1,55 @@
-import TextField from '@mui/material/TextField'
+import TextField from "@mui/material/TextField";
 import {
   Control,
   Controller,
   FieldValues,
   Path,
   PathValue,
-} from 'react-hook-form'
-import Typography from '@mui/material/Typography'
-import { RegisterOptions } from 'react-hook-form'
-import { InputProps as StandardInputProps } from '@mui/material/Input/Input'
+} from "react-hook-form";
+import Typography from "@mui/material/Typography";
+import { RegisterOptions } from "react-hook-form";
+import { InputProps as StandardInputProps } from "@mui/material/Input/Input";
 import {
+  Box,
   FormHelperText,
   IconButton,
   InputAdornment,
   InputLabel,
   useTheme,
-} from '@mui/material'
-import { Variant } from '@mui/material/styles/createTypography'
-import { InputHTMLAttributes, useState } from 'react'
-import { InputBaseProps } from '@mui/material/InputBase'
-import { OutlinedInputProps } from '@mui/material/OutlinedInput'
-import { X, Eye, EyeOff } from 'lucide-react'
+} from "@mui/material";
+import { Variant } from "@mui/material/styles/createTypography";
+import { InputHTMLAttributes, useState } from "react";
+import { InputBaseProps } from "@mui/material/InputBase";
+import { OutlinedInputProps } from "@mui/material/OutlinedInput";
+import { X, Eye, EyeOff } from "lucide-react";
 
 type FormInputTextProps<T extends FieldValues> = {
-  id: string
-  name: Path<T>
-  control: Control<T, object>
-  label: string
-  size?: 'small' | 'medium'
-  type?: InputHTMLAttributes<unknown>['type']
-  rules?: RegisterOptions
-  disabled?: boolean
-  onChange?: StandardInputProps['onChange']
-  InputProps?: Partial<OutlinedInputProps>
-  inputProps?: InputBaseProps['inputProps']
-  onEnter?: () => void
-  clearable?: boolean
-  variant?: 'standard' | 'outlined' | 'filled'
-  rows?: number
-  multiline?: boolean
-  bgcolor?: string
-  labelVariant?: Variant
-}
+  id: string;
+  name: Path<T>;
+  control: Control<T, object>;
+  label: string;
+  size?: "small" | "medium";
+  type?: InputHTMLAttributes<unknown>["type"];
+  rules?: RegisterOptions;
+  disabled?: boolean;
+  onChange?: StandardInputProps["onChange"];
+  InputProps?: Partial<OutlinedInputProps>;
+  inputProps?: InputBaseProps["inputProps"];
+  onEnter?: () => void;
+  clearable?: boolean;
+  variant?: "standard" | "outlined" | "filled";
+  rows?: number;
+  multiline?: boolean;
+  bgcolor?: string;
+  labelVariant?: Variant;
+};
 
 export const FormInputText = <T extends FieldValues>({
   id,
   name,
   control,
   label,
-  size = 'small',
+  size = "small",
   type,
   rules,
   disabled,
@@ -61,22 +62,23 @@ export const FormInputText = <T extends FieldValues>({
   rows = 1,
   multiline = false,
   bgcolor,
-  labelVariant = 'subtitle2',
+  labelVariant = "subtitle2",
 }: FormInputTextProps<T>) => {
-  const theme = useTheme()
-  const colorIcono = theme.palette.text.primary
+  const theme = useTheme();
+  const colorIcono = theme.palette.text.primary;
 
   // Add these variables to your component to track the state
-  const [showPassword, setShowPassword] = useState(false)
-  const handleClickShowPassword = () => setShowPassword(!showPassword)
+  const [showPassword, setShowPassword] = useState(false);
+  const handleClickShowPassword = () => setShowPassword(!showPassword);
 
   return (
     <div>
       <InputLabel htmlFor={id}>
-        <Typography variant={labelVariant} sx={{ color: 'text.primary' }}>
+        <Typography variant={labelVariant} sx={{ color: "text.primary" }}>
           {label}
         </Typography>
       </InputLabel>
+      <Box height={5} />
       <Controller
         name={name}
         control={control}
@@ -88,25 +90,25 @@ export const FormInputText = <T extends FieldValues>({
               name={name}
               variant={variant}
               sx={{
-                width: '100%',
+                width: "100%",
                 bgcolor: bgcolor,
               }}
               size={size}
               error={!!error}
               rows={rows}
               multiline={multiline}
-              type={showPassword ? 'text' : type}
+              type={showPassword ? "text" : type}
               onChange={(event) => {
                 if (onChange) {
-                  onChange(event)
+                  onChange(event);
                 }
-                field.onChange(event)
+                field.onChange(event);
               }}
               inputRef={field.ref}
               onKeyUp={(event) => {
-                if (event.key === 'Enter' && !event.shiftKey) {
+                if (event.key === "Enter" && !event.shiftKey) {
                   if (onEnter) {
-                    onEnter()
+                    onEnter();
                   }
                 }
               }}
@@ -118,14 +120,14 @@ export const FormInputText = <T extends FieldValues>({
                   field.value && clearable ? (
                     <IconButton
                       size="small"
-                      color={'primary'}
+                      color={"primary"}
                       onClick={() => {
-                        field.onChange('')
+                        field.onChange("");
                       }}
                     >
                       <X color={colorIcono} />
                     </IconButton>
-                  ) : type === 'password' ? (
+                  ) : type === "password" ? (
                     <InputAdornment position="end">
                       <IconButton onClick={handleClickShowPassword}>
                         {showPassword ? (
@@ -142,9 +144,9 @@ export const FormInputText = <T extends FieldValues>({
             {!!error && <FormHelperText error>{error?.message}</FormHelperText>}
           </>
         )}
-        defaultValue={'' as PathValue<T, Path<T>>}
+        defaultValue={"" as PathValue<T, Path<T>>}
         rules={rules}
       />
     </div>
-  )
-}
+  );
+};

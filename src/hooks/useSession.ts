@@ -1,11 +1,13 @@
-import { delay } from "@/utils";
-import { saveCookie, readCookie, deleteCookie, print } from "../utils";
+import { MessagesInterpreter, delay } from "@/utils";
+import { readCookie, deleteCookie, print } from "../utils";
 import { Services, forbiddenStates, methodFormatRequest } from "../services";
 import { checkToken } from "@/utils/token";
 import {} from "@/context/FullScreenLoadingProvider";
 import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
 import { CONSTANTS } from "../../config";
 import { useRouter } from "next/navigation";
+import { PermissionTypes, getPermissionsBoolean } from "@/utils/permissions";
+import { toast } from "sonner";
 
 export const useSession = () => {
   const router = useRouter();
@@ -14,6 +16,7 @@ export const useSession = () => {
   const sessionRequest = async ({
     url,
     type = "get",
+    isPermissions = false,
     body,
     headers,
     params,
@@ -43,9 +46,22 @@ export const useSession = () => {
         withCredentials,
       });
 
+      if (isPermissions && response.status == 403) {
+        return router.push("/not-found");
+      }
+
+      if (isPermissions && response.status == 401) {
+        await logoutSession();
+        return router.push("/login");
+      }
+
       print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
+      if (!isPermissions) {
+        return router.push("/not-found");
+      }
+
       if (e.code === "ECONNABORTED") {
         throw new Error("La petición está tardando demasiado");
       }
@@ -62,6 +78,28 @@ export const useSession = () => {
       }
 
       throw e.response?.data || "Ocurrió un error desconocido";
+    }
+  };
+
+  const getPermissions = async (
+    route: string
+  ): Promise<PermissionTypes | undefined> => {
+    try {
+      await delay(500);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/policies/authorization`,
+        type: "POST",
+        isPermissions: true,
+        body: {
+          route,
+        },
+      });
+      const resPolicies: PermissionTypes = getPermissionsBoolean(
+        res.data.policie
+      );
+      return resPolicies;
+    } catch (e) {
+      toast.error(MessagesInterpreter(e));
     }
   };
 
@@ -99,12 +137,9 @@ export const useSession = () => {
   const updateSession = async () => {
     print(`Actualizando token 🚨`);
     try {
-      const response = await Services.post({
-        url: `${CONSTANTS.baseUrl}/token`,
+      await Services.post({
+        url: `${CONSTANTS.baseUrl}/auth/refresh`,
       });
-
-      print(response);
-      saveCookie("token", response.datos);
 
       await delay(500);
     } catch (e) {
@@ -112,5 +147,5 @@ export const useSession = () => {
     }
   };
 
-  return { sessionRequest, logoutSession, deleteSessionCookie };
+  return { sessionRequest, logoutSession, deleteSessionCookie, getPermissions };
 };
