@@ -243,7 +243,6 @@ const ProfileSection = () => {
                       </Box>
                     )}
                   </Stack>
-
                   <Button
                     fullWidth
                     variant="outlined"

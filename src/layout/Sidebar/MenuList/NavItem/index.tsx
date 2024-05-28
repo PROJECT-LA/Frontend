@@ -106,7 +106,7 @@ const NavItem = ({
       width: "0",
     },
     "&:hover::before": {
-      width: "90%",
+      width: matchDownMd ? "90%" : "100%",
       borderRadius: "1rem",
       transition: "all .3s ease",
       backgroundColor:

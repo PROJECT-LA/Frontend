@@ -1,6 +1,4 @@
 import { EsquemaColor } from "./types";
-import { createTheme } from "@mui/material";
-import { globalPalette, customization, globalTypography } from "./global";
 
 export const colors: EsquemaColor = {
   // text variants
@@ -19,14 +17,14 @@ export const colors: EsquemaColor = {
   dividerDark: "#393B44",
 
   // primary
-  primaryLight: "#e5f3fb",
-  primaryMain: "#84B898",
-  primaryDark: "#4F6F52",
+  primaryLight: "#89C9B8",
+  primaryMain: "#3CA25E",
+  primaryDark: "#30322F",
 
   // primary dark
-  darkPrimaryLight: "#e5f3fb",
-  darkPrimaryMain: "#84B898",
-  darkPrimaryDark: "#4F6F52",
+  darkPrimaryLight: "#89C9B8",
+  darkPrimaryMain: "#3CA25E",
+  darkPrimaryDark: "#62B881",
 
   // secondary
   secondaryLight: "#E4D6F3",
@@ -73,23 +71,3 @@ export const colors: EsquemaColor = {
   grey700: "#364152",
   grey900: "#121926",
 };
-
-const lightPalette = globalPalette("light", colors);
-const lightStyleComponents = customization("light", colors);
-const lightLetters = globalTypography("light", colors);
-
-const darkPalette = globalPalette("dark", colors);
-const darkStyleComponents = customization("dark", colors);
-const darkLetters = globalTypography("dark", colors);
-
-export const lightTheme = createTheme({
-  palette: lightPalette,
-  components: lightStyleComponents,
-  typography: lightLetters,
-});
-
-export const darkTheme = createTheme({
-  palette: darkPalette,
-  components: darkStyleComponents,
-  typography: darkLetters,
-});

@@ -46,22 +46,19 @@ export const useSession = () => {
         withCredentials,
       });
 
-      if (isPermissions && response.status == 403) {
-        return router.push("/not-found");
-      }
-
-      if (isPermissions && response.status == 401) {
-        await logoutSession();
-        return router.push("/login");
+      if (isPermissions) {
+        if (response.status == 403) {
+          return router.push("/not-found");
+        }
+        if (response.status == 401) {
+          await logoutSession();
+          return router.push("/login");
+        }
       }
 
       print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
-      if (!isPermissions) {
-        return router.push("/not-found");
-      }
-
       if (e.code === "ECONNABORTED") {
         throw new Error("La petición está tardando demasiado");
       }
