@@ -1,6 +1,10 @@
 "use client";
 import MainCard from "@/components/cards/MainCard";
-import { GlobalPermissionsProps, PermissionTypes } from "@/utils/permissions";
+import {
+  GlobalPermissionsProps,
+  PermissionTypes,
+  initialPermissions,
+} from "@/utils/permissions";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, useSortable } from "@dnd-kit/sortable";
 import {
@@ -19,7 +23,7 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import {
   ChevronDown,
@@ -33,118 +37,91 @@ import {
 import { IconTooltip } from "@/components/buttons";
 import { CONSTANTS } from "../../../../../config";
 import { Item } from "@/types";
-import { siteName } from "@/utils";
+import { MessagesInterpreter, delay, siteName } from "@/utils";
+import { useSession } from "@/hooks/useSession";
+import { toast } from "sonner";
+import { SkeletonModules } from "./ui";
 
-const Sidebar: Item[] = [
-  {
-    id: "1",
-    status: "ACTIVO",
-    title: "Principal",
-    description: "Sección principal",
-    subModule: [
-      {
-        id: "2",
-        status: "ACTIVO",
-        title: "Inicio",
-        icon: "home",
-        url: "/admin/home",
-      },
-      {
-        id: "3",
-        status: "ACTIVO",
-        title: "Perfil",
-        icon: "user",
-        url: "/admin/profile",
-      },
-    ],
-  },
-  {
-    id: "4",
-    status: "ACTIVO",
-    title: "Configuración",
-    description: "Sección de configuraciones",
-    subModule: [
-      {
-        id: "5",
-        status: "ACTIVO",
-        title: "Usuarios",
-        icon: "users",
-        url: "/admin/users",
-      },
-      {
-        id: "6",
-        status: "ACTIVO",
-        title: "Parámetros",
-        icon: "settings-2",
-        url: "/admin/parameters",
-      },
-      {
-        id: "7",
-        status: "ACTIVO",
-        title: "Módulos",
-        icon: "package-open",
-        url: "/admin/modules",
-      },
-      {
-        id: "8",
-        status: "ACTIVO",
-        title: "Permisos",
-        icon: "lock",
-        url: "/admin/policies",
-      },
-      {
-        id: "9",
-        status: "ACTIVO",
-        title: "Roles",
-        icon: "notebook",
-        url: "/admin/roles",
-      },
-    ],
-  },
-];
-
-const ModulesClient2 = ({ permissions }: GlobalPermissionsProps) => {
+const ModulesClient2 = () => {
+  const [loading, setLoading] = useState<boolean>(false);
+  const [permissions, setPermissions] =
+    useState<PermissionTypes>(initialPermissions);
+  const { sessionRequest, getPermissions } = useSession();
   const theme = useTheme();
 
-  const [modulesSection, setModulesSection] = useState<Item[]>(Sidebar);
+  useEffect(() => {
+    const getPermissionsClient = async () => {
+      const data = await getPermissions("/admin/modules");
+      if (data !== undefined) setPermissions(data);
+    };
+    getPermissionsClient();
 
-  const [games, setGames] = useState([
-    { name: "Dota 2", items: ["Item 1", "Item 2"] },
-    { name: "League of Legends", items: ["Item 3", "Item 4"] },
-    { name: "CS:GO", items: ["Item 5", "Item 6"] },
-    { name: "World of Warcraft", items: ["Item 7", "Item 8"] },
-    { name: "The Witcher", items: ["Item 9", "Item 10"] },
-    { name: "God of War", items: ["Item 11", "Item 12"] },
-    { name: "Diablo", items: ["Item 13", "Item 14"] },
-  ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const reorderGamesList = (e: DragEndEvent) => {
+  useEffect(() => {
+    getModules().finally(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const [modulesSection, setModulesSection] = useState<Item[]>([]);
+
+  const getModules = async () => {
+    try {
+      setLoading(true);
+      await delay(1000);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/modules`,
+      });
+      console.log("***********************************");
+      console.log(res);
+      console.log(res.data);
+      console.log("***********************************");
+
+      setModulesSection(res.data);
+    } catch (e) {
+      toast.error("Error", { description: MessagesInterpreter(e) });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const reorderSections = (e: DragEndEvent) => {
     if (!e.over) return;
-
     if (e.active.id !== e.over.id) {
-      setGames((games) => {
-        const oldIdx = games.findIndex((game) => game.name === e.active.id);
-        const newIdx = games.findIndex((game) => game.name === e.over!.id);
-        return arrayMove(games, oldIdx, newIdx);
+      setModulesSection((sections) => {
+        const oldIdx = sections.findIndex(
+          (section) => section.id === e.active.id
+        );
+        const newIdx = sections.findIndex(
+          (section) => section.id === e.over!.id
+        );
+        return arrayMove(sections, oldIdx, newIdx);
       });
     }
   };
 
-  const reorderGameItems = (parentIndex: number, e: DragEndEvent) => {
+  const reorderSubModules = (sectionIndex: number, e: DragEndEvent) => {
     if (!e.over) return;
-
     if (e.active.id !== e.over.id) {
-      setGames((games) => {
-        const newGames = [...games];
-        const items = newGames[parentIndex].items;
-        const oldIdx = items.indexOf(e.active.id.toString());
-        const newIdx = items.indexOf(e.over!.id.toString());
-        newGames[parentIndex].items = arrayMove(items, oldIdx, newIdx);
-        return newGames;
+      setModulesSection((sections) => {
+        const newSections = [...sections];
+        const subModules = newSections[sectionIndex].subModule!;
+        const oldIdx = subModules.findIndex(
+          (subModule) => subModule.id === e.active.id
+        );
+        const newIdx = subModules.findIndex(
+          (subModule) => subModule.id === e.over!.id
+        );
+        newSections[sectionIndex].subModule = arrayMove(
+          subModules,
+          oldIdx,
+          newIdx
+        );
+        return newSections;
       });
     }
   };
-
   return (
     <>
       <title>{`Módulos - ${siteName()}`}</title>
@@ -155,67 +132,76 @@ const ModulesClient2 = ({ permissions }: GlobalPermissionsProps) => {
         justifyContent="space-between"
       >
         <Typography variant="h4">Módulos</Typography>
-        <Button variant="contained" startIcon={<ListCollapse size={18} />}>
-          <Typography>Nueva Sección</Typography>
-        </Button>
+        {permissions.create && (
+          <Button variant="contained" startIcon={<PlusCircle size={18} />}>
+            <Typography>Nueva Sección</Typography>
+          </Button>
+        )}
       </Stack>
-      <DndContext onDragEnd={reorderGamesList}>
-        <Box marginTop={3} minHeight="80vh">
-          <Card
-            sx={{
-              padding: 4,
-              borderRadius: CONSTANTS.borderRadius,
-              height: "100%",
-            }}
-          >
-            <SortableContext items={games.map((game) => game.name)}>
-              <Stack height="100%" spacing={CONSTANTS.gridSpacing}>
-                {games.map((game, index) => (
-                  <div key={`lista-juego-${index}`}>
-                    <GameItem
-                      name={game.name}
-                      items={game.items}
-                      permissions={permissions}
-                      parentIndex={index}
-                      reorderGameItems={reorderGameItems}
-                    />
-                  </div>
-                ))}
-              </Stack>
-            </SortableContext>
-          </Card>
-        </Box>
-      </DndContext>
+
+      <>
+        {loading && modulesSection.length === 0 ? (
+          <SkeletonModules />
+        ) : (
+          <DndContext onDragEnd={reorderSections}>
+            <Box marginTop={3} minHeight="80vh">
+              <Card
+                sx={{
+                  padding: 4,
+                  borderRadius: CONSTANTS.borderRadius,
+                  height: "100%",
+                }}
+              >
+                <SortableContext
+                  items={modulesSection.map((section) => section.id)}
+                >
+                  <Stack height="100%" spacing={CONSTANTS.gridSpacing}>
+                    {modulesSection.map((section, index) => (
+                      <div key={`section-${section.id}`}>
+                        <SectionItem
+                          section={section}
+                          permissions={permissions}
+                          sectionIndex={index}
+                          reorderSubModules={reorderSubModules}
+                        />
+                      </div>
+                    ))}
+                  </Stack>
+                </SortableContext>
+              </Card>
+            </Box>
+          </DndContext>
+        )}
+      </>
     </>
   );
 };
 
-interface IGameItem {
-  name: string;
-  items: string[];
+interface ISectionItem {
+  section: Item;
   permissions: PermissionTypes;
-  parentIndex: number;
-  reorderGameItems: (parentIndex: number, e: DragEndEvent) => void;
+  sectionIndex: number;
+  reorderSubModules: (sectionIndex: number, e: DragEndEvent) => void;
 }
 
-const GameItem = ({
-  name,
-  items,
+const SectionItem = ({
+  section,
   permissions,
-  parentIndex,
-  reorderGameItems,
-}: IGameItem) => {
+  sectionIndex,
+  reorderSubModules,
+}: ISectionItem) => {
+  const theme = useTheme();
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: name });
+    useSortable({ id: section.id });
 
   return (
-    <DndContext onDragEnd={(e) => reorderGameItems(parentIndex, e)}>
+    <DndContext onDragEnd={(e) => reorderSubModules(sectionIndex, e)}>
       <Box
         {...listeners}
         ref={setNodeRef}
         {...attributes}
         sx={{
-          borderColor: "black",
+          borderColor: theme.palette.divider,
           border: 1,
           width: "100%",
           height: "100%",
@@ -225,62 +211,86 @@ const GameItem = ({
           transition: transition,
           transform: CSS.Transform.toString(transform),
           bgcolor: "background.paper",
-
           boxShadow: 3,
         }}
       >
         <Stack width="100%">
-          <Accordion>
+          {/* <Accordion>
             <AccordionSummary expandIcon={<ChevronDown />}>
-              <>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  <Box
-                    sx={{
-                      ":hover": {
-                        cursor: "grab",
-                      },
-                      ":active": {
-                        cursor: "grabbing",
-                      },
-                    }}
-                  >
-                    <IconButton>
-                      <GripVertical />
-                    </IconButton>
-                  </Box>
-                  <Typography>{name}</Typography>
-                </Stack>
-                <Divider />
-              </>
+              <> */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              sx={{
+                ":hover": {
+                  cursor: "grab",
+                },
+                ":active": {
+                  cursor: "grabbing",
+                },
+              }}
+            >
+              <IconButton>
+                <GripVertical />
+              </IconButton>
+              <Typography>
+                {section.id} - {section.title}
+              </Typography>
+            </Stack>
+            <IconTooltip
+              id={`editarSubModule-${section.id}`}
+              title={"Editar"}
+              color={"primary"}
+              action={() => {}}
+              icon={<Pencil />}
+              name={"Editar submódulo"}
+            />
+          </Stack>
+          <Divider />
+          {/* </>
             </AccordionSummary>
 
-            <AccordionDetails>
-              <SortableContext items={items}>
-                <List>
-                  {items.map((item, index) => (
-                    <ItemSection key={`lista-item-${index}`} id={item}>
-                      {item}
-                    </ItemSection>
-                  ))}
-                </List>
-              </SortableContext>
-            </AccordionDetails>
-          </Accordion>
-          <Button fullWidth variant="outlined" startIcon={<PlusCircle />}>
-            Agregar módulo
-          </Button>
+            <AccordionDetails> */}
+          <SortableContext
+            items={section.subModule!.map((subModule) => subModule.id)}
+          >
+            <List>
+              {section.subModule!.map((subModule, index) => (
+                <SubModuleItem
+                  key={`subModule-${subModule.id}`}
+                  id={subModule.id}
+                >
+                  {`${subModule.id} - ${subModule.title}`}
+                </SubModuleItem>
+              ))}
+            </List>
+          </SortableContext>
+          {/* </AccordionDetails>
+          </Accordion> */}
+          <Box width="100%" display="flex" justifyContent="center">
+            <Button variant="outlined" startIcon={<PlusCircle />}>
+              Agregar módulo
+            </Button>
+          </Box>
         </Stack>
       </Box>
     </DndContext>
   );
 };
 
-interface IItem {
+interface ISubModuleItem {
   id: string;
-  children: string;
+  children: any;
 }
 
-const ItemSection = ({ id, children }: IItem) => {
+const SubModuleItem = ({ id, children }: ISubModuleItem) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -300,28 +310,29 @@ const ItemSection = ({ id, children }: IItem) => {
         bgcolor: "background.paper",
         ":hover": {
           cursor: "grab",
-          bgcolor: "grey.100",
+          opacity: "80%",
         },
         ":active": {
           cursor: "grabbing",
-          bgcolor: "grey.200",
         },
         boxShadow: 3,
       }}
     >
       <Stack direction="row" width="100%" justifyContent="space-between">
         <Stack direction="row" alignItems="center">
-          <GripVertical />
+          <IconButton>
+            <GripVertical />
+          </IconButton>
           {children}
         </Stack>
         <Stack>
           <IconTooltip
-            id={`editarModulo-${children}`}
+            id={`editarSubModule-${children}`}
             title={"Editar"}
             color={"primary"}
             action={() => {}}
             icon={<Pencil />}
-            name={"Editar módulo"}
+            name={"Editar submódulo"}
           />
         </Stack>
       </Stack>

@@ -6,7 +6,6 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Image from "next/image";
 
-// Constantes
 const configuracionSlider: SettingsSlider = {
   dots: true,
   autoplay: true,
@@ -55,7 +54,7 @@ export const LoginSlider = () => {
             <Slider {...configuracionSlider}>
               <Box sx={{ textAlign: "center" }}>
                 <Typography
-                  variant="h2"
+                  variant="h3"
                   sx={{
                     fontWeight: "semi-bold",
                   }}
@@ -63,7 +62,7 @@ export const LoginSlider = () => {
                   Genera reportes gráficos
                 </Typography>
                 <Box height={8}></Box>
-                <Typography variant="body1">
+                <Typography variant="subtitle2">
                   Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                   Dolores ducimus voluptates maxime debitis numquam ratione at
                 </Typography>
@@ -71,7 +70,7 @@ export const LoginSlider = () => {
 
               <Box sx={{ textAlign: "center" }}>
                 <Typography
-                  variant="h2"
+                  variant="h3"
                   sx={{
                     fontWeight: "semi-bold",
                   }}
@@ -79,7 +78,7 @@ export const LoginSlider = () => {
                   Mejora continua
                 </Typography>
                 <Box height={8}></Box>
-                <Typography variant="body1">
+                <Typography variant="subtitle2">
                   Lorem ipsum, dolor sit amet consectetur adipisicing elit.
                   Aspernatur dolorum architecto a esse dolores itaque,
                 </Typography>
@@ -87,7 +86,7 @@ export const LoginSlider = () => {
 
               <Box sx={{ textAlign: "center" }}>
                 <Typography
-                  variant="h2"
+                  variant="h3"
                   sx={{
                     fontWeight: "semi-bold",
                   }}
@@ -95,7 +94,7 @@ export const LoginSlider = () => {
                   Evalúa el rendimiento
                 </Typography>
                 <Box height={8}></Box>
-                <Typography variant="body1">
+                <Typography variant="subtitle2">
                   Lorem ipsum dolor sit amet consectetur adipisicing elit.
                 </Typography>
               </Box>

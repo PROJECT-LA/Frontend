@@ -1,8 +1,8 @@
-import { useState, useRef, useEffect, ChangeEvent } from 'react'
-import Link from 'next/link'
+import { useState, useRef, useEffect, ChangeEvent } from "react";
+import Link from "next/link";
 
 // material-ui
-import { useTheme } from '@mui/material/styles'
+import { useTheme } from "@mui/material/styles";
 import {
   Box,
   Button,
@@ -19,51 +19,51 @@ import {
   TextField,
   Typography,
   useMediaQuery,
-} from '@mui/material'
+} from "@mui/material";
 
 // third-party
-import PerfectScrollbar from 'react-perfect-scrollbar'
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 // project imports
-import Transitions from '@/components/Transitions'
+import Transitions from "@/components/Transitions";
 
-import NotificationList from './NotificationList'
+import NotificationList from "./NotificationList";
 
 // assets
-import { Bell } from 'lucide-react'
+import { Bell } from "lucide-react";
 
 // notification status options
 const status = [
   {
-    value: 'all',
-    label: 'All Notification',
+    value: "all",
+    label: "All Notification",
   },
   {
-    value: 'new',
-    label: 'New',
+    value: "new",
+    label: "New",
   },
   {
-    value: 'unread',
-    label: 'Unread',
+    value: "unread",
+    label: "Unread",
   },
   {
-    value: 'other',
-    label: 'Other',
+    value: "other",
+    label: "Other",
   },
-]
+];
 
 // ==============================|| NOTIFICATION ||============================== //
 
 const NotificationSection = () => {
-  const theme = useTheme()
-  const matchesXs = useMediaQuery(theme.breakpoints.down('md'))
+  const theme = useTheme();
+  const matchesXs = useMediaQuery(theme.breakpoints.down("md"));
 
-  const [open, setOpen] = useState(false)
-  const [value, setValue] = useState('')
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("");
   /**
    * anchorRef is used on different componets and specifying one type leads to other components throwing an error
    * */
-  const anchorRef = useRef<HTMLDivElement | null>(null)
+  const anchorRef = useRef<HTMLDivElement | null>(null);
 
   // const handleToggle = () => {
   //   setOpen((prevOpen) => !prevOpen);
@@ -71,24 +71,24 @@ const NotificationSection = () => {
 
   const handleClose = (event: MouseEvent | TouchEvent) => {
     if (anchorRef.current && anchorRef.current.contains(event.target as Node)) {
-      return
+      return;
     }
-    setOpen(false)
-  }
+    setOpen(false);
+  };
 
-  const prevOpen = useRef(open)
+  const prevOpen = useRef(open);
   useEffect(() => {
     if (prevOpen.current === true && open === false && anchorRef.current) {
-      anchorRef.current.focus()
+      anchorRef.current.focus();
     }
-    prevOpen.current = open
-  }, [open])
+    prevOpen.current = open;
+  }, [open]);
 
   const handleChange = (
     event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    if (event?.target?.value) setValue(event?.target.value)
-  }
+    if (event?.target?.value) setValue(event?.target.value);
+  };
 
   return (
     <>
@@ -96,29 +96,29 @@ const NotificationSection = () => {
         <ButtonBase
           sx={{
             padding: 1,
-            borderRadius: '50%',
-            transition: 'all .2s ease-in-out',
+            borderRadius: "50%",
+            transition: "all .2s ease-in-out",
             background: theme.palette.background.paper,
             color: theme.palette.text.primary,
             border: 1,
             borderColor: theme.palette.divider,
-            position: 'relative',
+            position: "relative",
           }}
         >
           <Bell size="1.5rem" />
           <Box
             sx={{
-              position: 'absolute',
-              display: 'grid',
-              placeItems: 'center',
+              position: "absolute",
+              display: "grid",
+              placeItems: "center",
               top: -5,
               right: -5,
               width: 20,
               backgroundColor: theme.palette.secondary.main,
-              borderRadius: '100%',
+              borderRadius: "100%",
             }}
           >
-            <Typography color={theme.palette.primary.light} variant="caption">
+            <Typography color={"white"} variant="caption">
               3
             </Typography>
           </Box>
@@ -126,7 +126,7 @@ const NotificationSection = () => {
       </Box>
 
       <Popper
-        placement={matchesXs ? 'bottom' : 'bottom-end'}
+        placement={matchesXs ? "bottom" : "bottom-end"}
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
@@ -135,7 +135,7 @@ const NotificationSection = () => {
         popperOptions={{
           modifiers: [
             {
-              name: 'offset',
+              name: "offset",
               options: {
                 offset: [matchesXs ? 5 : 0, 20],
               },
@@ -145,7 +145,7 @@ const NotificationSection = () => {
       >
         {({ TransitionProps }) => (
           <Transitions
-            position={matchesXs ? 'top' : 'top-right'}
+            position={matchesXs ? "top" : "top-right"}
             in={open}
             {...TransitionProps}
           >
@@ -160,7 +160,7 @@ const NotificationSection = () => {
         )}
       </Popper>
     </>
-  )
-}
+  );
+};
 
-export default NotificationSection
+export default NotificationSection;
