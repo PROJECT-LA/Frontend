@@ -121,45 +121,75 @@ const ProfileClient = () => {
           <Box>
             <Grid container spacing={CONSTANTS.gridSpacing}>
               <Grid item xs={12} md={4}>
-                <Card
-                  sx={{
-                    height: "100%",
-                    border: 1,
-                    borderColor:
-                      theme.palette.mode === "light"
-                        ? theme.palette.grey[400]
-                        : theme.palette.divider,
-                    borderRadius: CONSTANTS.borderRadius,
-                  }}
-                >
-                  <Stack
-                    marginY={`${matchDownMd ? "1rem" : "3rem"}`}
-                    justifyContent="center"
-                    alignItems="center"
+                <Stack spacing={2}>
+                  <Card
+                    sx={{
+                      height: "80%",
+                      border: 1,
+                      borderColor:
+                        theme.palette.mode === "light"
+                          ? theme.palette.grey[400]
+                          : theme.palette.divider,
+                      borderRadius: CONSTANTS.borderRadius,
+                    }}
                   >
-                    <Box
-                      border={1}
-                      borderColor={theme.palette.grey[500]}
-                      borderRadius="50%"
-                      padding={5}
+                    <Stack
+                      marginY={`${matchDownMd ? "1rem" : "2.5rem"}`}
+                      justifyContent="center"
+                      alignItems="center"
                     >
-                      <UserCircle2 size="4rem" />
-                    </Box>
-                    <Box height={30} />
-                    <Button
-                      onClick={openProfileDialog}
-                      variant="outlined"
-                      startIcon={<PlusCircle size={20} />}
-                    >
-                      <Typography variant="h5">Subir foto</Typography>
-                    </Button>
-                  </Stack>
-                </Card>
+                      <Box
+                        border={1}
+                        borderColor={theme.palette.grey[500]}
+                        borderRadius="50%"
+                        padding={5}
+                      >
+                        <UserCircle2 size="4rem" />
+                      </Box>
+                      <Box height={30} />
+                      <Button
+                        disabled={loading}
+                        onClick={openProfileDialog}
+                        variant="outlined"
+                        startIcon={<PlusCircle size={20} />}
+                      >
+                        <Typography variant="h5">Subir foto</Typography>
+                      </Button>
+                    </Stack>
+                  </Card>
+
+                  <Box>
+                    <Typography variant="subtitle2">Roles</Typography>
+                    <Box height={5} />
+                    <Stack direction="row" spacing={1}>
+                      {userInfo?.roles.map((elem, index) => (
+                        <Box key={`user-roles-elem-id-${elem.name}-${index}`}>
+                          {rolesData.map((rol, index) => {
+                            if (elem.id === rol.id) {
+                              return (
+                                <Chip
+                                  key={`roles-id-user-${rol.id}-index`}
+                                  label={rol.name}
+                                />
+                              );
+                            } else {
+                              return <></>;
+                            }
+                          })}
+                        </Box>
+                      ))}
+                    </Stack>
+                  </Box>
+                </Stack>
               </Grid>
 
               <Grid item xs={12} md={8} marginTop={`${matchDownMd && "2rem"}`}>
                 {userInfo !== undefined && userInfo !== null && (
-                  <UserInfomation loadingModal={loading} userInfo={userInfo} />
+                  <UserInfomation
+                    loadingModal={loading}
+                    userInfo={userInfo}
+                    setLoadingModal={setLoading}
+                  />
                 )}
               </Grid>
             </Grid>
