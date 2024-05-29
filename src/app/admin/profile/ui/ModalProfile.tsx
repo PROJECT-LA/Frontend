@@ -17,11 +17,6 @@ import React, { useRef, useState } from "react";
 import { CONSTANTS } from "../../../../../config";
 import { toast } from "sonner";
 
-interface ModalProfile {
-  loadingModal: boolean;
-  cancelAction: () => void;
-}
-
 const pulse = keyframes`
   0%, 100% {
     opacity: 1;
@@ -31,9 +26,22 @@ const pulse = keyframes`
   }
 `;
 
-export const ModalProfile = ({ loadingModal, cancelAction }: ModalProfile) => {
+interface ModalProfile {
+  acceptAction: () => void;
+  cancelAction: () => void;
+  fileList: File[];
+  setFileList: (data: File[]) => void;
+  fileRemove: () => void;
+}
+
+export const ModalProfile = ({
+  cancelAction,
+  acceptAction,
+  fileList,
+  setFileList,
+  fileRemove,
+}: ModalProfile) => {
   const theme = useTheme();
-  const [fileList, setFileList] = useState<File[]>([]);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const onDragEnter = () => {
@@ -69,10 +77,6 @@ export const ModalProfile = ({ loadingModal, cancelAction }: ModalProfile) => {
       formData.append("file", fileList[0]);
       // Services at endpoint
     }
-  };
-
-  const fileRemove = () => {
-    setFileList([]);
   };
 
   return (
@@ -169,7 +173,6 @@ export const ModalProfile = ({ loadingModal, cancelAction }: ModalProfile) => {
             </Stack>
           )}
           <Box height={"5px"} />
-          <LinealLoader mostrar={loadingModal} />
         </Grid>
       </DialogContent>
       <DialogActions
@@ -184,14 +187,10 @@ export const ModalProfile = ({ loadingModal, cancelAction }: ModalProfile) => {
           },
         }}
       >
-        <Button
-          variant={"outlined"}
-          disabled={loadingModal}
-          onClick={cancelAction}
-        >
+        <Button variant={"outlined"} onClick={cancelAction}>
           Cancelar
         </Button>
-        <Button variant={"contained"} disabled={loadingModal} type={"submit"}>
+        <Button variant={"contained"} type="button" onClick={acceptAction}>
           Guardar
         </Button>
       </DialogActions>

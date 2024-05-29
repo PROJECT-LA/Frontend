@@ -22,26 +22,16 @@ import { FormInputText } from "@/components/forms";
 import { MessagesInterpreter, delay } from "@/utils";
 import { toast } from "sonner";
 import { LinealLoader } from "@/components/loaders";
-
-interface UserCUInformation {
-  names: string;
-  lastNames: string;
-  email: string;
-  phone: string;
-  username: string;
-  ci: string;
-  roles: RolCRUDType[];
-  location: string;
-}
+import { UserCUInformation } from "../types";
 
 export const UserInfomation = ({
   userInfo,
   loadingModal,
-  setLoadingModal,
+  submitData,
 }: {
   userInfo: UserRolCRUDType;
   loadingModal: boolean;
-  setLoadingModal: (status: boolean) => void;
+  submitData: (data: UserCUInformation) => void;
 }) => {
   const theme = useTheme();
   const { sessionRequest } = useSession();
@@ -53,27 +43,13 @@ export const UserInfomation = ({
       lastNames: userInfo.lastNames,
       names: userInfo.names,
       ci: "",
-      roles: userInfo.roles,
       phone: "",
       location: "",
     },
   });
 
   const saveProfileInformation = async (data: UserCUInformation) => {
-    try {
-      setLoadingModal(true);
-      await delay(1000);
-      const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/users/${user?.id}`,
-        type: "PATCH",
-        body: data,
-      });
-      toast.success(MessagesInterpreter(res));
-    } catch (e) {
-      toast.error(MessagesInterpreter(e));
-    } finally {
-      setLoadingModal(false);
-    }
+    submitData(data);
   };
 
   return (
@@ -150,7 +126,7 @@ export const UserInfomation = ({
               <FormInputText
                 id={"email"}
                 control={control}
-                type="emailr"
+                type="email"
                 name="email"
                 label="Correo electrónico"
                 disabled={loadingModal}
@@ -161,7 +137,7 @@ export const UserInfomation = ({
 
         <Box height={10} />
         <LinealLoader mostrar={loadingModal} />
-        <Box height={10} />
+        <Box height={20} />
         <Box>
           <Button
             type="submit"

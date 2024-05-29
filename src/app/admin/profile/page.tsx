@@ -20,11 +20,18 @@ import { PermissionTypes, initialPermissions } from "@/utils/permissions";
 import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
 import { RolType, UserRolCRUDType } from "../(configuration)/users/types";
-import { MessagesInterpreter, siteName } from "@/utils";
+import { MessagesInterpreter, delay, siteName } from "@/utils";
 import { CustomDialog } from "@/components/modals";
 import { ModalProfile, UserInfomation } from "./ui";
+import { UserCUInformation } from "./types";
 
 const ProfileClient = () => {
+  /* Profile data */
+  const [fileList, setFileList] = useState<File[]>([]);
+  const fileRemove = () => {
+    setFileList([]);
+  };
+
   const [userInfo, setUserInfo] = useState<UserRolCRUDType | null>();
   const [rolesData, setRolesData] = useState<RolType[]>([]);
   const { sessionRequest } = useSession();
@@ -69,6 +76,41 @@ const ProfileClient = () => {
       setLoading(false);
     }
   };
+
+  const saveProfileInformation = async (data: UserCUInformation) => {
+    const rolesString: string[] = [];
+    if (userInfo?.roles) {
+      for (const rol of userInfo?.roles) {
+        rolesString.push(rol.id);
+      }
+    }
+    const dataSend = {
+      username: data.username,
+      email: data.email,
+      lastNames: data.lastNames,
+      names: data.names,
+      ci: data.ci,
+      roles: rolesString,
+      phone: data.phone,
+      location: data.location,
+    };
+    try {
+      setLoading(true);
+      await delay(1000);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/users/${user?.id}`,
+        type: "PATCH",
+        body: dataSend,
+      });
+      toast.success(MessagesInterpreter(res));
+      await getProfileInfo();
+    } catch (e) {
+      toast.error(MessagesInterpreter(e));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   /***********************************************************/
 
   useEffect(() => {
@@ -98,7 +140,12 @@ const ProfileClient = () => {
     setProfilePhotoDialog(true);
   };
 
+  const acceptProfileDialog = () => {
+    setProfilePhotoDialog(false);
+  };
+
   const closeProfileDialog = () => {
+    setFileList([]);
     setProfilePhotoDialog(false);
   };
   return (
@@ -110,7 +157,10 @@ const ProfileClient = () => {
         title={"Subir foto de perfil"}
       >
         <ModalProfile
-          loadingModal={loading}
+          fileList={fileList}
+          setFileList={setFileList}
+          fileRemove={fileRemove}
+          acceptAction={acceptProfileDialog}
           cancelAction={closeProfileDialog}
         />
       </CustomDialog>
@@ -142,9 +192,20 @@ const ProfileClient = () => {
                         border={1}
                         borderColor={theme.palette.grey[500]}
                         borderRadius="50%"
-                        padding={5}
+                        padding={fileList.length === 0 ? 5 : 0}
                       >
-                        <UserCircle2 size="4rem" />
+                        {fileList.length === 0 ? (
+                          <UserCircle2 size="4rem" />
+                        ) : (
+                          <img
+                            style={{
+                              width: "150px",
+                              borderRadius: "50%",
+                              height: "150px",
+                            }}
+                            src={URL.createObjectURL(fileList[0])}
+                          />
+                        )}
                       </Box>
                       <Box height={30} />
                       <Button
@@ -188,7 +249,7 @@ const ProfileClient = () => {
                   <UserInfomation
                     loadingModal={loading}
                     userInfo={userInfo}
-                    setLoadingModal={setLoading}
+                    submitData={saveProfileInformation}
                   />
                 )}
               </Grid>
