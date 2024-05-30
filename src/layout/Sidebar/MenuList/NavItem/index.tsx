@@ -40,7 +40,7 @@ const NavItem = ({
 }) => {
   const theme = useTheme();
 
-  const { cerrarDrawer, openDrawer } = useGlobalStore();
+  const { cerrarDrawer, openDrawer, setTitlePage } = useGlobalStore();
   const pathname = usePathname();
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -66,8 +66,9 @@ const NavItem = ({
     listItemProps = { component: "a", href: item.url, target: itemTarget };
   }
 
-  const itemHandler = (id: any) => {
-    console.log(id);
+  const itemHandler = (itemNav: Item) => {
+    console.log(itemNav.title);
+    if (itemNav.title && itemNav.title?.length > 0) setTitlePage(itemNav.title);
 
     if (matchesSM) cerrarDrawer();
   };
@@ -170,7 +171,7 @@ const NavItem = ({
           },
         },
       }}
-      onClick={() => itemHandler(item.id)}
+      onClick={() => itemHandler(item)}
     >
       {pathname === item?.url && (
         <Box

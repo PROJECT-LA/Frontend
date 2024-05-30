@@ -5,6 +5,9 @@ import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
 interface GlobalState {
+  titlePage: string;
+  setTitlePage: (title: string) => void;
+
   openDrawer: boolean;
   toggleDrawer: () => void;
   cerrarDrawer: () => void;
@@ -48,10 +51,16 @@ export const useAuthStore = create<AuthState>()(
 );
 
 export const useGlobalStore = create<GlobalState>((set) => ({
+  titlePage: "",
+  setTitlePage: (newTitle: string) => {
+    set((state) => {
+      return { ...state, titlePage: newTitle };
+    });
+  },
   openDrawer: true,
   toggleDrawer: () => {
     set((state) => {
-      return { openDrawer: !state.openDrawer };
+      return { ...state, openDrawer: !state.openDrawer };
     });
   },
   cerrarDrawer: () => {

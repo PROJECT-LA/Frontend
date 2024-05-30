@@ -1,0 +1,297 @@
+"use client";
+import { Icono } from "@/components/Icono";
+import { IconTooltip } from "@/components/buttons";
+import { Item } from "@/types";
+import { PermissionTypes } from "@/utils/permissions";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import {
+  Box,
+  Button,
+  Chip,
+  IconButton,
+  List,
+  ListItem,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import {
+  GripVertical,
+  Info,
+  Pencil,
+  PlusCircle,
+  ToggleLeft,
+  ToggleRight,
+  Trash2Icon,
+} from "lucide-react";
+import { CSS } from "@dnd-kit/utilities";
+import { getIconLucide } from "@/types/icons";
+
+interface SectionProps {
+  section: Item;
+  permissions: PermissionTypes;
+  sectionIndex: number;
+  reorderSubModules: (sectionIndex: number, e: DragEndEvent) => void;
+  addModuleModal: (state: boolean) => void;
+}
+
+export const DragSection = ({
+  section,
+  permissions,
+  sectionIndex,
+  reorderSubModules,
+  addModuleModal,
+}: SectionProps) => {
+  const theme = useTheme();
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: section.id });
+
+  return (
+    <DndContext onDragEnd={(e) => reorderSubModules(sectionIndex, e)}>
+      <Box
+        {...listeners}
+        ref={setNodeRef}
+        {...attributes}
+        sx={{
+          borderColor: theme.palette.divider,
+          border: 1,
+          width: "100%",
+          height: "100%",
+          marginBottom: 1,
+          padding: 1,
+          borderRadius: 2,
+          transition: transition,
+          transform: CSS.Transform.toString(transform),
+          bgcolor: "background.paper",
+          boxShadow: 3,
+        }}
+      >
+        <Stack width="100%">
+          {/* <Accordion>
+            <AccordionSummary expandIcon={<ChevronDown />}>
+              <> */}
+          <Stack
+            direction="row"
+            alignItems="center"
+            justifyContent="space-between"
+            spacing={1}
+          >
+            <Stack
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              sx={{
+                ":hover": {
+                  cursor: "grab",
+                },
+                ":active": {
+                  cursor: "grabbing",
+                },
+              }}
+            >
+              <IconButton>
+                <GripVertical />
+              </IconButton>
+              <Chip label={section.order + ""} />
+              <Typography>{section.title}</Typography>
+            </Stack>
+            <Stack direction="row" spacing={1}>
+              {section.description && (
+                <IconTooltip
+                  title={section.description}
+                  icon={<Info />}
+                  action={() => {}}
+                  color="info"
+                  id=""
+                  name=""
+                />
+              )}
+
+              {permissions.update && (
+                <IconTooltip
+                  id={`editarSubModule-${section.id}`}
+                  title={"Editar"}
+                  color={"primary"}
+                  action={() => {}}
+                  icon={<Pencil />}
+                  name={"Editar submódulo"}
+                />
+              )}
+
+              {permissions.update && (
+                <IconTooltip
+                  id={`cambiarEstadoModulo-${section.id}`}
+                  title={section.status == "ACTIVO" ? "Inactivar" : "Activar"}
+                  color={section.status == "ACTIVO" ? "success" : "error"}
+                  action={() => {
+                    // changeStateModuleModal(
+                    //   moduleData,
+                    //   moduleData.module === null
+                    // );
+                  }}
+                  deactivate={section.status == "PENDIENTE"}
+                  icon={
+                    section.status == "ACTIVO" ? (
+                      <ToggleRight />
+                    ) : (
+                      <ToggleLeft />
+                    )
+                  }
+                  name={
+                    section.status == "ACTIVO"
+                      ? "Inactivar Módulo"
+                      : "Activar Módulo"
+                  }
+                />
+              )}
+              {permissions.delete && (
+                <IconTooltip
+                  id="Eliminar"
+                  name="Eliminar"
+                  title="Eliminar"
+                  color="error"
+                  action={() => {}}
+                  icon={<Trash2Icon />}
+                />
+              )}
+            </Stack>
+          </Stack>
+          {/* </>
+            </AccordionSummary>
+
+            <AccordionDetails> */}
+          <SortableContext
+            items={section.subModule!.map((subModule) => subModule.id)}
+          >
+            <List>
+              {section.subModule!.map((subModule, index) => (
+                <Module
+                  key={`subModule-${subModule.id}`}
+                  id={subModule.id}
+                  module={subModule}
+                  permissions={permissions}
+                />
+              ))}
+            </List>
+          </SortableContext>
+          {/* </AccordionDetails>
+          </Accordion> */}
+          <Box width="100%" display="flex" justifyContent="center">
+            <Button
+              variant="outlined"
+              onClick={() => addModuleModal(false)}
+              startIcon={<PlusCircle />}
+            >
+              Agregar módulo
+            </Button>
+          </Box>
+        </Stack>
+      </Box>
+    </DndContext>
+  );
+};
+
+interface ModuleProps {
+  id: string;
+  module: Item;
+  permissions: PermissionTypes;
+}
+
+const Module = ({ id, permissions, module }: ModuleProps) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id });
+
+  return (
+    <ListItem
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      sx={{
+        borderColor: "black",
+        border: 1,
+        marginBottom: 1,
+        padding: 1,
+        borderRadius: 2,
+        transition: transition,
+        transform: CSS.Transform.toString(transform),
+        bgcolor: "background.paper",
+        ":hover": {
+          cursor: "grab",
+          opacity: "80%",
+        },
+        ":active": {
+          cursor: "grabbing",
+        },
+        boxShadow: 3,
+      }}
+    >
+      <Stack direction="row" width="100%" justifyContent="space-between">
+        <Stack direction="row" alignItems="center" spacing={1}>
+          <IconButton>
+            <GripVertical />
+          </IconButton>
+          <Chip label={module.order} />
+          {module.icon && <Icono>{getIconLucide(module.icon)}</Icono>}
+          <Typography>{module.title}</Typography>
+        </Stack>
+        <Stack direction="row" spacing={1}>
+          {module.description && (
+            <IconTooltip
+              title={module.description}
+              icon={<Info />}
+              action={() => {}}
+              color="info"
+              id=""
+              name=""
+            />
+          )}
+
+          {permissions.update && (
+            <IconTooltip
+              id={`editarSubModule-data-own-${module.id}`}
+              title={"Editar"}
+              color={"primary"}
+              action={() => {}}
+              icon={<Pencil />}
+              name={"Editar submódulo"}
+            />
+          )}
+
+          {permissions.update && (
+            <IconTooltip
+              id={`cambiarEstadoModulo-${module.id}`}
+              title={module.status == "ACTIVO" ? "Inactivar" : "Activar"}
+              color={module.status == "ACTIVO" ? "success" : "error"}
+              action={() => {
+                // changeStateModuleModal(
+                //   moduleData,
+                //   moduleData.module === null
+                // );
+              }}
+              deactivate={module.status == "PENDIENTE"}
+              icon={
+                module.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />
+              }
+              name={
+                module.status == "ACTIVO"
+                  ? "Inactivar Módulo"
+                  : "Activar Módulo"
+              }
+            />
+          )}
+          {permissions.delete && (
+            <IconTooltip
+              id="Eliminar"
+              name="Eliminar"
+              title="Eliminar"
+              color="error"
+              action={() => {}}
+              icon={<Trash2Icon />}
+            />
+          )}
+        </Stack>
+      </Stack>
+    </ListItem>
+  );
+};

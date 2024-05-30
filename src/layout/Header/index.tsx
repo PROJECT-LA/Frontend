@@ -30,7 +30,7 @@ const Header = ({
 }) => {
   const { user } = useAuthStore();
   const theme = useTheme();
-  const { toggleDrawer } = useGlobalStore();
+  const { toggleDrawer, titlePage } = useGlobalStore();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
@@ -49,7 +49,7 @@ const Header = ({
             id="menu-hamburguesa"
             icon={<Menu />}
           />
-          <Typography variant="h5">{user?.roleName}</Typography>
+          <Typography variant="h5">{titlePage}</Typography>
         </Stack>
       </Box>
 
