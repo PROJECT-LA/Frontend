@@ -11,6 +11,7 @@ export interface Item {
   breadcrumbs?: boolean;
   external?: boolean;
   target?: boolean | string;
+  order?: number;
 
   status?: string;
 }

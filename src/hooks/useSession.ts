@@ -109,6 +109,10 @@ export const useSession = () => {
       showFullScreen();
       await delay(1000);
       const token = readCookie("token");
+      if (!token) {
+        router.refresh();
+        router.push("/login");
+      }
 
       deleteCookie("token");
 

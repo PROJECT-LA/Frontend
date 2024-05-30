@@ -14,12 +14,15 @@ import {
   Box,
   Button,
   Card,
+  Chip,
   Divider,
   IconButton,
   List,
   ListItem,
   ListItemIcon,
   Stack,
+  Tab,
+  Tabs,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -29,10 +32,13 @@ import {
   ChevronDown,
   Grab,
   GripVertical,
+  Info,
   ListCollapse,
   Pencil,
   PlusCircle,
+  ToggleLeft,
   ToggleRight,
+  Trash2Icon,
 } from "lucide-react";
 import { IconTooltip } from "@/components/buttons";
 import { CONSTANTS } from "../../../../../config";
@@ -41,6 +47,41 @@ import { MessagesInterpreter, delay, siteName } from "@/utils";
 import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
 import { SkeletonModules } from "./ui";
+import { Icono } from "@/components/Icono";
+import { getIconLucide } from "@/types/icons";
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function CustomTabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 const ModulesClient2 = () => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -73,10 +114,6 @@ const ModulesClient2 = () => {
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/modules`,
       });
-      console.log("***********************************");
-      console.log(res);
-      console.log(res.data);
-      console.log("***********************************");
 
       setModulesSection(res.data);
     } catch (e) {
@@ -122,57 +159,79 @@ const ModulesClient2 = () => {
       });
     }
   };
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
   return (
     <>
       <title>{`Módulos - ${siteName()}`}</title>
-      <Stack
-        alignItems="center"
-        direction="row"
-        width="100%"
-        justifyContent="space-between"
-      >
-        <Typography variant="h4">Módulos</Typography>
-        {permissions.create && (
-          <Button variant="contained" startIcon={<PlusCircle size={18} />}>
-            <Typography>Nueva Sección</Typography>
-          </Button>
-        )}
-      </Stack>
-
       <>
-        {loading && modulesSection.length === 0 ? (
-          <SkeletonModules />
-        ) : (
-          <DndContext onDragEnd={reorderSections}>
-            <Box marginTop={3} minHeight="80vh">
-              <Card
-                sx={{
-                  padding: 4,
-                  borderRadius: CONSTANTS.borderRadius,
-                  height: "100%",
-                }}
-              >
-                <SortableContext
-                  items={modulesSection.map((section) => section.id)}
-                >
-                  <Stack height="100%" spacing={CONSTANTS.gridSpacing}>
-                    {modulesSection.map((section, index) => (
-                      <div key={`section-${section.id}`}>
-                        <SectionItem
-                          section={section}
-                          permissions={permissions}
-                          sectionIndex={index}
-                          reorderSubModules={reorderSubModules}
-                        />
-                      </div>
-                    ))}
-                  </Stack>
-                </SortableContext>
-              </Card>
-            </Box>
-          </DndContext>
-        )}
+        <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            aria-label="basic tabs example"
+          >
+            <Tab label="ADMINISTRADOR" {...a11yProps(0)} />
+            <Tab label="GERENTE" {...a11yProps(1)} />
+            <Tab label="AUDITOR" {...a11yProps(2)} />
+          </Tabs>
+        </Box>
       </>
+
+      <CustomTabPanel value={value} index={0}>
+        <>
+          <Stack
+            alignItems="center"
+            direction="row"
+            width="100%"
+            justifyContent="end"
+          >
+            {permissions.create && (
+              <Button variant="contained" startIcon={<PlusCircle size={18} />}>
+                <Typography>Nueva Sección</Typography>
+              </Button>
+            )}
+          </Stack>
+          <>
+            {loading && modulesSection.length === 0 ? (
+              <SkeletonModules />
+            ) : (
+              <DndContext onDragEnd={reorderSections}>
+                <Box marginTop={3} minHeight="80vh">
+                  <Card
+                    sx={{
+                      padding: 4,
+                      borderRadius: CONSTANTS.borderRadius,
+                      height: "100%",
+                    }}
+                  >
+                    <SortableContext
+                      items={modulesSection.map((section) => section.id)}
+                    >
+                      <Stack height="100%" spacing={CONSTANTS.gridSpacing}>
+                        {modulesSection.map((section, index) => (
+                          <div key={`section-${section.id}`}>
+                            <SectionItem
+                              section={section}
+                              permissions={permissions}
+                              sectionIndex={index}
+                              reorderSubModules={reorderSubModules}
+                            />
+                          </div>
+                        ))}
+                      </Stack>
+                    </SortableContext>
+                  </Card>
+                </Box>
+              </DndContext>
+            )}
+          </>
+        </>
+      </CustomTabPanel>
     </>
   );
 };
@@ -240,20 +299,71 @@ const SectionItem = ({
               <IconButton>
                 <GripVertical />
               </IconButton>
-              <Typography>
-                {section.id} - {section.title}
-              </Typography>
+              <Chip label={section.order + ""} />
+              <Typography>{section.title}</Typography>
             </Stack>
-            <IconTooltip
-              id={`editarSubModule-${section.id}`}
-              title={"Editar"}
-              color={"primary"}
-              action={() => {}}
-              icon={<Pencil />}
-              name={"Editar submódulo"}
-            />
+            <Stack direction="row" spacing={1}>
+              {section.description && (
+                <IconTooltip
+                  title={section.description}
+                  icon={<Info />}
+                  action={() => {}}
+                  color="info"
+                  id=""
+                  name=""
+                />
+              )}
+
+              {permissions.update && (
+                <IconTooltip
+                  id={`editarSubModule-${section.id}`}
+                  title={"Editar"}
+                  color={"primary"}
+                  action={() => {}}
+                  icon={<Pencil />}
+                  name={"Editar submódulo"}
+                />
+              )}
+
+              {permissions.update && (
+                <IconTooltip
+                  id={`cambiarEstadoModulo-${section.id}`}
+                  title={section.status == "ACTIVO" ? "Inactivar" : "Activar"}
+                  color={section.status == "ACTIVO" ? "success" : "error"}
+                  action={() => {
+                    // changeStateModuleModal(
+                    //   moduleData,
+                    //   moduleData.module === null
+                    // );
+                  }}
+                  deactivate={section.status == "PENDIENTE"}
+                  icon={
+                    section.status == "ACTIVO" ? (
+                      <ToggleRight />
+                    ) : (
+                      <ToggleLeft />
+                    )
+                  }
+                  name={
+                    section.status == "ACTIVO"
+                      ? "Inactivar Módulo"
+                      : "Activar Módulo"
+                  }
+                />
+              )}
+              {permissions.delete && (
+                <IconTooltip
+                  id="Eliminar"
+                  name="Eliminar"
+                  title="Eliminar"
+                  color="error"
+                  action={() => {}}
+                  icon={<Trash2Icon />}
+                />
+              )}
+            </Stack>
           </Stack>
-          <Divider />
+          <Divider color="red" />
           {/* </>
             </AccordionSummary>
 
@@ -266,9 +376,9 @@ const SectionItem = ({
                 <SubModuleItem
                   key={`subModule-${subModule.id}`}
                   id={subModule.id}
-                >
-                  {`${subModule.id} - ${subModule.title}`}
-                </SubModuleItem>
+                  module={subModule}
+                  permissions={permissions}
+                />
               ))}
             </List>
           </SortableContext>
@@ -287,10 +397,11 @@ const SectionItem = ({
 
 interface ISubModuleItem {
   id: string;
-  children: any;
+  module: Item;
+  permissions: PermissionTypes;
 }
 
-const SubModuleItem = ({ id, children }: ISubModuleItem) => {
+const SubModuleItem = ({ id, permissions, module }: ISubModuleItem) => {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -319,21 +430,68 @@ const SubModuleItem = ({ id, children }: ISubModuleItem) => {
       }}
     >
       <Stack direction="row" width="100%" justifyContent="space-between">
-        <Stack direction="row" alignItems="center">
+        <Stack direction="row" alignItems="center" spacing={1}>
           <IconButton>
             <GripVertical />
           </IconButton>
-          {children}
+          {module.icon && <Icono>{getIconLucide(module.icon)}</Icono>}
+          <Typography>{module.title}</Typography>
         </Stack>
-        <Stack>
-          <IconTooltip
-            id={`editarSubModule-${children}`}
-            title={"Editar"}
-            color={"primary"}
-            action={() => {}}
-            icon={<Pencil />}
-            name={"Editar submódulo"}
-          />
+        <Stack direction="row" spacing={1}>
+          {module.description && (
+            <IconTooltip
+              title={module.description}
+              icon={<Info />}
+              action={() => {}}
+              color="info"
+              id=""
+              name=""
+            />
+          )}
+
+          {permissions.update && (
+            <IconTooltip
+              id={`editarSubModule-data-own-${module.id}`}
+              title={"Editar"}
+              color={"primary"}
+              action={() => {}}
+              icon={<Pencil />}
+              name={"Editar submódulo"}
+            />
+          )}
+
+          {permissions.update && (
+            <IconTooltip
+              id={`cambiarEstadoModulo-${module.id}`}
+              title={module.status == "ACTIVO" ? "Inactivar" : "Activar"}
+              color={module.status == "ACTIVO" ? "success" : "error"}
+              action={() => {
+                // changeStateModuleModal(
+                //   moduleData,
+                //   moduleData.module === null
+                // );
+              }}
+              deactivate={module.status == "PENDIENTE"}
+              icon={
+                module.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />
+              }
+              name={
+                module.status == "ACTIVO"
+                  ? "Inactivar Módulo"
+                  : "Activar Módulo"
+              }
+            />
+          )}
+          {permissions.delete && (
+            <IconTooltip
+              id="Eliminar"
+              name="Eliminar"
+              title="Eliminar"
+              color="error"
+              action={() => {}}
+              icon={<Trash2Icon />}
+            />
+          )}
         </Stack>
       </Stack>
     </ListItem>

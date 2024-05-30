@@ -22,14 +22,14 @@ import { FormInputText } from "@/components/forms";
 import { MessagesInterpreter, delay } from "@/utils";
 import { toast } from "sonner";
 import { LinealLoader } from "@/components/loaders";
-import { UserCUInformation } from "../types";
+import { UserCUInformation, UserProfileInfo } from "../types";
 
 export const UserInfomation = ({
   userInfo,
   loadingModal,
   submitData,
 }: {
-  userInfo: UserRolCRUDType;
+  userInfo: UserProfileInfo;
   loadingModal: boolean;
   submitData: (data: UserCUInformation) => void;
 }) => {
@@ -42,9 +42,9 @@ export const UserInfomation = ({
       email: userInfo.email,
       lastNames: userInfo.lastNames,
       names: userInfo.names,
-      ci: "",
-      phone: "",
-      location: "",
+      ci: userInfo.ci,
+      phone: userInfo.phone,
+      address: userInfo.address,
     },
   });
 
@@ -107,7 +107,7 @@ export const UserInfomation = ({
                 id={"address"}
                 control={control}
                 type="text"
-                name="location"
+                name="address"
                 label="Dirección"
                 disabled={loadingModal}
               />
@@ -119,7 +119,7 @@ export const UserInfomation = ({
                 type="text"
                 name="username"
                 label="Usuario"
-                disabled={loadingModal}
+                disabled={true}
               />
             </Grid>
             <Grid item xs={12} sm={12} md={6}>

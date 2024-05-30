@@ -19,11 +19,16 @@ import { useAuthStore } from "@/store";
 import { PermissionTypes, initialPermissions } from "@/utils/permissions";
 import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
-import { RolType, UserRolCRUDType } from "../(configuration)/users/types";
+import {
+  RolCRUDType,
+  RolType,
+  UserRolCRUDType,
+} from "../(configuration)/users/types";
 import { MessagesInterpreter, delay, siteName } from "@/utils";
 import { CustomDialog } from "@/components/modals";
 import { ModalProfile, UserInfomation } from "./ui";
-import { UserCUInformation } from "./types";
+import { SendUpdatedInfo, UserCUInformation, UserProfileInfo } from "./types";
+import { ChangePassword } from "./ui";
 
 const ProfileClient = () => {
   /* Profile data */
@@ -32,7 +37,7 @@ const ProfileClient = () => {
     setFileList([]);
   };
 
-  const [userInfo, setUserInfo] = useState<UserRolCRUDType | null>();
+  const [userInfo, setUserInfo] = useState<UserProfileInfo | null>();
   const [rolesData, setRolesData] = useState<RolType[]>([]);
   const { sessionRequest } = useSession();
   const [permissions, setPermissions] =
@@ -64,11 +69,9 @@ const ProfileClient = () => {
     try {
       setLoading(true);
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/users?limit=30`,
+        url: `${CONSTANTS.baseUrl}/users/${user?.id}`,
       });
-      const dataUsers: UserRolCRUDType[] = res.data.rows;
-      const userFind = dataUsers.find((elem) => elem.id === user?.id);
-      if (userFind !== undefined) setUserInfo(userFind);
+      setUserInfo(res);
     } catch (e) {
       toast.error("Error", { description: MessagesInterpreter(e) });
       throw e;
@@ -84,21 +87,19 @@ const ProfileClient = () => {
         rolesString.push(rol.id);
       }
     }
-    const dataSend = {
-      username: data.username,
+    const dataSend: SendUpdatedInfo = {
       email: data.email,
       lastNames: data.lastNames,
       names: data.names,
       ci: data.ci,
-      roles: rolesString,
       phone: data.phone,
-      location: data.location,
+      address: data.address,
     };
     try {
       setLoading(true);
       await delay(1000);
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/users/${user?.id}`,
+        url: `${CONSTANTS.baseUrl}/users/${user?.id}/update-profile`,
         type: "PATCH",
         body: dataSend,
       });
@@ -223,21 +224,11 @@ const ProfileClient = () => {
                     <Typography variant="subtitle2">Roles</Typography>
                     <Box height={5} />
                     <Stack direction="row" spacing={1}>
-                      {userInfo?.roles.map((elem, index) => (
-                        <Box key={`user-roles-elem-id-${elem.name}-${index}`}>
-                          {rolesData.map((rol, index) => {
-                            if (elem.id === rol.id) {
-                              return (
-                                <Chip
-                                  key={`roles-id-user-${rol.id}-index`}
-                                  label={rol.name}
-                                />
-                              );
-                            } else {
-                              return <></>;
-                            }
-                          })}
-                        </Box>
+                      {userInfo?.roles.map((elem) => (
+                        <Chip
+                          key={`roles-of-user-each-${elem.id}`}
+                          label={elem.name}
+                        />
                       ))}
                     </Stack>
                   </Box>
@@ -256,6 +247,8 @@ const ProfileClient = () => {
             </Grid>
           </Box>
         </MainCard>
+
+        <ChangePassword />
       </Stack>
     </>
   );
