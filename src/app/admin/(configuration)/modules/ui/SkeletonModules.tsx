@@ -6,21 +6,24 @@ import MainCard from "@/components/cards/MainCard";
 export const SkeletonModules = () => {
   const theme = useTheme();
   return (
-    <MainCard>
-      <Stack spacing={1}>
-        <Skeleton
-          height="150px"
-          sx={{ borderRadius: CONSTANTS.borderRadius }}
-        />
-        <Skeleton
-          height="150px"
-          sx={{ borderRadius: CONSTANTS.borderRadius }}
-        />
-        <Skeleton
-          height="150px"
-          sx={{ borderRadius: CONSTANTS.borderRadius }}
-        />
-      </Stack>
-    </MainCard>
+    <>
+      <Box height={20} />
+      <MainCard>
+        <Stack spacing={1}>
+          <Skeleton
+            height="150px"
+            sx={{ borderRadius: CONSTANTS.borderRadius }}
+          />
+          <Skeleton
+            height="150px"
+            sx={{ borderRadius: CONSTANTS.borderRadius }}
+          />
+          <Skeleton
+            height="150px"
+            sx={{ borderRadius: CONSTANTS.borderRadius }}
+          />
+        </Stack>
+      </MainCard>
+    </>
   );
 };

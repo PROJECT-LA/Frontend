@@ -31,6 +31,8 @@ import { SendUpdatedInfo, UserCUInformation, UserProfileInfo } from "./types";
 import { ChangePassword } from "./ui";
 
 const ProfileClient = () => {
+  const { user } = useAuthStore();
+
   /* Profile data */
   const [fileList, setFileList] = useState<File[]>([]);
   const fileRemove = () => {
@@ -46,7 +48,7 @@ const ProfileClient = () => {
   const [profilePhotoDialog, setProfilePhotoDialog] = useState<boolean>(false);
 
   const { getPermissions } = useSession();
-  const { user } = useAuthStore();
+
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
 

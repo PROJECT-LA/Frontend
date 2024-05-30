@@ -46,9 +46,11 @@ import { Item } from "@/types";
 import { MessagesInterpreter, delay, siteName } from "@/utils";
 import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
-import { SkeletonModules } from "./ui";
+import { ModulesModalView, SkeletonModules } from "./ui";
 import { Icono } from "@/components/Icono";
 import { getIconLucide } from "@/types/icons";
+import { CustomDialog } from "@/components/modals";
+import { ModuleCRUDType } from "./types";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -84,11 +86,23 @@ function a11yProps(index: number) {
 }
 
 const ModulesClient2 = () => {
+  const [moduleEdition, setModuleEdition] = useState<
+    ModuleCRUDType | undefined | null
+  >();
+  const [modalModule, setModalModule] = useState<{
+    state: boolean;
+    isSection: boolean;
+  }>({
+    isSection: false,
+    state: false,
+  });
+  const [roles, setRoles] = useState<RolCRUDType[]>([])
   const [loading, setLoading] = useState<boolean>(false);
   const [permissions, setPermissions] =
     useState<PermissionTypes>(initialPermissions);
   const { sessionRequest, getPermissions } = useSession();
   const theme = useTheme();
+
 
   useEffect(() => {
     const getPermissionsClient = async () => {
@@ -101,9 +115,11 @@ const ModulesClient2 = () => {
   }, []);
 
   useEffect(() => {
-    getModules().finally(() => {});
+    getRoles().then(
+      getModules().finally(()=>{})
+    ).finally(()=>{})
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [, setRoles]);
 
   const [modulesSection, setModulesSection] = useState<Item[]>([]);
 
@@ -111,11 +127,30 @@ const ModulesClient2 = () => {
     try {
       setLoading(true);
       await delay(1000);
+      for(const rol of roles){
+      }
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/modules`,
       });
 
       setModulesSection(res.data);
+    } catch (e) {
+      toast.error("Error", { description: MessagesInterpreter(e) });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getRoles = async () => {
+    try {
+      setLoading(true);
+      await delay(1000);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/roles`,
+      });
+
+      console.log(res)
+      setRoles(res.data);
     } catch (e) {
       toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
@@ -165,8 +200,50 @@ const ModulesClient2 = () => {
     setValue(newValue);
   };
 
+  const closeModalModule = async () => {
+    setModalModule({
+      isSection: false,
+      state: false,
+    });
+    setModuleEdition(undefined);
+  };
+
+  const addModuleModal = (isSection: boolean) => {
+    setModalModule({
+      state: true,
+      isSection,
+    });
+  };
+
   return (
     <>
+      <CustomDialog
+        isOpen={modalModule.state}
+        handleClose={closeModalModule}
+        title={
+          moduleEdition?.id
+            ? modalModule.isSection
+              ? "Editar Sección"
+              : "Editar Módulo"
+            : modalModule?.isSection
+            ? "Nueva Sección"
+            : "Nuevo Módulo"
+        }
+      >
+        <ModulesModalView
+          module={moduleEdition}
+          isSection={modalModule.isSection}
+          correctAction={() => {
+            closeModalModule().finally();
+            // getSectionsRequest().then(() => {
+            //   getModulesRequest().finally();
+            // });
+          }}
+          cancelAction={closeModalModule}
+          sections={[]}
+        />
+      </CustomDialog>
+
       <title>{`Módulos - ${siteName()}`}</title>
       <>
         <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -191,7 +268,13 @@ const ModulesClient2 = () => {
             justifyContent="end"
           >
             {permissions.create && (
-              <Button variant="contained" startIcon={<PlusCircle size={18} />}>
+              <Button
+                onClick={() => {
+                  addModuleModal(false);
+                }}
+                variant="contained"
+                startIcon={<PlusCircle size={18} />}
+              >
                 <Typography>Nueva Sección</Typography>
               </Button>
             )}
@@ -385,7 +468,11 @@ const SectionItem = ({
           {/* </AccordionDetails>
           </Accordion> */}
           <Box width="100%" display="flex" justifyContent="center">
-            <Button variant="outlined" startIcon={<PlusCircle />}>
+            <Button
+              variant="outlined"
+              onClick={() => addModuleModal(false)}
+              startIcon={<PlusCircle />}
+            >
               Agregar módulo
             </Button>
           </Box>
@@ -434,6 +521,7 @@ const SubModuleItem = ({ id, permissions, module }: ISubModuleItem) => {
           <IconButton>
             <GripVertical />
           </IconButton>
+          <Chip label={module.order} />
           {module.icon && <Icono>{getIconLucide(module.icon)}</Icono>}
           <Typography>{module.title}</Typography>
         </Stack>
