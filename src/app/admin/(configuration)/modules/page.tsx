@@ -10,6 +10,7 @@ import {
   Tab,
   Tabs,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import React, { FC, useEffect, useState } from "react";
@@ -46,7 +47,7 @@ function CustomTabPanel(props: TabPanelProps) {
       {...other}
     >
       {value === index && (
-        <Box sx={{ p: 3 }}>
+        <Box sx={{ paddingY: 3 }}>
           <Typography>{children}</Typography>
         </Box>
       )}
@@ -55,6 +56,8 @@ function CustomTabPanel(props: TabPanelProps) {
 }
 
 const ModulesClient2 = () => {
+  const theme = useTheme();
+  const mdUp = useMediaQuery(theme.breakpoints.up("md"));
   const [showDeleteModule, setShowDeleteModule] = useState<boolean>(false);
   const [showAlertModuleState, setShowAlertModuleState] =
     useState<boolean>(false);
@@ -152,11 +155,13 @@ const ModulesClient2 = () => {
         idRole: rolId,
         data: updatedOrders,
       };
+      console.log(sendOrder);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/modules/change/order`,
         type: "PATCH",
         body: sendOrder,
       });
+      console.log(res);
 
       toast.success(MessagesInterpreter(res));
       await getModulesRoles();
@@ -325,6 +330,8 @@ const ModulesClient2 = () => {
 
   return (
     <>
+      <title>{`Módulos - ${siteName()}`}</title>
+
       <AlertDialog
         isOpen={showAlertModuleState}
         title={"Alerta"}
@@ -374,8 +381,6 @@ const ModulesClient2 = () => {
         />
       </CustomDialog>
 
-      <title>{`Módulos - ${siteName()}`}</title>
-
       {!loading && roles.length > 0 && modules.length > 0 && (
         <>
           <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
@@ -404,7 +409,8 @@ const ModulesClient2 = () => {
               <>
                 <Stack
                   alignItems="center"
-                  direction="row"
+                  direction={mdUp ? "row" : "column"}
+                  spacing={mdUp ? 0 : 3}
                   width="100%"
                   justifyContent="space-between"
                 >
@@ -441,7 +447,7 @@ const ModulesClient2 = () => {
                   <Box marginTop={3} minHeight="80vh">
                     <Card
                       sx={{
-                        padding: 4,
+                        padding: mdUp ? 4 : 1,
                         borderRadius: CONSTANTS.borderRadius,
                         height: "100%",
                         width: "100%",
