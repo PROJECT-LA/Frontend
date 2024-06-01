@@ -35,12 +35,6 @@ export const ModulesModalView = ({
   idSection,
   nameSection,
 }: ModulesModalType) => {
-  if (!isSection) {
-    console.log("******************");
-    console.log(nameSection);
-    console.log("******************");
-  }
-
   const { sessionRequest } = useSession();
   const { control, watch, handleSubmit } = useForm<ModuleCRUDType>({
     defaultValues: {
@@ -60,7 +54,10 @@ export const ModulesModalView = ({
   const [options, setOptions] = useState<Array<optionType>>([]);
 
   const saveUpdateModule = async (module: ModuleCRUDType) => {
+    console.log("^^^^^ênvio^^^^^^^^^^");
     print(module);
+    print(isSection);
+    console.log("^^^^^ênvio^^^^^^^^^^");
 
     let sendModule: CUModuleType | null = null;
     if (isSection) {
@@ -75,9 +72,8 @@ export const ModulesModalView = ({
         url: module.url,
         idRole,
         // @ts-ignore error en el tipo value
-        icon: module.icon ? module.icon.value : "home",
-        idSection: module.idSection ? module.idSection : "",
-        description: module.description,
+        icon: module.icon.value ?? "home",
+        idModule: idSection,
       };
     }
 
@@ -88,6 +84,7 @@ export const ModulesModalView = ({
         type: !!module.id ? "patch" : "post",
         body: sendModule,
       });
+      console.log(res);
       toast.success(MessagesInterpreter(res));
       correctAction();
     } catch (e) {
@@ -114,15 +111,16 @@ export const ModulesModalView = ({
     // eslint-disable-next-line
   }, []);
 
-  const [actualIcon, setActualIcon] = useState<ReactNode | undefined | null>(
-    getIconLucide(module?.icon ? module?.icon : "")
-  );
+  const [actualIcon, setActualIcon] = useState<ReactNode | undefined | null>();
   useEffect(() => {
     if (iconWatch) {
       // @ts-expect-error Value en iconWatch
       setActualIcon(getIconLucide(iconWatch.value));
+      return;
     }
-  }, [iconWatch]);
+    setActualIcon(getIconLucide(module?.icon ?? "home"));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [, iconWatch]);
 
   return (
     <form onSubmit={handleSubmit(saveUpdateModule)}>

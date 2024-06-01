@@ -22,9 +22,9 @@ export interface CUModuleType {
   url?: string;
   icon?: string;
   idRole: string;
-  idSection?: string;
+  idModule?: string;
   status?: string;
-  description: string;
+  description?: string;
 }
 
 export interface TabPanelProps {

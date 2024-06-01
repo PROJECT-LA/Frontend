@@ -25,6 +25,16 @@ import { ModuleCRUDType, RolModules, TabPanelProps } from "./types";
 import { RolCRUDType } from "../users/types";
 import { Item } from "@/types";
 
+interface NewOrder {
+  idRole: string;
+  data: SendedItem[];
+}
+interface SendedItem {
+  id: string;
+  order: string;
+  subModules?: SendedItem[];
+}
+
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
   return (
@@ -115,14 +125,52 @@ const ModulesClient2 = () => {
     }
   };
 
+  const updateOrderModules = async (indexRole: number, rolId: string) => {
+    try {
+      setLoading(true);
+      const updatedOrders: SendedItem[] = [];
+      await delay(1000);
+
+      modules[indexRole].data.map((section, indexSection) => {
+        const updatedModules: SendedItem[] = [];
+        if (section.subModule !== undefined) {
+          section.subModule.map((module, indexModule) => {
+            updatedModules.push({
+              id: module.id,
+              order: Number(indexModule + 1) + "",
+            });
+          });
+        }
+        updatedOrders.push({
+          id: section.id,
+          order: Number(indexSection + 1) + "",
+          subModules: updatedModules,
+        });
+      });
+
+      const sendOrder: NewOrder = {
+        idRole: rolId,
+        data: updatedOrders,
+      };
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/modules/change/order`,
+        type: "PATCH",
+        body: sendOrder,
+      });
+
+      toast.success(MessagesInterpreter(res));
+      await getModulesRoles();
+    } catch (e) {
+      toast.error("Error", { description: MessagesInterpreter(e) });
+    } finally {
+      setLoading(false);
+      setOrderListener(false);
+    }
+  };
+
   const reorderSections = (idRole: number, e: DragEndEvent) => {
     if (!e.over) return;
     if (e.active.id !== e.over.id) {
-      console.log("********* Section nueva ****************");
-      console.log(e.active);
-      console.log("********* Section cambiada ****************");
-      console.log(e.over);
-
       setOrderListener(true);
       setModules((rolesModules) => {
         const newRoles = [...modules];
@@ -134,10 +182,6 @@ const ModulesClient2 = () => {
           (section) => section.id === e.over!.id
         );
         newRoles[idRole].data = arrayMove(newSections, oldIdx, newIdx);
-        console.log("***************** newRoles ******************");
-        console.log(newRoles);
-        console.log("***************** newRoles ******************");
-
         return newRoles;
       });
     }
@@ -152,26 +196,28 @@ const ModulesClient2 = () => {
     if (e.active.id !== e.over.id) {
       setOrderListener(true);
 
-      // setModulesSection((sections) => {
-      //   const newSections = [...sections];
-      //   const subModules = newSections[sectionIndex].subModule!;
-      //   const oldIdx = subModules.findIndex(
-      //     (subModule) => subModule.id === e.active.id
-      //   );
-      //   const newIdx = subModules.findIndex(
-      //     (subModule) => subModule.id === e.over!.id
-      //   );
-      //   newSections[sectionIndex].subModule = arrayMove(
-      //     subModules,
-      //     oldIdx,
-      //     newIdx
-      //   );
-      //   return newSections;
-      // });
+      setModules((modules) => {
+        const newRoles = [...modules];
+        const newSections = newRoles[idRole].data;
+        const newModules = newSections[sectionIndex].subModule!;
+
+        const oldIdx = newModules.findIndex(
+          (module) => module.id === e.active.id
+        );
+        const newIdx = newModules.findIndex(
+          (module) => module.id === e.over!.id
+        );
+        newSections[sectionIndex].subModule = arrayMove(
+          newModules,
+          oldIdx,
+          newIdx
+        );
+        newRoles[idRole].data = [...newSections];
+        return newRoles;
+      });
     }
   };
 
-  /******************************************** actions *****************************************/
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
     setValue(newValue);
   };
@@ -185,15 +231,12 @@ const ModulesClient2 = () => {
     setModuleEdition(undefined);
   };
 
-  const addModuleModal = (
+  const addModuleModal = async (
     isSection: boolean,
     idRole: string,
     idSection?: string,
     nameSection?: string
   ) => {
-    console.log(idSection);
-    console.log(nameSection);
-
     setModalModule({
       state: true,
       idRole,
@@ -232,7 +275,6 @@ const ModulesClient2 = () => {
         toast.success(MessagesInterpreter(res));
         await getModulesRoles();
       } catch (e) {
-        console.log(e);
         toast.error(MessagesInterpreter(e));
       } finally {
         setLoading(false);
@@ -268,7 +310,6 @@ const ModulesClient2 = () => {
         toast.success(MessagesInterpreter(res));
         await getModulesRoles();
       } catch (e) {
-        console.log(e);
         toast.error(MessagesInterpreter(e));
       } finally {
         setLoading(false);
@@ -279,7 +320,7 @@ const ModulesClient2 = () => {
 
   const cancelDeleteModule = () => {
     setShowDeleteModule(false);
-    setModuleEdition(null);
+    setModuleEdition(undefined);
   };
 
   return (
@@ -371,7 +412,10 @@ const ModulesClient2 = () => {
                   <Stack direction="row" spacing={1}>
                     {permissions.update && (
                       <Button
-                        onClick={() => {}}
+                        onClick={() => {
+                          if (orderListener)
+                            updateOrderModules(index, elem.rolId);
+                        }}
                         variant="contained"
                         disabled={!orderListener}
                         startIcon={<RefreshCcw size={18} />}
@@ -432,7 +476,7 @@ const ModulesClient2 = () => {
                                   idRole={elem.rolId}
                                   section={section}
                                   permissions={permissions}
-                                  sectionIndex={index}
+                                  sectionIndex={indexSection}
                                   reorderSubModules={reorderSubModules}
                                   editModule={editModuleModal}
                                 />

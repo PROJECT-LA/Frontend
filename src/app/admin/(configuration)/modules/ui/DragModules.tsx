@@ -32,6 +32,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { getIconLucide } from "@/types/icons";
 import { ModuleCRUDType } from "../types";
+import { useState } from "react";
 
 interface SectionProps {
   idRole: string;
@@ -99,7 +100,7 @@ export const DragSection = ({
         }}
       >
         <Stack width="100%">
-          <Accordion defaultExpanded>
+          <Accordion>
             <AccordionSummary
               expandIcon={
                 <IconButton sx={{ border: 1 }}>
@@ -233,7 +234,9 @@ export const DragSection = ({
           >
             <Button
               variant="outlined"
-              onClick={() => addModuleModal(false, section.id, section.title)}
+              onClick={() =>
+                addModuleModal(false, idRole, section.id, section.title)
+              }
               startIcon={<PlusCircle />}
             >
               Agregar módulo
