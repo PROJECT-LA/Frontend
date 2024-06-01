@@ -5,9 +5,10 @@ export interface ModuleCRUDType {
   title: string;
   description: string;
   icon: string | null;
-  order: number;
   url?: string;
-  module: Module | null;
+  // module: Module | null;
+  idSection?: string;
+  nameSection?: string;
   status: string;
 }
 export interface Module {
@@ -20,8 +21,8 @@ export interface CUModuleType {
   title: string;
   url?: string;
   icon?: string;
-  order: number;
-  idModule?: string;
+  idRole: string;
+  idSection?: string;
   status?: string;
   description: string;
 }

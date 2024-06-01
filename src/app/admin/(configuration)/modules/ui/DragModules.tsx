@@ -27,13 +27,29 @@ import {
 } from "lucide-react";
 import { CSS } from "@dnd-kit/utilities";
 import { getIconLucide } from "@/types/icons";
+import { ModuleCRUDType } from "../types";
 
 interface SectionProps {
+  idRole: string;
   section: Item;
   permissions: PermissionTypes;
   sectionIndex: number;
   reorderSubModules: (sectionIndex: number, e: DragEndEvent) => void;
-  addModuleModal: (state: boolean) => void;
+  addModuleModal: (
+    state: boolean,
+    idRole: string,
+    idSection?: string,
+    nameSection?: string
+  ) => void;
+  changeState: (module: Item, isSection: boolean) => void;
+  deleteModule: (modules: Item, isSection: boolean) => void;
+  editModule: (
+    module: Item,
+    idRole: string,
+    isSection: boolean,
+    idSection?: string,
+    nameSection?: string
+  ) => void;
 }
 
 export const DragSection = ({
@@ -42,6 +58,10 @@ export const DragSection = ({
   sectionIndex,
   reorderSubModules,
   addModuleModal,
+  changeState,
+  deleteModule,
+  editModule,
+  idRole,
 }: SectionProps) => {
   const theme = useTheme();
   const { attributes, listeners, setNodeRef, transform, transition } =
@@ -50,9 +70,9 @@ export const DragSection = ({
   return (
     <DndContext onDragEnd={(e) => reorderSubModules(sectionIndex, e)}>
       <Box
-        {...listeners}
-        ref={setNodeRef}
-        {...attributes}
+        // {...listeners}
+        // ref={setNodeRef}
+        // {...attributes}
         sx={{
           borderColor: theme.palette.divider,
           border: 1,
@@ -113,7 +133,9 @@ export const DragSection = ({
                   id={`editarSubModule-${section.id}`}
                   title={"Editar"}
                   color={"primary"}
-                  action={() => {}}
+                  action={() => {
+                    editModule(section, idRole, true);
+                  }}
                   icon={<Pencil />}
                   name={"Editar submódulo"}
                 />
@@ -125,10 +147,7 @@ export const DragSection = ({
                   title={section.status == "ACTIVO" ? "Inactivar" : "Activar"}
                   color={section.status == "ACTIVO" ? "success" : "error"}
                   action={() => {
-                    // changeStateModuleModal(
-                    //   moduleData,
-                    //   moduleData.module === null
-                    // );
+                    changeState(section, true);
                   }}
                   deactivate={section.status == "PENDIENTE"}
                   icon={
@@ -151,7 +170,9 @@ export const DragSection = ({
                   name="Eliminar"
                   title="Eliminar"
                   color="error"
-                  action={() => {}}
+                  action={() => {
+                    deleteModule(section, true);
+                  }}
                   icon={<Trash2Icon />}
                 />
               )}
@@ -169,8 +190,14 @@ export const DragSection = ({
                 <Module
                   key={`subModule-${subModule.id}`}
                   id={subModule.id}
+                  idRole={idRole}
                   module={subModule}
                   permissions={permissions}
+                  changeState={changeState}
+                  deleteModule={deleteModule}
+                  editModule={editModule}
+                  idSection={section.id}
+                  nameSection={section.title ?? ""}
                 />
               ))}
             </List>
@@ -180,7 +207,7 @@ export const DragSection = ({
           <Box width="100%" display="flex" justifyContent="center">
             <Button
               variant="outlined"
-              onClick={() => addModuleModal(false)}
+              onClick={() => addModuleModal(false, section.id, section.title)}
               startIcon={<PlusCircle />}
             >
               Agregar módulo
@@ -196,17 +223,41 @@ interface ModuleProps {
   id: string;
   module: Item;
   permissions: PermissionTypes;
+  changeState: (module: Item, isSection: boolean) => void;
+  deleteModule: (modules: Item, isSection: boolean) => void;
+  editModule: (
+    module: Item,
+    idRole: string,
+    isSection: boolean,
+    idSection?: string,
+    nameSection?: string
+  ) => void;
+  idSection: string;
+  nameSection: string;
+  idRole: string;
 }
 
-const Module = ({ id, permissions, module }: ModuleProps) => {
+const Module = ({
+  id,
+  idSection,
+  idRole,
+  nameSection,
+  permissions,
+  module,
+  changeState,
+  deleteModule,
+  editModule,
+}: ModuleProps) => {
+  console.log(idSection);
+  console.log(nameSection);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
   return (
     <ListItem
-      ref={setNodeRef}
-      {...attributes}
-      {...listeners}
+      // ref={setNodeRef}
+      // {...attributes}
+      // {...listeners}
       sx={{
         borderColor: "black",
         border: 1,
@@ -252,7 +303,9 @@ const Module = ({ id, permissions, module }: ModuleProps) => {
               id={`editarSubModule-data-own-${module.id}`}
               title={"Editar"}
               color={"primary"}
-              action={() => {}}
+              action={() => {
+                editModule(module, idRole, false, idSection, nameSection);
+              }}
               icon={<Pencil />}
               name={"Editar submódulo"}
             />
@@ -264,10 +317,7 @@ const Module = ({ id, permissions, module }: ModuleProps) => {
               title={module.status == "ACTIVO" ? "Inactivar" : "Activar"}
               color={module.status == "ACTIVO" ? "success" : "error"}
               action={() => {
-                // changeStateModuleModal(
-                //   moduleData,
-                //   moduleData.module === null
-                // );
+                changeState(module, false);
               }}
               deactivate={module.status == "PENDIENTE"}
               icon={
@@ -286,7 +336,9 @@ const Module = ({ id, permissions, module }: ModuleProps) => {
               name="Eliminar"
               title="Eliminar"
               color="error"
-              action={() => {}}
+              action={() => {
+                deleteModule(module, false);
+              }}
               icon={<Trash2Icon />}
             />
           )}

@@ -67,7 +67,6 @@ const NavItem = ({
   }
 
   const itemHandler = (itemNav: Item) => {
-    console.log(itemNav.title);
     if (itemNav.title && itemNav.title?.length > 0) setTitlePage(itemNav.title);
 
     if (matchesSM) cerrarDrawer();

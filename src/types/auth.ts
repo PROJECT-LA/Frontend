@@ -10,6 +10,7 @@ export interface UserData {
   names: string;
   lastNames: string;
   email: string;
+  image: string;
 }
 
 export interface LoginType {

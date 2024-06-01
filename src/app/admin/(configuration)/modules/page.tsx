@@ -16,13 +16,14 @@ import React, { FC, useEffect, useState } from "react";
 import { PlusCircle } from "lucide-react";
 import { IconTooltip } from "@/components/buttons";
 import { CONSTANTS } from "../../../../../config";
-import { MessagesInterpreter, delay, siteName } from "@/utils";
+import { MessagesInterpreter, delay, siteName, titleCase } from "@/utils";
 import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
 import { ModulesModalView, DragSection } from "./ui";
-import { CustomDialog } from "@/components/modals";
+import { AlertDialog, CustomDialog } from "@/components/modals";
 import { ModuleCRUDType, RolModules, TabPanelProps } from "./types";
 import { RolCRUDType } from "../users/types";
+import { Item } from "@/types";
 
 function CustomTabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -44,14 +45,19 @@ function CustomTabPanel(props: TabPanelProps) {
 }
 
 const ModulesClient2 = () => {
-  const [moduleEdition, setModuleEdition] = useState<
-    ModuleCRUDType | undefined | null
-  >();
+  const [showDeleteModule, setShowDeleteModule] = useState<boolean>(false);
+  const [showAlertModuleState, setShowAlertModuleState] =
+    useState<boolean>(false);
+  const [moduleEdition, setModuleEdition] = useState<Item | undefined | null>();
   const [modalModule, setModalModule] = useState<{
     state: boolean;
     isSection: boolean;
+    idRole: string;
+    idSection?: string;
+    nameSection?: string;
   }>({
     isSection: false,
+    idRole: "",
     state: false,
   });
   const [roles, setRoles] = useState<RolCRUDType[]>([]);
@@ -153,20 +159,133 @@ const ModulesClient2 = () => {
   const closeModalModule = async () => {
     setModalModule({
       isSection: false,
+      idRole: "",
       state: false,
     });
     setModuleEdition(undefined);
   };
 
-  const addModuleModal = (isSection: boolean) => {
+  const addModuleModal = (
+    isSection: boolean,
+    idRole: string,
+    idSection?: string,
+    nameSection?: string
+  ) => {
+    console.log(idSection);
+    console.log(nameSection);
+
     setModalModule({
       state: true,
+      idRole,
       isSection,
+      idSection,
+      nameSection,
     });
+  };
+
+  const editModuleModal = async (
+    module: Item,
+    idRole: string,
+    isSection: boolean,
+    idSection?: string,
+    nameSection?: string
+  ) => {
+    setModalModule({
+      isSection,
+      idRole,
+      state: true,
+      idSection,
+      nameSection,
+    });
+    setModuleEdition(module);
+  };
+
+  const acceptAlertModuleState = async () => {
+    setShowAlertModuleState(false);
+    if (moduleEdition !== null && moduleEdition !== undefined) {
+      try {
+        setLoading(true);
+        const res = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/modules/${moduleEdition.id}/status`,
+          type: "patch",
+        });
+        toast.success(MessagesInterpreter(res));
+        await getModulesRoles();
+      } catch (e) {
+        console.log(e);
+        toast.error(MessagesInterpreter(e));
+      } finally {
+        setLoading(false);
+      }
+    }
+    setModuleEdition(null);
+  };
+
+  const cancelAlertModuleState = async () => {
+    setShowAlertModuleState(false);
+    setModuleEdition(null);
+  };
+
+  const changeStateModuleModal = async (module: Item, isSection: boolean) => {
+    setModuleEdition(module);
+    setShowAlertModuleState(true);
+  };
+
+  const deleteModule = async (module: Item, isSection: boolean) => {
+    setShowDeleteModule(true);
+    setModuleEdition(module);
+  };
+
+  const acceptDeleteModule = async () => {
+    setShowDeleteModule(false);
+    if (moduleEdition !== null && moduleEdition !== undefined) {
+      try {
+        setLoading(true);
+        const res = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/modules/${moduleEdition.id}`,
+          type: "delete",
+        });
+        toast.success(MessagesInterpreter(res));
+        await getModulesRoles();
+      } catch (e) {
+        console.log(e);
+        toast.error(MessagesInterpreter(e));
+      } finally {
+        setLoading(false);
+      }
+    }
+    setModuleEdition(null);
+  };
+
+  const cancelDeleteModule = () => {
+    setShowDeleteModule(false);
+    setModuleEdition(null);
   };
 
   return (
     <>
+      <AlertDialog
+        isOpen={showAlertModuleState}
+        title={"Alerta"}
+        text={`¿Está seguro de ${
+          moduleEdition?.status == "ACTIVO" ? "inactivar" : "activar"
+        } el módulo: ${titleCase(moduleEdition?.title ?? "")} ?`}
+      >
+        <Button onClick={cancelAlertModuleState}>Cancelar</Button>
+        <Button onClick={acceptAlertModuleState}>Aceptar</Button>
+      </AlertDialog>
+
+      <AlertDialog
+        isOpen={showDeleteModule}
+        title={"Alerta"}
+        text={`¿Está seguro de eliminar el módulo "${titleCase(
+          moduleEdition?.title ?? ""
+        )}" de manera permanente ?`}
+      >
+        <Button onClick={cancelDeleteModule}>Cancelar</Button>
+        <Button onClick={acceptDeleteModule}>Aceptar</Button>
+      </AlertDialog>
+
       <CustomDialog
         isOpen={modalModule.state}
         handleClose={closeModalModule}
@@ -182,14 +301,15 @@ const ModulesClient2 = () => {
       >
         <ModulesModalView
           isSection={modalModule.isSection}
+          idSection={modalModule.idSection}
+          idRole={modalModule.idRole}
+          nameSection={modalModule.nameSection}
+          module={moduleEdition}
           correctAction={() => {
             closeModalModule().finally();
-            // getSectionsRequest().then(() => {
-            //   getModulesRequest().finally();
-            // });
+            getModulesRoles().finally(() => {});
           }}
           cancelAction={closeModalModule}
-          sections={[]}
         />
       </CustomDialog>
 
@@ -231,7 +351,7 @@ const ModulesClient2 = () => {
                   {permissions.create && (
                     <Button
                       onClick={() => {
-                        addModuleModal(false);
+                        addModuleModal(true, elem.rolId);
                       }}
                       variant="contained"
                       startIcon={<PlusCircle size={18} />}
@@ -273,11 +393,15 @@ const ModulesClient2 = () => {
                               (section, indexSection) => (
                                 <DragSection
                                   key={`section-${section.id}`}
+                                  changeState={changeStateModuleModal}
+                                  deleteModule={deleteModule}
                                   addModuleModal={addModuleModal}
+                                  idRole={elem.rolId}
                                   section={section}
                                   permissions={permissions}
                                   sectionIndex={index}
                                   reorderSubModules={reorderSubModules}
+                                  editModule={editModuleModal}
                                 />
                               )
                             )}

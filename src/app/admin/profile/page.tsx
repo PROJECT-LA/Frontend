@@ -29,12 +29,14 @@ import { CustomDialog } from "@/components/modals";
 import { ModalProfile, UserInfomation } from "./ui";
 import { SendUpdatedInfo, UserCUInformation, UserProfileInfo } from "./types";
 import { ChangePassword } from "./ui";
+import { handleAddBase64Image } from "@/utils/utilities";
 
 const ProfileClient = () => {
   const { user } = useAuthStore();
 
   /* Profile data */
   const [fileList, setFileList] = useState<File[]>([]);
+  const [image, setImage] = useState<string>("");
   const fileRemove = () => {
     setFileList([]);
   };
@@ -53,20 +55,6 @@ const ProfileClient = () => {
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
 
   /***********************************************************/
-  const getRoles = async () => {
-    try {
-      setLoading(true);
-      const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/roles`,
-      });
-      setRolesData(res.data.rows);
-    } catch (e) {
-      toast.error("Error", { description: MessagesInterpreter(e) });
-      throw e;
-    } finally {
-      setLoading(false);
-    }
-  };
   const getProfileInfo = async () => {
     try {
       setLoading(true);
@@ -74,37 +62,36 @@ const ProfileClient = () => {
         url: `${CONSTANTS.baseUrl}/users/${user?.id}`,
       });
       setUserInfo(res);
+      if (res.image && res.image.length > 0) setImage(res.image);
     } catch (e) {
+      console.error(e);
       toast.error("Error", { description: MessagesInterpreter(e) });
-      throw e;
     } finally {
       setLoading(false);
     }
   };
 
   const saveProfileInformation = async (data: UserCUInformation) => {
-    const rolesString: string[] = [];
-    if (userInfo?.roles) {
-      for (const rol of userInfo?.roles) {
-        rolesString.push(rol.id);
-      }
-    }
-    const dataSend: SendUpdatedInfo = {
-      email: data.email,
-      lastNames: data.lastNames,
-      names: data.names,
-      ci: data.ci,
-      phone: data.phone,
-      address: data.address,
-    };
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("lastNames", data.lastNames);
+    formData.append("names", data.names);
+    formData.append("ci", data.ci);
+    formData.append("phone", data.phone);
+    formData.append("address", data.address);
+    if (fileList.length > 0) formData.append("image", fileList[0]);
     try {
       setLoading(true);
       await delay(1000);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/users/${user?.id}/update-profile`,
         type: "PATCH",
-        body: dataSend,
+        body: formData,
       });
+      console.log("*****************************");
+      console.log(res);
+      console.log("*****************************");
+
       toast.success(MessagesInterpreter(res));
       await getProfileInfo();
     } catch (e) {
@@ -127,17 +114,12 @@ const ProfileClient = () => {
   }, []);
 
   useEffect(() => {
-    getRoles()
-      .then(() =>
-        getProfileInfo()
-          .catch(() => {})
-          .finally(() => {})
-      )
+    if (!user) return;
+    getProfileInfo()
       .catch(() => {})
       .finally(() => {});
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   const openProfileDialog = () => {
     setProfilePhotoDialog(true);
@@ -195,11 +177,11 @@ const ProfileClient = () => {
                         border={1}
                         borderColor={theme.palette.grey[500]}
                         borderRadius="50%"
-                        padding={fileList.length === 0 ? 5 : 0}
+                        padding={
+                          fileList.length === 0 && image.length === 0 ? 5 : 0
+                        }
                       >
-                        {fileList.length === 0 ? (
-                          <UserCircle2 size="4rem" />
-                        ) : (
+                        {fileList.length > 0 ? (
                           <img
                             style={{
                               width: "150px",
@@ -208,6 +190,21 @@ const ProfileClient = () => {
                             }}
                             src={URL.createObjectURL(fileList[0])}
                           />
+                        ) : (
+                          <>
+                            {image.length > 0 ? (
+                              <img
+                                style={{
+                                  width: "150px",
+                                  borderRadius: "50%",
+                                  height: "150px",
+                                }}
+                                src={`data:image/jpeg;base64,${image}`}
+                              />
+                            ) : (
+                              <UserCircle2 size="4rem" />
+                            )}
+                          </>
                         )}
                       </Box>
                       <Box height={30} />

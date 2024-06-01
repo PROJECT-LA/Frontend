@@ -36,6 +36,7 @@ export interface UserProfileInfo {
   phone: string;
   ci: string;
   address: string;
+  image: string | null;
   username: string;
   roles: RolCRUDType[];
 }

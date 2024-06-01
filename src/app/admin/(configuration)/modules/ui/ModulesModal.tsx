@@ -5,7 +5,7 @@ import {
   FormInputAutocomplete,
   FormInputText,
 } from "@/components/forms";
-import { ModuleCRUDType, CUModuleType } from "../types/modulesTypes";
+import { ModuleCRUDType, CUModuleType } from "../types";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
@@ -15,21 +15,32 @@ import { MessagesInterpreter, print } from "@/utils";
 import { Icono } from "@/components/Icono";
 import { LinealLoader } from "@/components/loaders";
 import { getIconLucide, icons } from "@/types/icons";
+import { Item } from "@/types";
 interface ModulesModalType {
-  module?: ModuleCRUDType | undefined | null;
+  module?: Item | undefined | null;
   correctAction: () => void;
   cancelAction: () => void;
-  sections: ModuleCRUDType[];
   isSection: boolean;
+  idSection?: string;
+  idRole: string;
+  nameSection?: string;
 }
 
 export const ModulesModalView = ({
   module,
   correctAction,
   cancelAction,
-  sections,
+  idRole,
   isSection,
+  idSection,
+  nameSection,
 }: ModulesModalType) => {
+  if (!isSection) {
+    console.log("******************");
+    console.log(nameSection);
+    console.log("******************");
+  }
+
   const { sessionRequest } = useSession();
   const { control, watch, handleSubmit } = useForm<ModuleCRUDType>({
     defaultValues: {
@@ -37,13 +48,9 @@ export const ModulesModalView = ({
       title: module?.title,
       url: module?.url,
       icon: module?.icon,
-      order: module?.order,
       description: module?.description,
-      module: {
-        id: module?.module?.id,
-        order: module?.module?.order,
-        title: module?.module?.title,
-      },
+      idSection,
+      nameSection,
     },
   });
 
@@ -59,17 +66,17 @@ export const ModulesModalView = ({
     if (isSection) {
       sendModule = {
         title: module.title,
-        order: Number(module.order),
+        idRole,
         description: module.description,
       };
     } else {
       sendModule = {
         title: module.title,
         url: module.url,
+        idRole,
         // @ts-ignore error en el tipo value
         icon: module.icon ? module.icon.value : "home",
-        order: Number(module.order),
-        idModule: module.module ? module.module.id : "",
+        idSection: module.idSection ? module.idSection : "",
         description: module.description,
       };
     }
@@ -124,20 +131,12 @@ export const ModulesModalView = ({
           {!isSection && (
             <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
               <Grid item xs={12} sm={12} md={6}>
-                <FormInputDropdown
-                  id={"idModule"}
-                  name="module.id"
+                <FormInputText
+                  id={"nameSection"}
+                  name="nameSection"
                   control={control}
                   label="Sección"
-                  disabled={loadingModal}
-                  options={sections.map((lm) => ({
-                    key: lm.id,
-                    value: lm.id,
-                    label: lm.title,
-                  }))}
-                  rules={
-                    isSection ? {} : { required: "Este campo es requerido" }
-                  }
+                  disabled={true}
                 />
               </Grid>
               <Grid item xs={12} sm={12} md={6} alignContent="end">
@@ -171,7 +170,7 @@ export const ModulesModalView = ({
           )}
           <Box height={"15px"} />
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Grid item xs={12} sm={12} md={6}>
+            <Grid item xs={12} sm={12} md={12}>
               <FormInputText
                 id={"name"}
                 control={control}
@@ -179,20 +178,6 @@ export const ModulesModalView = ({
                 label="Nombre"
                 disabled={loadingModal}
                 rules={{ required: "Este campo es requerido" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <FormInputText
-                id={"sort"}
-                control={control}
-                type={"number"}
-                inputProps={{ type: "number" }}
-                name="order"
-                label="Orden"
-                disabled={loadingModal}
-                rules={{
-                  required: "Este campo es requerido",
-                }}
               />
             </Grid>
           </Grid>
@@ -220,25 +205,28 @@ export const ModulesModalView = ({
             </>
           )}
 
-          <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Box height={"20px"} />
-            <Grid item xs={12} sm={12} md={12}>
-              <FormInputText
-                id={"descripcion"}
-                control={control}
-                name="description"
-                label="Descripción"
-                multiline
-                rows={2}
-                disabled={loadingModal}
-                rules={{ required: "Este campo es requerido" }}
-                onChange={(event) => {
-                  const value = event.target.value;
-                  return Number(value);
-                }}
-              />
+          {isSection && (
+            <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
+              <Box height={"20px"} />
+              <Grid item xs={12} sm={12} md={12}>
+                <FormInputText
+                  id={"descripcion"}
+                  control={control}
+                  name="description"
+                  label="Descripción"
+                  multiline
+                  rows={2}
+                  disabled={loadingModal}
+                  rules={{ required: "Este campo es requerido" }}
+                  onChange={(event) => {
+                    const value = event.target.value;
+                    return Number(value);
+                  }}
+                />
+              </Grid>
             </Grid>
-          </Grid>
+          )}
+
           <Box height={"20px"} />
           <LinealLoader mostrar={loadingModal} />
         </Grid>
