@@ -35,10 +35,15 @@ import { ModuleCRUDType } from "../types";
 
 interface SectionProps {
   idRole: string;
+  indexRole: number;
   section: Item;
   permissions: PermissionTypes;
   sectionIndex: number;
-  reorderSubModules: (sectionIndex: number, e: DragEndEvent) => void;
+  reorderSubModules: (
+    rolId: number,
+    sectionIndex: number,
+    e: DragEndEvent
+  ) => void;
   addModuleModal: (
     state: boolean,
     idRole: string,
@@ -58,6 +63,7 @@ interface SectionProps {
 
 export const DragSection = ({
   section,
+  indexRole,
   permissions,
   sectionIndex,
   reorderSubModules,
@@ -72,7 +78,9 @@ export const DragSection = ({
     useSortable({ id: section.id });
 
   return (
-    <DndContext onDragEnd={(e) => reorderSubModules(sectionIndex, e)}>
+    <DndContext
+      onDragEnd={(e) => reorderSubModules(indexRole, sectionIndex, e)}
+    >
       <Box
         ref={setNodeRef}
         sx={{
@@ -91,16 +99,16 @@ export const DragSection = ({
         }}
       >
         <Stack width="100%">
-          <Accordion>
+          <Accordion defaultExpanded>
             <AccordionSummary
               expandIcon={
-                <IconButton>
+                <IconButton sx={{ border: 1 }}>
                   <ChevronDown />
                 </IconButton>
               }
             >
               <Stack
-                width="100%"
+                width="98%"
                 direction="row"
                 alignItems="center"
                 justifyContent="space-between"

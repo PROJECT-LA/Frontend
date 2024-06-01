@@ -13,7 +13,7 @@ import {
   useTheme,
 } from "@mui/material";
 import React, { FC, useEffect, useState } from "react";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, RefreshCcw } from "lucide-react";
 import { IconTooltip } from "@/components/buttons";
 import { CONSTANTS } from "../../../../../config";
 import { MessagesInterpreter, delay, siteName, titleCase } from "@/utils";
@@ -48,6 +48,7 @@ const ModulesClient2 = () => {
   const [showDeleteModule, setShowDeleteModule] = useState<boolean>(false);
   const [showAlertModuleState, setShowAlertModuleState] =
     useState<boolean>(false);
+  const [orderListener, setOrderListener] = useState<boolean>(false);
   const [moduleEdition, setModuleEdition] = useState<Item | undefined | null>();
   const [modalModule, setModalModule] = useState<{
     state: boolean;
@@ -114,24 +115,43 @@ const ModulesClient2 = () => {
     }
   };
 
-  const reorderSections = (e: DragEndEvent) => {
+  const reorderSections = (idRole: number, e: DragEndEvent) => {
     if (!e.over) return;
     if (e.active.id !== e.over.id) {
-      // setModulesSection((sections) => {
-      //   const oldIdx = sections.findIndex(
-      //     (section) => section.id === e.active.id
-      //   );
-      //   const newIdx = sections.findIndex(
-      //     (section) => section.id === e.over!.id
-      //   );
-      //   return arrayMove(sections, oldIdx, newIdx);
-      // });
+      console.log("********* Section nueva ****************");
+      console.log(e.active);
+      console.log("********* Section cambiada ****************");
+      console.log(e.over);
+
+      setOrderListener(true);
+      setModules((rolesModules) => {
+        const newRoles = [...modules];
+        const newSections = newRoles[idRole].data;
+        const oldIdx = newSections.findIndex(
+          (section) => section.id === e.active.id
+        );
+        const newIdx = newSections.findIndex(
+          (section) => section.id === e.over!.id
+        );
+        newRoles[idRole].data = arrayMove(newSections, oldIdx, newIdx);
+        console.log("***************** newRoles ******************");
+        console.log(newRoles);
+        console.log("***************** newRoles ******************");
+
+        return newRoles;
+      });
     }
   };
 
-  const reorderSubModules = (sectionIndex: number, e: DragEndEvent) => {
+  const reorderSubModules = (
+    idRole: number,
+    sectionIndex: number,
+    e: DragEndEvent
+  ) => {
     if (!e.over) return;
     if (e.active.id !== e.over.id) {
+      setOrderListener(true);
+
       // setModulesSection((sections) => {
       //   const newSections = [...sections];
       //   const subModules = newSections[sectionIndex].subModule!;
@@ -348,20 +368,32 @@ const ModulesClient2 = () => {
                   justifyContent="space-between"
                 >
                   <Typography>{`Módulos para ${elem.rolName}`}</Typography>
-                  {permissions.create && (
-                    <Button
-                      onClick={() => {
-                        addModuleModal(true, elem.rolId);
-                      }}
-                      variant="contained"
-                      startIcon={<PlusCircle size={18} />}
-                    >
-                      <Typography>Nueva Sección</Typography>
-                    </Button>
-                  )}
+                  <Stack direction="row" spacing={1}>
+                    {permissions.update && (
+                      <Button
+                        onClick={() => {}}
+                        variant="contained"
+                        disabled={!orderListener}
+                        startIcon={<RefreshCcw size={18} />}
+                      >
+                        <Typography>Actualizar orden</Typography>
+                      </Button>
+                    )}
+                    {permissions.create && (
+                      <Button
+                        onClick={() => {
+                          addModuleModal(true, elem.rolId);
+                        }}
+                        variant="contained"
+                        startIcon={<PlusCircle size={18} />}
+                      >
+                        <Typography>Nueva Sección</Typography>
+                      </Button>
+                    )}
+                  </Stack>
                 </Stack>
 
-                <DndContext onDragEnd={reorderSections}>
+                <DndContext onDragEnd={(e) => reorderSections(index, e)}>
                   <Box marginTop={3} minHeight="80vh">
                     <Card
                       sx={{
@@ -392,6 +424,7 @@ const ModulesClient2 = () => {
                             {modules[index].data.map(
                               (section, indexSection) => (
                                 <DragSection
+                                  indexRole={index}
                                   key={`section-${section.id}`}
                                   changeState={changeStateModuleModal}
                                   deleteModule={deleteModule}
