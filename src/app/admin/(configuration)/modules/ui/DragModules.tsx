@@ -6,6 +6,9 @@ import { PermissionTypes } from "@/utils/permissions";
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
   Chip,
@@ -17,6 +20,7 @@ import {
   useTheme,
 } from "@mui/material";
 import {
+  ChevronDown,
   GripVertical,
   Info,
   Pencil,
@@ -70,10 +74,9 @@ export const DragSection = ({
   return (
     <DndContext onDragEnd={(e) => reorderSubModules(sectionIndex, e)}>
       <Box
-        // {...listeners}
-        // ref={setNodeRef}
-        // {...attributes}
+        ref={setNodeRef}
         sx={{
+          zIndex: 1,
           borderColor: theme.palette.divider,
           border: 1,
           width: "100%",
@@ -88,123 +91,138 @@ export const DragSection = ({
         }}
       >
         <Stack width="100%">
-          {/* <Accordion>
-            <AccordionSummary expandIcon={<ChevronDown />}>
-              <> */}
-          <Stack
-            direction="row"
-            alignItems="center"
-            justifyContent="space-between"
-            spacing={1}
-          >
-            <Stack
-              direction="row"
-              alignItems="center"
-              spacing={1}
-              sx={{
-                ":hover": {
-                  cursor: "grab",
-                },
-                ":active": {
-                  cursor: "grabbing",
-                },
-              }}
+          <Accordion>
+            <AccordionSummary
+              expandIcon={
+                <IconButton>
+                  <ChevronDown />
+                </IconButton>
+              }
             >
-              <IconButton>
-                <GripVertical />
-              </IconButton>
-              <Chip label={section.order + ""} />
-              <Typography>{section.title}</Typography>
-            </Stack>
-            <Stack direction="row" spacing={1}>
-              {section.description && (
-                <IconTooltip
-                  title={section.description}
-                  icon={<Info />}
-                  action={() => {}}
-                  color="info"
-                  id=""
-                  name=""
-                />
-              )}
+              <Stack
+                width="100%"
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={1}
+              >
+                <Stack
+                  {...listeners}
+                  {...attributes}
+                  direction="row"
+                  alignItems="center"
+                  spacing={1}
+                  sx={{
+                    flexGrow: 1,
+                    ":hover": {
+                      cursor: "grab",
+                    },
+                    ":active": {
+                      cursor: "grabbing",
+                    },
+                  }}
+                >
+                  <IconButton>
+                    <GripVertical />
+                  </IconButton>
+                  <Chip label={section.order + ""} />
+                  <Typography>{section.title}</Typography>
+                </Stack>
+                <Stack direction="row" spacing={1} sx={{ zIndex: 5 }}>
+                  {section.description && (
+                    <IconTooltip
+                      title={section.description}
+                      icon={<Info />}
+                      action={() => {}}
+                      color="info"
+                      id=""
+                      name=""
+                    />
+                  )}
 
-              {permissions.update && (
-                <IconTooltip
-                  id={`editarSubModule-${section.id}`}
-                  title={"Editar"}
-                  color={"primary"}
-                  action={() => {
-                    editModule(section, idRole, true);
-                  }}
-                  icon={<Pencil />}
-                  name={"Editar submódulo"}
-                />
-              )}
+                  {permissions.update && (
+                    <IconTooltip
+                      id={`editarSubModule-${section.id}`}
+                      title={"Editar"}
+                      color={"primary"}
+                      action={() => {
+                        editModule(section, idRole, true);
+                      }}
+                      icon={<Pencil />}
+                      name={"Editar submódulo"}
+                    />
+                  )}
 
-              {permissions.update && (
-                <IconTooltip
-                  id={`cambiarEstadoModulo-${section.id}`}
-                  title={section.status == "ACTIVO" ? "Inactivar" : "Activar"}
-                  color={section.status == "ACTIVO" ? "success" : "error"}
-                  action={() => {
-                    changeState(section, true);
-                  }}
-                  deactivate={section.status == "PENDIENTE"}
-                  icon={
-                    section.status == "ACTIVO" ? (
-                      <ToggleRight />
-                    ) : (
-                      <ToggleLeft />
-                    )
-                  }
-                  name={
-                    section.status == "ACTIVO"
-                      ? "Inactivar Módulo"
-                      : "Activar Módulo"
-                  }
-                />
-              )}
-              {permissions.delete && (
-                <IconTooltip
-                  id="Eliminar"
-                  name="Eliminar"
-                  title="Eliminar"
-                  color="error"
-                  action={() => {
-                    deleteModule(section, true);
-                  }}
-                  icon={<Trash2Icon />}
-                />
-              )}
-            </Stack>
-          </Stack>
-          {/* </>
+                  {permissions.update && (
+                    <IconTooltip
+                      id={`cambiarEstadoModulo-${section.id}`}
+                      title={
+                        section.status == "ACTIVO" ? "Inactivar" : "Activar"
+                      }
+                      color={section.status == "ACTIVO" ? "success" : "error"}
+                      action={() => {
+                        changeState(section, true);
+                      }}
+                      deactivate={section.status == "PENDIENTE"}
+                      icon={
+                        section.status == "ACTIVO" ? (
+                          <ToggleRight />
+                        ) : (
+                          <ToggleLeft />
+                        )
+                      }
+                      name={
+                        section.status == "ACTIVO"
+                          ? "Inactivar Módulo"
+                          : "Activar Módulo"
+                      }
+                    />
+                  )}
+                  {permissions.delete && (
+                    <IconTooltip
+                      id="Eliminar"
+                      name="Eliminar"
+                      title="Eliminar"
+                      color="error"
+                      action={() => {
+                        deleteModule(section, true);
+                      }}
+                      icon={<Trash2Icon />}
+                    />
+                  )}
+                </Stack>
+              </Stack>
             </AccordionSummary>
 
-            <AccordionDetails> */}
-          <SortableContext
-            items={section.subModule!.map((subModule) => subModule.id)}
+            <AccordionDetails>
+              <SortableContext
+                items={section.subModule!.map((subModule) => subModule.id)}
+              >
+                <List>
+                  {section.subModule!.map((subModule, index) => (
+                    <Module
+                      key={`subModule-${subModule.id}`}
+                      id={subModule.id}
+                      idRole={idRole}
+                      module={subModule}
+                      permissions={permissions}
+                      changeState={changeState}
+                      deleteModule={deleteModule}
+                      editModule={editModule}
+                      idSection={section.id}
+                      nameSection={section.title ?? ""}
+                    />
+                  ))}
+                </List>
+              </SortableContext>
+            </AccordionDetails>
+          </Accordion>
+          <Box
+            width="100%"
+            display="flex"
+            marginBottom={2}
+            justifyContent="center"
           >
-            <List>
-              {section.subModule!.map((subModule, index) => (
-                <Module
-                  key={`subModule-${subModule.id}`}
-                  id={subModule.id}
-                  idRole={idRole}
-                  module={subModule}
-                  permissions={permissions}
-                  changeState={changeState}
-                  deleteModule={deleteModule}
-                  editModule={editModule}
-                  idSection={section.id}
-                  nameSection={section.title ?? ""}
-                />
-              ))}
-            </List>
-          </SortableContext>
-          {/* </AccordionDetails>
-          </Accordion> */}
-          <Box width="100%" display="flex" justifyContent="center">
             <Button
               variant="outlined"
               onClick={() => addModuleModal(false, section.id, section.title)}
@@ -255,10 +273,9 @@ const Module = ({
 
   return (
     <ListItem
-      // ref={setNodeRef}
-      // {...attributes}
-      // {...listeners}
+      ref={setNodeRef}
       sx={{
+        zIndex: 2,
         borderColor: "black",
         border: 1,
         marginBottom: 1,
@@ -278,7 +295,16 @@ const Module = ({
       }}
     >
       <Stack direction="row" width="100%" justifyContent="space-between">
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack
+          {...attributes}
+          {...listeners}
+          direction="row"
+          alignItems="center"
+          spacing={1}
+          sx={{
+            flexGrow: 1,
+          }}
+        >
           <IconButton>
             <GripVertical />
           </IconButton>
@@ -286,7 +312,8 @@ const Module = ({
           {module.icon && <Icono>{getIconLucide(module.icon)}</Icono>}
           <Typography>{module.title}</Typography>
         </Stack>
-        <Stack direction="row" spacing={1}>
+
+        <Stack direction="row" spacing={1} sx={{ zIndex: 5 }}>
           {module.description && (
             <IconTooltip
               title={module.description}
