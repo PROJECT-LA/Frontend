@@ -1,11 +1,15 @@
 import { optionType } from "@/components/forms/FormInputDropdown";
 import {
   Home,
+  Lock,
+  Notebook,
   PackageOpen,
+  Settings2,
   ShieldQuestion,
   SlidersHorizontal,
   User,
   UserCog,
+  Users,
 } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -22,6 +26,22 @@ export const icons: IconMapper[] = [
   {
     name: "user",
     icon: <User />,
+  },
+  {
+    name: "users",
+    icon: <Users />,
+  },
+  {
+    name: "settings-2",
+    icon: <Settings2 />,
+  },
+  {
+    name: "lock",
+    icon: <Lock />,
+  },
+  {
+    name: "notebook",
+    icon: <Notebook />,
   },
   {
     name: "user-cog",
@@ -42,5 +62,7 @@ export const icons: IconMapper[] = [
 ];
 
 export const getIconLucide = (name: string): ReactNode => {
+  console.log(name);
+
   return icons.find((elem) => elem.name === name)?.icon;
 };

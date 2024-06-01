@@ -4,14 +4,16 @@ export interface Item {
   id: string;
   title?: string;
   description?: string;
-  type: string;
   caption?: string;
   url?: string;
-  children?: Array<Item>;
-  icon?: ReactNode;
+  subModule?: Array<Item>;
+  icon?: string;
   breadcrumbs?: boolean;
   external?: boolean;
   target?: boolean | string;
+  order?: number;
+
+  status?: string;
 }
 
 export enum SortEnum {

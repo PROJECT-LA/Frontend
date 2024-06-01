@@ -4,7 +4,6 @@ import { List, Typography } from "@mui/material";
 
 // project imports
 import NavItem from "../NavItem";
-import NavCollapse from "../NavCollapse";
 import { Item } from "@/types";
 import { useGlobalStore } from "@/store";
 
@@ -12,18 +11,15 @@ const NavGroup = ({ item }: { item: Item }) => {
   const { openDrawer } = useGlobalStore();
   const theme = useTheme();
 
-  const items = item.children?.map((menu) => {
-    switch (menu.type) {
-      case "collapse":
-        return <NavCollapse key={menu.id} menu={menu} level={1} />;
-      case "item":
-        return <NavItem key={menu.id} item={menu} level={1} />;
-      default:
-        return (
-          <Typography key={menu.id} variant="h6" color="error" align="center">
-            Menu Items Error
-          </Typography>
-        );
+  const items = item.subModule?.map((menu) => {
+    if (menu.icon && menu.icon.length > 0) {
+      return <NavItem key={menu.id} item={menu} level={1} />;
+    } else {
+      return (
+        <Typography key={menu.id} variant="h6" color="error" align="center">
+          Menu Items Error
+        </Typography>
+      );
     }
   });
 

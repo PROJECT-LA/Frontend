@@ -54,7 +54,10 @@ const ProfileSection = () => {
   };
 
   useEffect(() => {
+    console.log("*************************");
     print(user);
+    console.log("*************************");
+
     interpretarRoles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [, user]);
@@ -136,13 +139,42 @@ const ProfileSection = () => {
                 : "transparent",
           }}
           onClick={cerrarMenuPerfil}
-          startIcon={<CircleUser color={theme.palette.text.primary} />}
+          startIcon={
+            <>
+              {user?.userData.image && user.userData.image.length > 0 ? (
+                <Box
+                  border={1}
+                  width="25px"
+                  height="25px"
+                  borderColor={theme.palette.divider}
+                  borderRadius="50%"
+                  position="relative"
+                >
+                  <img
+                    style={{
+                      position: "absolute",
+                      left: 0,
+                      top: 0,
+                      width: "23px",
+                      borderRadius: "50%",
+                      height: "23px",
+                      border: 1,
+                      borderColor: theme.palette.divider,
+                    }}
+                    src={`data:image/jpeg;base64,${user.userData.image}`}
+                  />
+                </Box>
+              ) : (
+                <CircleUser color={theme.palette.text.primary} />
+              )}
+            </>
+          }
           variant="outlined"
         >
           <Stack direction="row" alignItems="center" gap={1}>
             <Stack>
               <Typography variant="h5" color={theme.palette.text.primary}>
-                Alexander
+                {user?.userData.username}
               </Typography>
             </Stack>
           </Stack>
@@ -193,9 +225,9 @@ const ProfileSection = () => {
                         variant="h4"
                         sx={{ fontWeight: 400 }}
                       >
-                        Alexander Nina
+                        {user?.userData.names}
                       </Typography>
-                      <Typography variant="h6">ADMINISTRADOR</Typography>
+                      <Typography variant="h6">{user?.roleName}</Typography>
                     </Stack>
                   </ButtonBase>
 
@@ -223,7 +255,7 @@ const ProfileSection = () => {
                                   value={rol.id}
                                   control={
                                     <Radio
-                                      checked={user?.id === rol.id}
+                                      checked={user?.idRole === rol.id}
                                       onChange={cambiarRol}
                                       color={"success"}
                                       size="small"
@@ -243,7 +275,6 @@ const ProfileSection = () => {
                       </Box>
                     )}
                   </Stack>
-
                   <Button
                     fullWidth
                     variant="outlined"

@@ -52,11 +52,11 @@ const Home = () => {
     <Stack>
       <Stack color={theme.palette.text.primary}>
         <Typography variant="h3" color="inherit">
-          Bienvenid@ Alexander Nina
+          Bienvenid@ {user?.userData.names} {user?.userData.lastNames}
         </Typography>
         <Box height={5} />
         <Typography variant="h6" color="inherit">
-          ADMINISTRADOR
+          Rol actual: {user?.roleName}
         </Typography>
       </Stack>
 

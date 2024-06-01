@@ -6,7 +6,6 @@ import React from "react";
 
 const MainCard = ({ children }: { children: React.ReactNode }) => {
   const theme = useTheme();
-  const { themeMode } = useThemeContext();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
   return (
     <Card
@@ -14,9 +13,10 @@ const MainCard = ({ children }: { children: React.ReactNode }) => {
         border: 1,
         borderRadius: CONSTANTS.borderRadius,
         borderColor: theme.palette.divider,
-        backgroundColor: !themeMode
-          ? theme.palette.background.paper
-          : "transparent !important",
+        backgroundColor:
+          theme.palette.mode === "light"
+            ? theme.palette.background.paper
+            : "transparent !important",
         padding: !matchDownMd ? "2.5rem" : "1rem",
       }}
     >

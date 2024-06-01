@@ -75,6 +75,10 @@ export const PoliticModalView = ({
 
   const saveUpdatePolicie = async (newPolicy: savePoliticCRUDType) => {
     try {
+      print("******************************************");
+      print(newPolicy);
+      print("******************************************");
+
       setLoadingModal(true);
       await delay(1000);
       const res = await sessionRequest({
@@ -113,7 +117,7 @@ export const PoliticModalView = ({
                 disabled={loadingModal}
                 options={roles.map((rol) => ({
                   key: rol.id,
-                  value: rol.description,
+                  value: rol.id,
                   label: rol.name,
                 }))}
                 rules={{ required: "Este campo es requerido" }}

@@ -10,15 +10,18 @@ import {
   useRef,
   useState,
 } from "react";
+import { lightTheme } from "./light-theme";
+import { darkTheme } from "./dark-theme";
 import { useMediaQuery } from "@mui/material";
 import { useDebouncedCallback } from "use-debounce";
 import { saveCookie, readCookie, print } from "@/utils";
-import { darkTheme, lightTheme } from "./colors";
 
 const DARK_SCHEME_QUERY = "(prefers-color-scheme: dark)";
 
+type ThemeMode = "light" | "dark";
+
 interface ThemeContextType {
-  themeMode: boolean;
+  themeMode: ThemeMode;
   toggleTheme: () => void;
 }
 
@@ -29,44 +32,65 @@ export default function ThemeRegistry({ children }: { children: ReactNode }) {
 
   const isMountRef = useRef(false);
 
-  const [themeMode, setThemeMode] = useState(isDarkOS);
+  const [themeMode, setThemeMode] = useState<ThemeMode>(
+    isDarkOS ? "dark" : "light"
+  );
 
   const debounced = useDebouncedCallback(() => {
     isMountRef.current = true;
-  }, 800);
+  }, 500);
 
   const saveDarkMode = () => {
-    setThemeMode(true);
+    setThemeMode("dark");
     saveCookie("theme", "dark");
     print("🌙");
   };
 
   const saveLightMode = () => {
-    setThemeMode(false);
+    setThemeMode("light");
     saveCookie("theme", "light");
     print("☀️");
   };
 
-  const guardarModoAutomatico = () => {
-    setThemeMode(isDarkOS);
+  const saveAutomaticMode = () => {
+    setThemeMode(isDarkOS ? "dark" : "light");
     saveCookie("theme", isDarkOS ? "dark" : "light");
     print("isDarkOS: ", isDarkOS ? "🌙" : "☀️");
   };
 
   const toggleTheme = () => {
-    if (themeMode) saveLightMode();
-    else saveDarkMode();
+    switch (themeMode) {
+      case "light":
+        saveDarkMode();
+        break;
+      case "dark":
+        saveLightMode();
+        break;
+      default:
+    }
   };
 
   useEffect(() => {
     const themeModeSaved = readCookie("theme");
     print("theme", themeModeSaved);
+
     if (!themeModeSaved) {
-      guardarModoAutomatico();
+      saveAutomaticMode();
       isMountRef.current = false;
       return;
     }
-    themeModeSaved ? saveDarkMode() : saveLightMode();
+
+    switch (themeModeSaved) {
+      case "dark":
+        saveDarkMode();
+        break;
+      case "light":
+        saveLightMode();
+        break;
+      default:
+        saveLightMode();
+        break;
+    }
     isMountRef.current = false;
     return;
 
@@ -75,7 +99,7 @@ export default function ThemeRegistry({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isMountRef.current) {
-      guardarModoAutomatico();
+      saveAutomaticMode();
     }
     debounced();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -84,7 +108,7 @@ export default function ThemeRegistry({ children }: { children: ReactNode }) {
   return (
     <ThemeContext.Provider value={{ themeMode, toggleTheme }}>
       <NextAppDirEmotionCacheProvider options={{ key: "mui" }}>
-        <ThemeProvider theme={themeMode ? darkTheme : lightTheme}>
+        <ThemeProvider theme={themeMode === "light" ? lightTheme : darkTheme}>
           {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
           <CssBaseline />
           {children}

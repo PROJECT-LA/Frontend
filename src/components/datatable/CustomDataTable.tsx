@@ -115,7 +115,6 @@ export const CustomDataTable = ({
 
   return (
     <Box sx={{ pb: 2 }}>
-      {/*título y acciones*/}
       <Grid
         container
         direction="row"
@@ -350,9 +349,11 @@ export const CustomDataTable = ({
                                 <Button
                                   disabled={loading}
                                   style={{
-                                    justifyContent: "end",
                                     minWidth: "0",
                                     padding: "0 1",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
                                   }}
                                   onClick={() => {
                                     const nuevosCriterios = [...columns];
@@ -383,14 +384,11 @@ export const CustomDataTable = ({
                                   </Typography>
                                   {columna.order && <Box width={"10px"} />}
                                   {columna.order && (
-                                    <Icono
-                                      fontSize={"inherit"}
-                                      color={"secondary"}
-                                    >
+                                    <Icono fontSize={"inherit"}>
                                       {columna.order == "asc" ? (
-                                        <ArrowUp />
+                                        <ArrowUp size={15} />
                                       ) : (
-                                        <ArrowDown />
+                                        <ArrowDown size={15} />
                                       )}
                                     </Icono>
                                   )}

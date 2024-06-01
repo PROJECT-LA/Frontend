@@ -104,6 +104,7 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
           {label}
         </Typography>
       </InputLabel>
+      <Box height={5} />
       <Controller
         name={name}
         control={control}

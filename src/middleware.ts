@@ -30,7 +30,7 @@ export const middleware = (req: NextRequest) => {
     }
 
     if (req.nextUrl.pathname.startsWith("/admin")) {
-      if (token?.value) {
+      if (token?.value && token?.value.length > 0) {
         return NextResponse.next();
       } else {
         const url = req.nextUrl.clone();

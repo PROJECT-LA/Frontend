@@ -50,7 +50,7 @@ export const PoliticsFilter = ({
   return (
     <Box sx={{ pl: 1, pr: 1, pt: 1 }}>
       <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-        <Grid item xs={12} sm={12} md={4}>
+        <Grid item xs={12} sm={12} md={4} alignContent="end">
           <FormInputText
             id={"search"}
             name={"search"}

@@ -14,9 +14,7 @@ import { BrowserView, MobileView } from "react-device-detect";
 // project imports
 import MenuList from "./MenuList";
 import { CONSTANTS } from "../../../config";
-import { ArrowLeftToLine } from "lucide-react";
 import { Logo, LogoCorto } from "../LogoSection";
-import { useState } from "react";
 import { useGlobalStore } from "@/store";
 
 const drawerWidth = CONSTANTS.drawerWidth;

@@ -34,6 +34,29 @@ export const decodeBase64 = (data: string) => {
   return Buffer.from(data, "base64").toString("ascii");
 };
 
+export const handleAddBase64Image = (base64String: string): File => {
+  const base64ToBlob = (base64: string, contentType: string) => {
+    const byteCharacters = atob(base64);
+    const byteArrays = [];
+    for (let offset = 0; offset < byteCharacters.length; offset += 512) {
+      const slice = byteCharacters.slice(offset, offset + 512);
+      const byteNumbers = new Array(slice.length);
+      for (let i = 0; i < slice.length; i++) {
+        byteNumbers[i] = slice.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      byteArrays.push(byteArray);
+    }
+    return new Blob(byteArrays, { type: contentType });
+  };
+
+  const contentType = "image/jpeg";
+  const base64Data = base64String.split(",")[1];
+  const blob = base64ToBlob(base64Data, contentType);
+  const file = new File([blob], "image.jpg", { type: contentType });
+  return file;
+};
+
 const isHTML = RegExp.prototype.test.bind(/^(<([^>]+)>)$/i);
 
 export const serializeError = (err: unknown) =>

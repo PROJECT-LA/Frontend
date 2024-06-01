@@ -1,48 +1,40 @@
-import { optionType } from "@/components/forms/FormInputDropdown";
+import { Item } from "@/types";
 
 export interface ModuleCRUDType {
   id: string;
-  isSection: boolean;
   title: string;
+  description: string;
+  icon: string | null;
   url?: string;
-  icon?: string;
-  order: string;
-  description?: string;
-  idModule?: string;
+  // module: Module | null;
+  idSection?: string;
+  nameSection?: string;
   status: string;
 }
-export interface NewCUModuleType {
-  id: string;
-  title: string;
-  url?: string;
-  icon?: string;
-  order: string;
-  description?: string;
-  idModule?: string;
-  isSection: boolean;
-}
-
-export interface Properties {
-  icon?: string;
-  description?: string;
-  sort: number;
-}
-
 export interface Module {
   id: string;
+  title: string;
+  order: number;
 }
 
 export interface CUModuleType {
-  id: string;
-  label: string;
-  url: string;
-  name: string;
-  isSection: boolean;
-  properties: {
-    icon?: optionType;
-    description?: string;
-    sort: number;
-  };
-  state: string;
+  title: string;
+  url?: string;
+  icon?: string;
+  idRole: string;
   idModule?: string;
+  status?: string;
+  description?: string;
+}
+
+export interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+export interface RolModules {
+  rolId: string;
+  rolName: string;
+  data: Item[];
 }

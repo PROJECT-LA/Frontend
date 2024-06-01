@@ -19,6 +19,7 @@ import {
 
 import { useGlobalStore } from "@/store";
 import { Home } from "lucide-react";
+import { getIconLucide } from "@/types/icons";
 
 interface ListItemProps {
   component:
@@ -39,7 +40,7 @@ const NavItem = ({
 }) => {
   const theme = useTheme();
 
-  const { cerrarDrawer, openDrawer } = useGlobalStore();
+  const { cerrarDrawer, openDrawer, setTitlePage } = useGlobalStore();
   const pathname = usePathname();
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -65,8 +66,8 @@ const NavItem = ({
     listItemProps = { component: "a", href: item.url, target: itemTarget };
   }
 
-  const itemHandler = (id: any) => {
-    console.log(id);
+  const itemHandler = (itemNav: Item) => {
+    if (itemNav.title && itemNav.title?.length > 0) setTitlePage(itemNav.title);
 
     if (matchesSM) cerrarDrawer();
   };
@@ -105,7 +106,7 @@ const NavItem = ({
       width: "0",
     },
     "&:hover::before": {
-      width: "90%",
+      width: matchDownMd ? "90%" : "100%",
       borderRadius: "1rem",
       transition: "all .3s ease",
       backgroundColor:
@@ -169,7 +170,7 @@ const NavItem = ({
           },
         },
       }}
-      onClick={() => itemHandler(item.id)}
+      onClick={() => itemHandler(item)}
     >
       {pathname === item?.url && (
         <Box
@@ -190,7 +191,7 @@ const NavItem = ({
           minWidth: !item?.icon ? 18 : 36,
         }}
       >
-        {!isFromCollapse && item.icon && item.icon}
+        {!isFromCollapse && item.icon && getIconLucide(item.icon)}
       </ListItemIcon>
 
       {(openDrawer || matchDownMd) && (

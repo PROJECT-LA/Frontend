@@ -9,6 +9,7 @@ import { print } from "@/utils";
 
 export type methodFormatRequest = {
   type?: Method;
+  isPermissions?: boolean;
 } & formatRequest;
 
 export type formatRequest = {

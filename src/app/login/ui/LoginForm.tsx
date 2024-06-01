@@ -62,12 +62,11 @@ export const LoginForm = () => {
             >
               <Grid item>
                 <Stack alignItems="center" justifyContent="center" spacing={1}>
-                  <Typography gutterBottom variant={matchDownSM ? "h2" : "h1"}>
+                  <Typography gutterBottom variant={matchDownSM ? "h3" : "h2"}>
                     Bienvenido
                   </Typography>
                   <Typography
-                    variant="caption"
-                    fontSize="16px"
+                    variant="subtitle2"
                     textAlign={matchDownSM ? "center" : "inherit"}
                   >
                     Introduce tu usuario y contraseña para ingresar

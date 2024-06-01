@@ -2,9 +2,11 @@ import { optionType } from "@/components/forms/FormInputDropdown";
 
 export interface PoliticsCRUDType {
   subject: string;
+  subjectName: string;
   object: string;
   action: string;
   app: string;
+  status: string;
 }
 
 export interface CUPoliticsCRUDType {
