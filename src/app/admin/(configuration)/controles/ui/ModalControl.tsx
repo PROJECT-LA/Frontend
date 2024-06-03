@@ -2,7 +2,7 @@ import { MessagesInterpreter, delay } from "@/utils";
 import React, { useState } from "react";
 import { CONSTANTS } from "../../../../../../config";
 import { toast } from "sonner";
-import { CUControlType } from "../types";
+import { CUControlType, ControlType } from "../types";
 import { useForm } from "react-hook-form";
 import { useSession } from "@/hooks/useSession";
 import {
@@ -18,7 +18,7 @@ import { LinealLoader } from "@/components/loaders";
 
 interface ModalControlView {
   idTemplate: string;
-  controls?: any | undefined;
+  controls?: ControlType | undefined;
   correctAction: () => void;
   cancelAction: () => void;
 }
@@ -35,15 +35,15 @@ export const ModalControlView = ({
     defaultValues: {
       id: controls?.id,
 
-      oControl: controls?.oControlsDescription,
+      oControl: controls?.oControlDescription,
       oControlDescription: controls?.oControlDescription,
       oControlCode: controls?.oControlCode,
 
-      gControl: controls?.gControlsDescription,
+      gControl: controls?.gControlDescription,
       gControlDescription: controls?.gControlDescription,
       gControlCode: controls?.gControlCode,
 
-      eControl: controls?.eControlsDescription,
+      eControl: controls?.eControlDescription,
       eControlDescription: controls?.eControlDescription,
       eControlCode: controls?.eControlCode,
 
@@ -123,10 +123,11 @@ export const ModalControlView = ({
               />
             </Grid>
           </Grid>
-          <Box height={"20px"} />
+
+          <Box height={"25px"} />
 
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Typography>Nivel general de aprobación</Typography>
+            <Typography variant="h5">Nivel general de aprobación</Typography>
           </Grid>
           <Box height={"15px"} />
 
@@ -172,11 +173,12 @@ export const ModalControlView = ({
               />
             </Grid>
           </Grid>
-          <Box height={"15px"} />
+          <Box height={"25px"} />
 
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Typography>-</Typography>
+            <Typography>-----------------</Typography>
           </Grid>
+          <Box height={"15px"} />
 
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Grid item xs={12} sm={12} md={6}>

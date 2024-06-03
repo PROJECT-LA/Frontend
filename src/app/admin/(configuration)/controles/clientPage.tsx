@@ -13,6 +13,7 @@ import {
   Button,
   Grid,
   Pagination,
+  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -31,6 +32,7 @@ import { toast } from "sonner";
 import { AlertDialog, CustomDialog } from "@/components/modals";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
 import { ModalControlView } from "./ui";
+import { ControlType } from "./types";
 
 interface Controles {
   idTemplate: string;
@@ -38,7 +40,7 @@ interface Controles {
 const Controles = ({ idTemplate }: Controles) => {
   const [permissions, setPermissions] =
     useState<PermissionTypes>(initialPermissions);
-  const [controlsData, setControlsData] = useState<any[]>();
+  const [controlsData, setControlsData] = useState<ControlType[]>();
 
   const [controlEdition, setControlEdition] = useState<any | undefined>();
 
@@ -62,11 +64,19 @@ const Controles = ({ idTemplate }: Controles) => {
 
   const [ordenCriterios, setOrdenCriterios] = useState<Array<SortTypeCriteria>>(
     [
-      { field: "nombre", name: "Nombre", sort: true },
-      { field: "description", name: "Descripción", sort: true },
-      { field: "version", name: "Versión", sort: true },
+      { field: "oCodigo", name: "oCódigo", sort: true },
+      { field: "oControl", name: "oControl", sort: true },
+      { field: "oDescription", name: "oDescripción", sort: true },
+
+      { field: "gCodigo", name: "gCódigo", sort: true },
+      { field: "gControl", name: "gControl", sort: true },
+      { field: "gDescription", name: "gDescripción", sort: true },
+
+      { field: "eCodigo", name: "eCódigo", sort: true },
+      { field: "eControl", name: "eControl", sort: true },
+      { field: "eDescription", name: "eDescripción", sort: true },
+
       { field: "status", name: "Estado", sort: true },
-      { field: "control", name: "Control" },
       { field: "actions", name: "Acciones" },
     ]
   );
@@ -75,8 +85,44 @@ const Controles = ({ idTemplate }: Controles) => {
     controlsData === undefined
       ? []
       : controlsData.map((control, indexTemplate) => [
+          <Typography key={`${control.oControl}-${control.oControl}-code`}>
+            {control.oControlCode}
+          </Typography>,
+          <Typography key={`${control.oControl}-${control.oControl}-control`}>
+            {control.oControl}
+          </Typography>,
+          <Typography
+            key={`${control.oControl}-${control.oControl}-description`}
+          >
+            {control.oControlDescription}
+          </Typography>,
+
+          <Typography key={`${control.gControl}-${control.gControl}-code`}>
+            {control.gControlCode}
+          </Typography>,
+          <Typography key={`${control.gControl}-${control.gControl}-control`}>
+            {control.gControl}
+          </Typography>,
+          <Typography
+            key={`${control.gControl}-${control.gControl}-description`}
+          >
+            {control.gControlDescription}
+          </Typography>,
+
+          <Typography key={`${control.eControl}-${control.eControlCode}-code`}>
+            {control.eControlCode}
+          </Typography>,
+          <Typography key={`${control.eControl}-${control.eControl}-control`}>
+            {control.eControl}
+          </Typography>,
+          <Typography
+            key={`${control.eControl}-${control.eControl}-description`}
+          >
+            {control.eControlDescription}
+          </Typography>,
+
           <CustomMessageState
-            key={`${control.name}-status`}
+            key={`${control.oControl}-status`}
             title={control.status}
             description={control.status}
             color={
@@ -88,10 +134,10 @@ const Controles = ({ idTemplate }: Controles) => {
             }
           />,
 
-          <Grid key={`${control.name}-${indexTemplate}-actions`}>
+          <Grid key={`${control.oControl}-${indexTemplate}-actions`}>
             {permissions.update && (
               <IconTooltip
-                id={`cambiarEstadoModulo-${control.name}`}
+                id={`cambiarEstadoModulo-${control.oControl}`}
                 title={control.status == "ACTIVO" ? "Inactivar" : "Activar"}
                 color={control.status == "ACTIVO" ? "success" : "error"}
                 action={() => {}}
