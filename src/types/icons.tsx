@@ -4,6 +4,7 @@ import {
   Lock,
   Notebook,
   PackageOpen,
+  Scale,
   Settings2,
   ShieldQuestion,
   SlidersHorizontal,
@@ -58,6 +59,10 @@ export const icons: IconMapper[] = [
   {
     name: "shield-question",
     icon: <ShieldQuestion />,
+  },
+  {
+    name: "scale",
+    icon: <Scale />,
   },
 ];
 
