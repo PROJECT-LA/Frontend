@@ -34,7 +34,7 @@ const ControlsPage2 = ({ idTemplate }: ControlProps) => {
   return (
     <>
       <title>{`Controles - ${siteName()}`}</title>
-      <MainCard padding={false}>
+      <MainCard padding={false} radius="0.4rem">
         <Grid container direction="row">
           <Grid item xs={4} borderRight={1}>
             <Stack padding={1} height="5rem">

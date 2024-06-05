@@ -7,16 +7,21 @@ import React, { ReactNode } from "react";
 interface MainCard {
   children: ReactNode;
   padding?: boolean;
+  radius?: string;
 }
 
-const MainCard = ({ children, padding = true }: MainCard) => {
+const MainCard = ({
+  children,
+  padding = true,
+  radius = CONSTANTS.borderRadius,
+}: MainCard) => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
   return (
     <Card
       sx={{
         border: 1,
-        borderRadius: CONSTANTS.borderRadius,
+        borderRadius: radius,
         borderColor: theme.palette.divider,
         backgroundColor:
           theme.palette.mode === "light"
