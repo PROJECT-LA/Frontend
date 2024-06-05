@@ -2,9 +2,14 @@
 import { useThemeContext } from "@/theme";
 import { CONSTANTS } from "../../../config";
 import { Card, useMediaQuery, useTheme } from "@mui/material";
-import React from "react";
+import React, { ReactNode } from "react";
 
-const MainCard = ({ children }: { children: React.ReactNode }) => {
+interface MainCard {
+  children: ReactNode;
+  padding?: boolean;
+}
+
+const MainCard = ({ children, padding = true }: MainCard) => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
   return (
@@ -17,7 +22,7 @@ const MainCard = ({ children }: { children: React.ReactNode }) => {
           theme.palette.mode === "light"
             ? theme.palette.background.paper
             : "transparent !important",
-        padding: !matchDownMd ? "2.5rem" : "1rem",
+        padding: !padding ? "0" : !matchDownMd ? "2.5rem" : "1rem",
       }}
     >
       {children}

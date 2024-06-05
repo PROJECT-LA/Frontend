@@ -114,7 +114,12 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
       </AppBar>
       <Main theme={theme} open={openDrawer}>
         <div style={{ minHeight: "82vh" }}>{children}</div>
-        <Box display="flex" justifyContent="center" alignItems="center">
+        <Box
+          display="flex"
+          justifyContent="center"
+          marginTop={5}
+          alignItems="center"
+        >
           <Typography>
             &#169;&nbsp;{new Date().getFullYear()}&nbsp;{CONSTANTS.siteName}
           </Typography>

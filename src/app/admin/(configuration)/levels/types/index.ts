@@ -10,3 +10,8 @@ export interface CULevel {
   level: number;
   description: string;
 }
+export type StatusLevelFilter = "active" | "inactive" | "none";
+export interface LevelFilter {
+  level: string;
+  status: StatusLevelFilter;
+}

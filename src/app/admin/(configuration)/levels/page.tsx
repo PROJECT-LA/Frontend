@@ -31,7 +31,7 @@ import {
   initialPermissions,
 } from "@/utils/permissions";
 import { CULevel, LevelData } from "./types";
-import { LevelsModalView } from "./ui";
+import { FilterLevels, LevelsModalView } from "./ui";
 
 export default function Levels() {
   const [permissions, setPermissions] =
@@ -355,7 +355,11 @@ export default function Levels() {
         tableContent={contenidoTabla}
         filters={
           showFilterLevels && (
-            <></>
+            <FilterLevels
+              filterLevel={searchLevels}
+              correctAction={() => {}}
+              closeAction={() => {}}
+            />
             // <FilterParameter
             //   filterParameter={filtroParametro}
             //   correctAction={(filters) => {
