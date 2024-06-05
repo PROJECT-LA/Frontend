@@ -43,10 +43,6 @@ export const ModalControlView = ({
       gControlDescription: controls?.gControlDescription,
       gControlCode: controls?.gControlCode,
 
-      eControl: controls?.eControlDescription,
-      eControlDescription: controls?.eControlDescription,
-      eControlCode: controls?.eControlCode,
-
       idTemplate,
     },
   });
@@ -162,55 +158,6 @@ export const ModalControlView = ({
                 id={"gControlDescription"}
                 control={control}
                 name="gControlDescription"
-                label="Descripción"
-                disabled={loadingModal}
-                rules={{
-                  required: {
-                    value: true,
-                    message: "Este campo es requerido",
-                  },
-                }}
-              />
-            </Grid>
-          </Grid>
-          <Box height={"25px"} />
-
-          <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Typography>-----------------</Typography>
-          </Grid>
-          <Box height={"15px"} />
-
-          <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Grid item xs={12} sm={12} md={6}>
-              <FormInputText
-                id={"eControlCode"}
-                control={control}
-                name="eControlCode"
-                label="Código"
-                disabled={loadingModal}
-                rules={{ required: "Este campo es requerido" }}
-              />
-            </Grid>
-            <Grid item xs={12} sm={12} md={6}>
-              <FormInputText
-                id={"eControl"}
-                control={control}
-                name="eControl"
-                label="Control"
-                disabled={loadingModal}
-                rules={{ required: "Este campo es requerido" }}
-              />
-            </Grid>
-          </Grid>
-
-          <Box height={"15px"} />
-
-          <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Grid item xs={12} sm={12} md={12}>
-              <FormInputText
-                id={"eControlDescription"}
-                control={control}
-                name="eControlDescription"
                 label="Descripción"
                 disabled={loadingModal}
                 rules={{
