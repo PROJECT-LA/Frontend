@@ -23,6 +23,7 @@ import {
   RotateCcw,
   ToggleLeft,
   ToggleRight,
+  Trash2,
 } from "lucide-react";
 import {
   GlobalPermissionsProps,
@@ -89,7 +90,12 @@ export default function Levels() {
         }
       />,
 
-      <Grid key={`${levelData.id}-${indexLevel}-acciones`}>
+      <Grid
+        container
+        key={`${levelData.id}-${indexLevel}-acciones`}
+        justifyContent="flex-end"
+        spacing={1}
+      >
         {permissions.update && (
           <IconTooltip
             id={`cambiarEstadoParametro-${levelData.id}`}
@@ -122,6 +128,18 @@ export default function Levels() {
               // editarParametroModal(levelData);
             }}
             icon={<Edit />}
+          />
+        )}
+        {permissions.delete && (
+          <IconTooltip
+            id={`eliminar-nivel-${indexLevel}`}
+            title={"Eliminar"}
+            color={"error"}
+            action={() => {
+              deleteLevelModal(levelData);
+            }}
+            icon={<Trash2 />}
+            name={"Eliminar nivel"}
           />
         )}
       </Grid>,
@@ -169,6 +187,7 @@ export default function Levels() {
     ),
   ];
 
+  /*************************REQUEST**********************/
   const getLevelsRequest = async () => {
     try {
       setLoading(true);
@@ -190,7 +209,23 @@ export default function Levels() {
       setErrorData(null);
     } catch (e) {
       setErrorData(e);
-      toast.error("Error", { description: MessagesInterpreter(e) });
+      toast.error(MessagesInterpreter(e));
+    } finally {
+      setLoading(false);
+    }
+  };
+  const deleteLevelRequest = async (level: LevelData) => {
+    try {
+      setLoading(true);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/levels/${level.id}`,
+        type: "delete",
+      });
+      await getLevelsRequest();
+      toast.success(MessagesInterpreter(res));
+    } catch (e) {
+      setErrorData(e);
+      toast.error(MessagesInterpreter(e));
     } finally {
       setLoading(false);
     }
@@ -221,6 +256,7 @@ export default function Levels() {
       setSearchLevels("");
     }
   }, [showFilterLevels]);
+  /*************************REQUEST**********************/
 
   const pagination = (
     <Pagination
@@ -233,6 +269,22 @@ export default function Levels() {
   );
 
   /*********************METHODS*****************/
+  const deleteLevelModal = (level: LevelData) => {
+    setLevelEdition(level);
+    setAlertDeleteLevel(true);
+  };
+  const cancelDeleteLevelModal = () => {
+    setLevelEdition(undefined);
+    setAlertDeleteLevel(false);
+  };
+  const acceptDeleteLevelModal = async () => {
+    if (levelEdition !== undefined) {
+      await deleteLevelRequest(levelEdition);
+    }
+    setLevelEdition(undefined);
+    setAlertDeleteLevel(false);
+  };
+
   const addLevelModal = () => {
     setModalLevel(true);
   };
@@ -260,6 +312,14 @@ export default function Levels() {
 
   return (
     <>
+      <AlertDialog
+        isOpen={alertDeleteLevel}
+        title={"Alerta"}
+        text={`¿Está seguro de eliminar el nivel "${levelEdition?.description}"?`}
+      >
+        <Button onClick={cancelDeleteLevelModal}>Cancelar</Button>
+        <Button onClick={acceptDeleteLevelModal}>Aceptar</Button>
+      </AlertDialog>
       <AlertDialog
         isOpen={alertStateLevel}
         title={"Alerta"}

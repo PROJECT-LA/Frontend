@@ -84,6 +84,7 @@ export const LevelsModalView = ({
                 steps={1}
                 min={0}
                 max={10}
+                initialValue={level?.level}
                 rules={{ required: "Este campo es requerido" }}
               />
             </Grid>
