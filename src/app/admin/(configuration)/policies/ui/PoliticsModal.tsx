@@ -75,10 +75,6 @@ export const PoliticModalView = ({
 
   const saveUpdatePolicie = async (newPolicy: savePoliticCRUDType) => {
     try {
-      print("******************************************");
-      print(newPolicy);
-      print("******************************************");
-
       setLoadingModal(true);
       await delay(1000);
       const res = await sessionRequest({

@@ -7,7 +7,10 @@ export default async function Page({
 }: {
   searchParams?: { template?: string };
 }) {
-  if (!searchParams?.template) notFound();
-  // return <Controles idTemplate={searchParams.template} />;
-  return <ControlsPage2 idTemplate={searchParams.template} />;
+  let existsId: boolean = false;
+  if (searchParams?.template) {
+    return <ControlsPage2 exists={true} idTemplate={searchParams.template} />;
+  } else {
+    return <ControlsPage2 exists={false} />;
+  }
 }

@@ -88,10 +88,6 @@ const ProfileClient = () => {
         type: "PATCH",
         body: formData,
       });
-      console.log("*****************************");
-      console.log(res);
-      console.log("*****************************");
-
       toast.success(MessagesInterpreter(res));
       await getProfileInfo();
     } catch (e) {

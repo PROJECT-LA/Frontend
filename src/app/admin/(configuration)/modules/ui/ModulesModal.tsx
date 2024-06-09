@@ -26,6 +26,8 @@ interface ModulesModalType {
   nameSection?: string;
 }
 
+const frontendOptionsAction: string[] = ["create", "read", "update", "delete"];
+
 export const ModulesModalView = ({
   module,
   correctAction,

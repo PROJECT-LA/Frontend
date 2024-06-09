@@ -1,5 +1,6 @@
 import { optionType } from "@/components/forms/FormInputDropdown";
 import {
+  FileSliders,
   Home,
   LineChart,
   Lock,
@@ -68,6 +69,10 @@ export const icons: IconMapper[] = [
   {
     name: "line-chart",
     icon: <LineChart />,
+  },
+  {
+    name: "file-sliders",
+    icon: <FileSliders />,
   },
 ];
 

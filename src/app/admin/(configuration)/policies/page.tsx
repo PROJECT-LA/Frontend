@@ -409,7 +409,7 @@ export default function PoliticsPage() {
         />
       </CustomDialog>
       <CustomDataTable
-        title={"Política"}
+        title={"Políticas"}
         error={!!errorData}
         loading={loading}
         actions={acciones}

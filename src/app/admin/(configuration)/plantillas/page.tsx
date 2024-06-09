@@ -284,27 +284,11 @@ export default function PoliticsPage() {
       const data = await getPermissions("/admin/plantillas");
       if (data !== undefined) setPermissions(data);
     };
-    getPermissionsClient();
+    getPermissionsClient().finally(() => {
+      getTemplateRequest().finally(() => {});
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    getTemplateRequest().finally(() => {});
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    page,
-    limit,
-    // filterApp,
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    JSON.stringify(ordenCriterios),
-    // filterPolicy,
-  ]);
-  // useEffect(() => {
-  //   if (!showPolicyFilter) {
-  //     setFilterPolicy("");
-  //     setFilterApp("");
-  //   }
-  // }, [showPolicyFilter]);
+  }, [page, limit, JSON.stringify(ordenCriterios)]);
 
   const addTemplateModal = () => {
     setModalTemplate(true);

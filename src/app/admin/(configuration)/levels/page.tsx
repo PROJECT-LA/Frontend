@@ -345,7 +345,7 @@ export default function Levels() {
         />
       </CustomDialog>
       <CustomDataTable
-        title="Parámetros"
+        title="Niveles"
         error={!!errorData}
         loading={loading}
         actions={actions}

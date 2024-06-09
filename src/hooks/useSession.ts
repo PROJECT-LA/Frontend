@@ -73,7 +73,6 @@ export const useSession = () => {
         hideFullScreen();
         return;
       }
-
       throw e.response?.data || "Ocurrió un error desconocido";
     }
   };
