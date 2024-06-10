@@ -9,6 +9,8 @@ import { MessagesInterpreter, delay, siteName } from "@/utils";
 import {
   Box,
   Button,
+  ButtonBase,
+  Card,
   Divider,
   Grid,
   Input,
@@ -24,6 +26,7 @@ import {
 } from "@mui/material";
 import {
   ArrowBigRightDash,
+  ChevronRight,
   FileSliders,
   Group,
   ListIcon,
@@ -51,6 +54,7 @@ import {
   AddModalInfo,
   CUControlGroupType,
   CUControlSpecificType,
+  ControlGroupType,
   initialAddModalInfo,
 } from "./types";
 import { CustomDialog } from "@/components/modals";
@@ -79,6 +83,7 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
   const router = useRouter();
   const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
+  const [dataControls, setDataControls] = useState<ControlGroupType[]>([]);
   const [editionControlGroup, setEditionControlGroup] = useState<
     CUControlGroupType | undefined
   >(undefined);
@@ -127,12 +132,36 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
         );
         setActualTemplate(actualTemplate);
       }
-      await delay(200);
+      await delay(100);
+
+      await getGroupControlsAndSpecific();
 
       setErrorData(null);
     } catch (e) {
       setErrorData(e);
-      toast.error("Error", { description: MessagesInterpreter(e) });
+      toast.error(MessagesInterpreter(e));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getGroupControlsAndSpecific = async () => {
+    try {
+      setLoading(true);
+      await delay(200);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/control-groups`,
+        params: {
+          page: 1,
+          limit: 30,
+          idTemplate,
+        },
+      });
+      setDataControls(res.data.rows);
+      await delay(100);
+    } catch (e) {
+      setErrorData(e);
+      toast.error(MessagesInterpreter(e));
     } finally {
       setLoading(false);
     }
@@ -346,33 +375,124 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                         </Stack>
                         <Divider />
                         <List>
-                          {new Array(10).fill(null).map((_, index) => (
-                            <ListItem key={`list-item-${index}`}>
-                              <Button
-                                disabled={!exists}
-                                fullWidth
-                                variant="outlined"
+                          {idTemplate !== undefined &&
+                            dataControls.map((elem) => (
+                              <ListItem
+                                key={`group-controls-${elem.id}-${elem.groupCode}`}
+                                onClick={() => {
+                                  setEditionControlGroup({
+                                    idTemplate,
+                                    group: elem.group,
+                                    groupCode: elem.groupCode,
+                                    groupDescription: elem.groupDescription,
+                                    id: elem.id,
+                                    objective: elem.objective,
+                                    objectiveCode: elem.objectiveCode,
+                                    objectiveDescription:
+                                      elem.objectiveDescription,
+                                  });
+                                }}
                               >
-                                Ejemplo 1
-                              </Button>
-                            </ListItem>
-                          ))}
+                                <Box
+                                  width={"100%"}
+                                  border={1}
+                                  borderColor={`${theme.palette.primary.main}80`}
+                                  paddingX={2}
+                                  paddingY={1}
+                                  borderRadius={1}
+                                  sx={{
+                                    cursor: "pointer",
+                                    transition: "all .3s ease-in",
+                                    "&:hover": {
+                                      backgroundColor: `${theme.palette.primary.light}35`,
+                                    },
+                                  }}
+                                >
+                                  <Stack spacing={1}>
+                                    <Stack
+                                      direction="row"
+                                      spacing={1}
+                                      alignItems="center"
+                                    >
+                                      <Typography variant="h5">
+                                        {elem.groupCode}
+                                      </Typography>
+                                      <ChevronRight size={12} />
+                                      <Typography>{elem.group}</Typography>
+                                    </Stack>
+                                  </Stack>
+                                </Box>
+                              </ListItem>
+                            ))}
                         </List>
                       </Box>
                     </Panel>
                     <PanelResizeHandle />
                     <Panel minSize={60}>
                       <Stack>
-                        <Stack
-                          padding={2}
-                          height="6rem"
-                          direction="row"
-                          alignItems="center"
-                          justifyContent="space-between"
-                        >
-                          <Typography>MARCA</Typography>
-                        </Stack>
-                        <Divider />
+                        {editionControlGroup !== undefined && (
+                          <>
+                            <Grid container spacing={1}>
+                              <Grid item xs={5.5}>
+                                <Stack spacing={1} height="6rem" padding={1}>
+                                  <Typography
+                                    variant="h4"
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    Grupo
+                                  </Typography>
+                                  <Stack direction="row" spacing={1}>
+                                    <Typography variant="h4">
+                                      {editionControlGroup?.groupCode}
+                                    </Typography>
+                                    <Typography>
+                                      {editionControlGroup?.group}
+                                    </Typography>
+                                  </Stack>
+                                  <Typography variant="subtitle2">
+                                    {editionControlGroup?.groupDescription}
+                                  </Typography>
+                                </Stack>
+                              </Grid>
+
+                              <Grid item xs={0.5}>
+                                <Box
+                                  display="flex"
+                                  justifyContent="center"
+                                  alignItems="center"
+                                  height="100%"
+                                >
+                                  <Divider orientation="vertical" />
+                                </Box>
+                              </Grid>
+
+                              <Grid item xs={6}>
+                                <Stack spacing={1} height="6rem" padding={1}>
+                                  <Typography
+                                    variant="h4"
+                                    sx={{ textAlign: "center" }}
+                                  >
+                                    Objetivo
+                                  </Typography>
+
+                                  <Stack direction="row" spacing={1}>
+                                    <Typography variant="h5">
+                                      {editionControlGroup.objectiveCode}
+                                    </Typography>
+                                    <Typography>
+                                      {editionControlGroup?.objective}
+                                    </Typography>
+                                  </Stack>
+                                  <Typography variant="subtitle2">
+                                    {editionControlGroup?.objectiveDescription}
+                                  </Typography>
+                                </Stack>
+                              </Grid>
+                            </Grid>
+                            <Divider />
+                          </>
+                        )}
+
                         <Stack spacing={2}>
                           {dataGroupEspecific.length === 0 ? (
                             <Stack

@@ -1,20 +1,22 @@
-export interface ControlType {
+export interface ControlSpecificType {
+  id: string;
+
+  name: string;
+  description: string;
+  code: string;
+}
+export interface ControlGroupType {
   id: string;
   status: string;
 
-  oControl: string;
-  oControlDescription: string;
-  oControlCode: string;
+  objective?: string;
+  objectiveDescription?: string;
+  objectiveCode?: string;
+  group?: string;
+  groupDescription?: string;
+  groupCode?: string;
 
-  gControl: string;
-  gControlDescription: string;
-  gControlCode: string;
-
-  eControl: string;
-  eControlDescription: string;
-  eControlCode: string;
-
-  idTemplate: string;
+  controls: ControlSpecificType[];
 }
 
 export interface CUControlGroupType {
@@ -28,6 +30,8 @@ export interface CUControlGroupType {
   group?: string;
   groupDescription?: string;
   groupCode?: string;
+
+  controls?: ControlSpecificType[];
 }
 
 export interface CUControlSpecificType {
