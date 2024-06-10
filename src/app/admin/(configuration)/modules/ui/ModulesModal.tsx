@@ -5,7 +5,7 @@ import {
   FormInputAutocomplete,
   FormInputText,
 } from "@/components/forms";
-import { ModuleCRUDType, CUModuleType } from "../types";
+import { ModuleCRUDType, CUModuleType, FrontendURL } from "../types";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import { toast } from "sonner";
 import { useSession } from "@/hooks/useSession";
@@ -24,6 +24,7 @@ interface ModulesModalType {
   idSection?: string;
   idRole: string;
   nameSection?: string;
+  urls?: FrontendURL[] | undefined;
 }
 
 const frontendOptionsAction: string[] = ["create", "read", "update", "delete"];
@@ -36,6 +37,7 @@ export const ModulesModalView = ({
   isSection,
   idSection,
   nameSection,
+  urls,
 }: ModulesModalType) => {
   const { sessionRequest } = useSession();
   const { control, watch, handleSubmit } = useForm<ModuleCRUDType>({
@@ -56,11 +58,6 @@ export const ModulesModalView = ({
   const [options, setOptions] = useState<Array<optionType>>([]);
 
   const saveUpdateModule = async (module: ModuleCRUDType) => {
-    console.log("^^^^^ênvio^^^^^^^^^^");
-    print(module);
-    print(isSection);
-    console.log("^^^^^ênvio^^^^^^^^^^");
-
     let sendModule: CUModuleType | null = null;
     if (isSection) {
       sendModule = {
@@ -168,6 +165,30 @@ export const ModulesModalView = ({
               </Grid>
             </Grid>
           )}
+
+          <Box height={"15px"} />
+          {!isSection && urls !== undefined && (
+            <>
+              <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
+                <Grid item xs={12} sm={12} md={12}>
+                  <FormInputDropdown
+                    id={"url"}
+                    control={control}
+                    name="url"
+                    label="URL"
+                    disabled={loadingModal}
+                    options={urls.map((elem) => ({
+                      key: elem.object,
+                      value: elem.object,
+                      label: elem.object,
+                    }))}
+                  />
+                </Grid>
+              </Grid>
+              <Box height={"15px"} />
+            </>
+          )}
+
           <Box height={"15px"} />
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Grid item xs={12} sm={12} md={12}>
@@ -181,29 +202,6 @@ export const ModulesModalView = ({
               />
             </Grid>
           </Grid>
-          <Box height={"15px"} />
-          {!isSection && (
-            <>
-              <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-                <Grid item xs={12} sm={12} md={12}>
-                  <FormInputText
-                    id={"url"}
-                    control={control}
-                    name="url"
-                    label="URL"
-                    disabled={loadingModal}
-                    rules={{
-                      required: {
-                        value: true,
-                        message: "Este campo es requerido",
-                      },
-                    }}
-                  />
-                </Grid>
-              </Grid>
-              <Box height={"15px"} />
-            </>
-          )}
 
           {isSection && (
             <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>

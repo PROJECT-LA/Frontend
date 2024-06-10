@@ -1,58 +1,55 @@
-import { MessagesInterpreter, delay } from "@/utils";
 import React, { useState } from "react";
+import { CUControlGroupType } from "../types";
+import { useSession } from "@/hooks/useSession";
+import { useForm } from "react-hook-form";
+import { MessagesInterpreter, delay } from "@/utils";
 import { CONSTANTS } from "../../../../../../config";
 import { toast } from "sonner";
-import { CUControlType, ControlType } from "../types";
-import { useForm } from "react-hook-form";
-import { useSession } from "@/hooks/useSession";
+import { LinealLoader } from "@/components/loaders";
 import {
   Box,
   Button,
   DialogActions,
   DialogContent,
+  Divider,
   Grid,
   Typography,
 } from "@mui/material";
 import { FormInputText } from "@/components/forms";
-import { LinealLoader } from "@/components/loaders";
 
-interface ModalControlView {
-  idTemplate: string;
-  controls?: ControlType | undefined;
+interface ModalControlGroupView {
+  data?: CUControlGroupType | undefined;
   correctAction: () => void;
   cancelAction: () => void;
 }
 
-export const ModalControlView = ({
-  cancelAction,
+export const ModalControlGroup = ({
+  data,
   correctAction,
-  idTemplate,
-  controls,
-}: ModalControlView) => {
+  cancelAction,
+}: ModalControlGroupView) => {
   const { sessionRequest } = useSession();
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
-  const { control, watch, handleSubmit } = useForm<CUControlType>({
+  const { control, watch, handleSubmit } = useForm<CUControlGroupType>({
     defaultValues: {
-      id: controls?.id,
+      id: data?.id,
+      idTemplate: data?.idTemplate,
 
-      oControl: controls?.oControlDescription,
-      oControlDescription: controls?.oControlDescription,
-      oControlCode: controls?.oControlCode,
-
-      gControl: controls?.gControlDescription,
-      gControlDescription: controls?.gControlDescription,
-      gControlCode: controls?.gControlCode,
-
-      idTemplate,
+      group: data?.group,
+      groupCode: data?.groupCode,
+      groupDescription: data?.groupDescription,
+      objective: data?.objective,
+      objectiveCode: data?.objective,
+      objectiveDescription: data?.objectiveDescription,
     },
   });
 
-  const saveUpdateControl = async (saveControl: CUControlType) => {
+  const saveUpdateControlGroup = async (saveControl: CUControlGroupType) => {
     try {
       setLoadingModal(true);
       await delay(300);
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/controls${
+        url: `${CONSTANTS.baseUrl}/control-groups${
           saveControl.id ? `/${saveControl.id}` : ""
         }`,
         type: !!saveControl.id ? "patch" : "post",
@@ -68,21 +65,20 @@ export const ModalControlView = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(saveUpdateControl)}>
+    <form onSubmit={handleSubmit(saveUpdateControlGroup)}>
       <DialogContent dividers>
         <Grid container direction={"column"} justifyContent="space-evenly">
-          <Box height={10} />
-          <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Typography variant="h5">Objetivo del control</Typography>
-          </Grid>
+          <Typography variant="h5" sx={{ textAlign: "center" }}>
+            Control grupo
+          </Typography>
           <Box height={10} />
 
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Grid item xs={12} sm={12} md={6}>
               <FormInputText
-                id={"oControlCode"}
+                id={"groupCode"}
                 control={control}
-                name="oControlCode"
+                name="groupCode"
                 label="Código"
                 disabled={loadingModal}
                 rules={{ required: "Este campo es requerido" }}
@@ -90,10 +86,10 @@ export const ModalControlView = ({
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
               <FormInputText
-                id={"oControl"}
+                id={"groupName"}
                 control={control}
-                name="oControl"
-                label="Control"
+                name="group"
+                label="Nombre"
                 disabled={loadingModal}
                 rules={{ required: "Este campo es requerido" }}
               />
@@ -105,9 +101,9 @@ export const ModalControlView = ({
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Grid item xs={12} sm={12} md={12}>
               <FormInputText
-                id={"oControlDescription"}
+                id={"groupDescription"}
                 control={control}
-                name="oControlDescription"
+                name="groupDescription"
                 label="Descripción"
                 disabled={loadingModal}
                 rules={{
@@ -120,19 +116,22 @@ export const ModalControlView = ({
             </Grid>
           </Grid>
 
-          <Box height={"25px"} />
+          <Box height={15} />
 
-          <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-            <Typography variant="h5">Nivel general de aprobación</Typography>
-          </Grid>
-          <Box height={"15px"} />
+          <Divider />
+          <Box height={10} />
+
+          <Typography variant="h5" sx={{ textAlign: "center" }}>
+            Control objetivo
+          </Typography>
+          <Box height={10} />
 
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Grid item xs={12} sm={12} md={6}>
               <FormInputText
-                id={"gControlCode"}
+                id={"objectiveCode"}
                 control={control}
-                name="gControlCode"
+                name="objectiveCode"
                 label="Código"
                 disabled={loadingModal}
                 rules={{ required: "Este campo es requerido" }}
@@ -140,10 +139,10 @@ export const ModalControlView = ({
             </Grid>
             <Grid item xs={12} sm={12} md={6}>
               <FormInputText
-                id={"gControl"}
+                id={"nameObjective"}
                 control={control}
-                name="gControl"
-                label="Control"
+                name="objective"
+                label="Nombre"
                 disabled={loadingModal}
                 rules={{ required: "Este campo es requerido" }}
               />
@@ -155,9 +154,9 @@ export const ModalControlView = ({
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Grid item xs={12} sm={12} md={12}>
               <FormInputText
-                id={"gControlDescription"}
+                id={"objectiveDescription"}
                 control={control}
-                name="gControlDescription"
+                name="objectiveDescription"
                 label="Descripción"
                 disabled={loadingModal}
                 rules={{
@@ -169,8 +168,6 @@ export const ModalControlView = ({
               />
             </Grid>
           </Grid>
-
-          <Box height={"20px"} />
 
           <LinealLoader mostrar={loadingModal} />
         </Grid>

@@ -39,6 +39,7 @@ type FormInputTextProps<T extends FieldValues> = {
   clearable?: boolean;
   variant?: "standard" | "outlined" | "filled";
   rows?: number;
+  placeholder?: string;
   multiline?: boolean;
   bgcolor?: string;
   labelVariant?: Variant;
@@ -54,6 +55,7 @@ export const FormInputText = <T extends FieldValues>({
   rules,
   disabled,
   onChange,
+  placeholder,
   InputProps,
   inputProps,
   onEnter,
@@ -112,6 +114,7 @@ export const FormInputText = <T extends FieldValues>({
                   }
                 }
               }}
+              placeholder={placeholder}
               value={field.value}
               disabled={disabled}
               inputProps={inputProps}

@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 import { Icono } from "@/components/Icono";
 import React, { MouseEventHandler, ReactNode, useState } from "react";
+import { AlignLeft } from "lucide-react";
 
 interface ActionType {
   color?:
@@ -32,7 +33,7 @@ interface ActionType {
 }
 
 interface ActionsButton {
-  deactivate?: false;
+  deactivate?: boolean;
   color?:
     | "inherit"
     | "action"
@@ -55,7 +56,7 @@ export const ActionsButton = ({
   deactivate = false,
   color = "primary",
   actions = [],
-  icon = "more_horiz",
+  icon = <AlignLeft size={18} />,
   alter = "icono",
   text = "acciones",
   label,
@@ -103,7 +104,9 @@ export const ActionsButton = ({
               handleTooltipClose();
               dropdownMenu(event);
             }}
+            disabled={deactivate}
             color="primary"
+            startIcon={icon}
           >
             {text}
           </Button>
@@ -113,6 +116,7 @@ export const ActionsButton = ({
             id={id}
             aria-label={label}
             size="small"
+            disabled={deactivate}
             onClick={(event) => {
               handleTooltipClose();
               dropdownMenu(event);

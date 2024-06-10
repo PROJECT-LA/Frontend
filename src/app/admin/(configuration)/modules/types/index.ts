@@ -38,3 +38,14 @@ export interface RolModules {
   rolName: string;
   data: Item[];
 }
+
+export interface FrontendURL {
+  subject: string;
+  object: string;
+  action: string;
+}
+
+export interface URLFrontendByRole {
+  id: string;
+  data: FrontendURL[];
+}

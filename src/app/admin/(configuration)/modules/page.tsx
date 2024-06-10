@@ -22,7 +22,13 @@ import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
 import { ModulesModalView, DragSection } from "./ui";
 import { AlertDialog, CustomDialog } from "@/components/modals";
-import { ModuleCRUDType, RolModules, TabPanelProps } from "./types";
+import {
+  FrontendURL,
+  ModuleCRUDType,
+  RolModules,
+  TabPanelProps,
+  URLFrontendByRole,
+} from "./types";
 import { RolCRUDType } from "../users/types";
 import { Item } from "@/types";
 
@@ -69,6 +75,7 @@ const ModulesClient2 = () => {
     idRole: string;
     idSection?: string;
     nameSection?: string;
+    urls?: FrontendURL[] | undefined;
   }>({
     isSection: false,
     idRole: "",
@@ -81,6 +88,8 @@ const ModulesClient2 = () => {
   const [permissions, setPermissions] =
     useState<PermissionTypes>(initialPermissions);
   const { sessionRequest, getPermissions } = useSession();
+
+  const [dataURLsByRole, setDataURLsByRole] = useState<URLFrontendByRole[]>([]);
 
   useEffect(() => {
     const getPermissionsClient = async () => {
@@ -108,19 +117,29 @@ const ModulesClient2 = () => {
       setRoles(res.data.rows);
 
       const temporalModules: RolModules[] = [];
+      const temporalURLs: URLFrontendByRole[] = [];
 
       for (const rol of rolesTemporal) {
         const res = await sessionRequest({
           url: `${CONSTANTS.baseUrl}/modules/${rol.id}`,
+        });
+        const res2 = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/policies/${rol.id}/frontend`,
         });
         temporalModules.push({
           rolId: rol.id,
           rolName: rol.name,
           data: res.data,
         });
+        await delay(50);
+        temporalURLs.push({
+          id: rol.id,
+          data: res2.data,
+        });
       }
 
       setModules(temporalModules);
+      setDataURLsByRole(temporalURLs);
     } catch (e) {
       toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
@@ -242,7 +261,9 @@ const ModulesClient2 = () => {
     idSection?: string,
     nameSection?: string
   ) => {
+    const frontendRole = dataURLsByRole.find((elem) => elem.id === idRole);
     setModalModule({
+      urls: frontendRole?.data,
       state: true,
       idRole,
       isSection,
@@ -258,7 +279,9 @@ const ModulesClient2 = () => {
     idSection?: string,
     nameSection?: string
   ) => {
+    const frontendRole = dataURLsByRole.find((elem) => elem.id === idRole);
     setModalModule({
+      urls: frontendRole?.data,
       isSection,
       idRole,
       state: true,
@@ -369,6 +392,7 @@ const ModulesClient2 = () => {
       >
         <ModulesModalView
           isSection={modalModule.isSection}
+          urls={modalModule.urls}
           idSection={modalModule.idSection}
           idRole={modalModule.idRole}
           nameSection={modalModule.nameSection}
