@@ -90,13 +90,13 @@ export default function UsersClientPage() {
         <Typography variant={"body2"}>{`${userData.lastNames}`}</Typography>
       </div>,
       <Typography
-        key={`${userData.id}-${indexUsuario}-tipoDoc`}
+        key={`${userData.id}-${indexUsuario}-email`}
         variant={"body2"}
       >
         {`${userData.email}`}
       </Typography>,
       <Typography
-        key={`${userData.id}-${indexUsuario}-usuario`}
+        key={`${userData.id}-${indexUsuario}-phone`}
         variant={"body2"}
       >
         {userData.phone}
@@ -107,6 +107,7 @@ export default function UsersClientPage() {
           <Chip
             key={`usuario-rol-${indexUsuarioRol}`}
             label={itemUsuarioRol.name}
+            sx={{ m: 0.5 }}
           />
         ))}
       </Grid>,
@@ -153,31 +154,16 @@ export default function UsersClientPage() {
               }
             />
           )}
-
-          {(userData.status == "ACTIVO" || userData.status == "INACTIVO") && (
-            <IconTooltip
-              id={`restablecerContrasena-${userData.id}`}
-              title="Restablecer contraseña"
-              color={"info"}
-              action={async () => {
-                await restoreUserModalPassword(userData);
-              }}
-              icon={<KeyRound />}
-              name={"Restablecer contraseña"}
-            />
-          )}
-          {userData.status == "PENDIENTE" && (
-            <IconTooltip
-              id={`reenviarCorreoActivacion-${userData.id}`}
-              title={"Reenviar correo de activación"}
-              color={"info"}
-              action={async () => {
-                await reenvioCorreoModal(userData);
-              }}
-              icon={<Mails />}
-              name={"Reenviar correo de activación"}
-            />
-          )}
+          <IconTooltip
+            id={`restablecerContrasena-${userData.id}`}
+            title="Restablecer contraseña"
+            color={"info"}
+            action={async () => {
+              await restoreUserModalPassword(userData);
+            }}
+            icon={<KeyRound />}
+            name={"Restablecer contraseña"}
+          />
           {permissions.update && (
             <IconTooltip
               id={`editarUsusario-${userData.id}`}
@@ -300,9 +286,7 @@ export default function UsersClientPage() {
     try {
       setLoading(true);
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/users/${usuario.id}/${
-          usuario.status == "ACTIVO" ? "inactivate" : "activate"
-        }`,
+        url: `${CONSTANTS.baseUrl}/users/${usuario.id}/change-status`,
         type: "patch",
       });
       print(`respuesta inactivar usuario: ${res}`);
@@ -320,7 +304,7 @@ export default function UsersClientPage() {
     try {
       setLoading(true);
       const respuesta = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/users/${usuario.id}/restauracion`,
+        url: `${CONSTANTS.baseUrl}/users/${usuario.id}/reset-password`,
         type: "patch",
       });
       print(`respuesta restablecer usuario: ${respuesta}`);
@@ -352,30 +336,13 @@ export default function UsersClientPage() {
     }
   };
 
-  const resendActivationEmail = async (usuario: UserRolCRUDType) => {
-    try {
-      setLoading(true);
-      const respuesta = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/users/${usuario.id}/reenviar`,
-        type: "patch",
-      });
-      print(`respuesta reenviar correo usuario: ${respuesta}`);
-      toast.success("Éxito", { description: MessagesInterpreter(respuesta) });
-      await getUsers();
-    } catch (e) {
-      print(`Error al reenvio correo usuario`, e);
-      toast.error("Error", { description: MessagesInterpreter(e) });
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const addUserModal = () => {
     setUserEdition(null);
     setModalUser(true);
   };
   const editUserModal = (usuario: UserRolCRUDType) => {
     setUserEdition(usuario);
+    console.log(usuario);
     setModalUser(true);
   };
 
@@ -393,11 +360,6 @@ export default function UsersClientPage() {
   const restoreUserModalPassword = (usuario: UserRolCRUDType) => {
     setUserEdition(usuario);
     setShowAlertRestoreUser(true);
-  };
-
-  const reenvioCorreoModal = (usuario: UserRolCRUDType) => {
-    setUserEdition(usuario);
-    setShowAlertEmailResend(true);
   };
 
   const cancelAlertUserState = async () => {
@@ -424,20 +386,6 @@ export default function UsersClientPage() {
     setShowAlertRestoreUser(false);
     if (userEdition) {
       await restoreUserPassword(userEdition);
-    }
-    setUserEdition(null);
-  };
-
-  const cancelAlertResendEmail = async () => {
-    setShowAlertEmailResend(false);
-    await delay(500);
-    setUserEdition(null);
-  };
-
-  const acceptAlertResendEmail = async () => {
-    setShowAlertEmailResend(false);
-    if (userEdition) {
-      await resendActivationEmail(userEdition);
     }
     setUserEdition(null);
   };
@@ -496,15 +444,6 @@ export default function UsersClientPage() {
       >
         <Button onClick={cancelAlertUserRestore}>Cancelar</Button>
         <Button onClick={acceptAlertUserRestore}>Aceptar</Button>
-      </AlertDialog>
-      <AlertDialog
-        isOpen={showAlertEmailResend}
-        title={"Alerta"}
-        text={`¿Está seguro de reenviar el correo de activación de
-         ${titleCase(userEdition?.names ?? "")} ?`}
-      >
-        <Button onClick={cancelAlertResendEmail}>Cancelar</Button>
-        <Button onClick={acceptAlertResendEmail}>Aceptar</Button>
       </AlertDialog>
 
       <CustomDialog

@@ -11,8 +11,9 @@ export interface UserRolCRUDType {
   email: string;
   status: string;
   phone: string;
-  password: string;
   roles: RolCRUDType[];
+  ci: string;
+  address: string;
 }
 
 export interface CRUserType {
@@ -24,7 +25,8 @@ export interface CRUserType {
   email: string;
   phone: string;
   username: string;
-  password: string;
+  ci: string;
+  address: string;
 }
 
 /// Tipo rol transversal

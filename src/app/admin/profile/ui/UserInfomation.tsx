@@ -1,26 +1,9 @@
-import { useSession } from "@/hooks/useSession";
-import { useAuthStore } from "@/store";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  RolCRUDType,
-  UserRolCRUDType,
-} from "../../(configuration)/users/types";
-import {
-  Box,
-  Button,
-  Chip,
-  Grid,
-  InputAdornment,
-  Stack,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Box, Button, Grid, InputAdornment, Stack } from "@mui/material";
 import { CONSTANTS } from "../../../../../config";
 import { Save } from "lucide-react";
 import { FormInputText } from "@/components/forms";
-import { MessagesInterpreter, delay } from "@/utils";
-import { toast } from "sonner";
 import { LinealLoader } from "@/components/loaders";
 import { UserCUInformation, UserProfileInfo } from "../types";
 
@@ -33,9 +16,6 @@ export const UserInfomation = ({
   loadingModal: boolean;
   submitData: (data: UserCUInformation) => void;
 }) => {
-  const theme = useTheme();
-  const { sessionRequest } = useSession();
-  const { user } = useAuthStore();
   const { handleSubmit, control } = useForm<UserCUInformation>({
     defaultValues: {
       username: userInfo.username,
@@ -57,6 +37,7 @@ export const UserInfomation = ({
       <form onSubmit={handleSubmit(saveProfileInformation)}>
         <Box>
           <Grid container spacing={CONSTANTS.gridSpacing}>
+            <Grid item xs={12} sm={12}></Grid>
             <Grid item xs={12} sm={12} md={6}>
               <FormInputText
                 id={"names"}

@@ -41,8 +41,9 @@ export const UsersModalView = ({
       username: user?.username,
       names: user?.names,
       phone: user?.phone,
+      ci: user?.ci,
+      address: user?.address,
       lastNames: user?.lastNames,
-      password: user?.password,
       roles: user?.roles.map((rol) => rol.id),
       status: user?.status,
       email: user?.email,
@@ -130,6 +131,28 @@ export const UsersModalView = ({
                 disabled={loadingModal}
               />
             </Grid>
+            <Grid item xs={12} sm={12} md={12}>
+              <FormInputText
+                id={"ci"}
+                control={control}
+                name="ci"
+                type="text"
+                label="CI"
+                disabled={loadingModal}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12}>
+              <FormInputText
+                id={"address"}
+                control={control}
+                type="text"
+                name="address"
+                multiline
+                rows={3}
+                label="Dirección"
+                disabled={loadingModal}
+              />
+            </Grid>
           </Grid>
           <Grid>
             <Box height={"25px"} />
@@ -139,30 +162,20 @@ export const UsersModalView = ({
               sx={{ fontWeight: "medium", textAlign: "center" }}
               variant="h5"
             >
-              Autorización del user
+              Datos Acceso
             </Typography>
             <Box height={"10px"} />
             <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-              <Grid item xs={12} sm={12} md={6}>
+              <Grid item xs={12} sm={12} md={12}>
                 <FormInputText
                   id={"username"}
                   control={control}
                   name="username"
-                  label="Usuario"
+                  type="text"
+                  label="Nombre de Usuario"
                   disabled={loadingModal}
                 />
               </Grid>
-              <Grid item xs={12} sm={12} md={6}>
-                <FormInputText
-                  id={"password"}
-                  control={control}
-                  name="password"
-                  type="password"
-                  label="Contraseña"
-                  disabled={loadingModal}
-                />
-              </Grid>
-
               <Grid item xs={12} sm={12} md={12}>
                 <FormInputDropdownMultiple
                   id={"roles"}
