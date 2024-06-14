@@ -63,7 +63,7 @@ export default function UsersClientPage() {
   const [modalUser, setModalUser] = useState(false);
   const [showAlertUserState, setShowAlertUserState] = useState(false);
   const [showAlertRestoreUser, setShowAlertRestoreUser] = useState(false);
-  const [showAlertEmailResend, setShowAlertEmailResend] = useState(false);
+  const [showAlertRemoveUser, setShowAlertRemoveUser] = useState(false);
 
   const [userEdition, setUserEdition] = useState<
     UserRolCRUDType | undefined | null
@@ -184,7 +184,7 @@ export default function UsersClientPage() {
               color={"secondary"}
               action={() => {
                 print(`Eliminaremos`, userData);
-                deleteAccount(userData);
+                deleteUserModal(userData);
               }}
               icon={<Trash />}
               name={"Eliminar cuenta"}
@@ -390,6 +390,26 @@ export default function UsersClientPage() {
     setUserEdition(null);
   };
 
+  const deleteUserModal = (usuario: UserRolCRUDType) => {
+    setUserEdition(usuario);
+    console.log(usuario);
+    setShowAlertRemoveUser(true);
+  };
+
+  const cancelAlertUserRemove = async () => {
+    setShowAlertRemoveUser(false);
+    await delay(500);
+    setUserEdition(null);
+  };
+
+  const acceptAlertUserRemove = async () => {
+    setShowAlertRemoveUser(false);
+    if (userEdition) {
+      await deleteAccount(userEdition);
+    }
+    setUserEdition(null);
+  };
+
   useEffect(() => {
     const getPermissionsClient = async () => {
       const data = await getPermissions("/admin/users");
@@ -446,6 +466,15 @@ export default function UsersClientPage() {
         <Button onClick={acceptAlertUserRestore}>Aceptar</Button>
       </AlertDialog>
 
+      <AlertDialog
+        isOpen={showAlertRemoveUser}
+        title={"Alerta"}
+        text={`¿Está seguro de eliminar el usuario
+         ${titleCase(userEdition?.names ?? "")} ?`}
+      >
+        <Button onClick={cancelAlertUserRemove}>Cancelar</Button>
+        <Button onClick={acceptAlertUserRemove}>Aceptar</Button>
+      </AlertDialog>
       <CustomDialog
         isOpen={modalUser}
         handleClose={closeUserModal}
