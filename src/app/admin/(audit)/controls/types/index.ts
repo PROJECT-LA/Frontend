@@ -1,6 +1,4 @@
 export interface ControlSpecificType {
-  id: string;
-
   name: string;
   description: string;
   code: string;
@@ -46,6 +44,7 @@ export interface CUControlSpecificType {
 export interface AddModalInfo {
   state: boolean;
   isGroup: boolean;
+  groupId?: string;
 }
 
 export const initialAddModalInfo = {

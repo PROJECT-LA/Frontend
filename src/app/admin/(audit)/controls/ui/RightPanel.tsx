@@ -1,24 +1,31 @@
 import React from "react";
-import { Stack, Grid, Typography, Divider, Box } from "@mui/material";
+import {
+  Stack,
+  Grid,
+  Typography,
+  Divider,
+  Box,
+  List,
+  ListItem,
+  Card,
+  useTheme,
+} from "@mui/material";
 import { Panel } from "react-resizable-panels";
 import MainCard from "@/components/cards/MainCard";
 import Image from "next/image";
 import { CUControlGroupType } from "../types";
-
-const dataGroupEspecific = [
-  // "NUEVO",
-  // "NUEVO",
-  // "NUEVO",
-  // "NUEVO",
-  // "NUEVO",
-  // "NUEVO",
-];
-
+import { PermissionTypes } from "@/utils/permissions";
+import { IconTooltip } from "@/components/buttons";
+import { Pencil, Trash2Icon, ToggleRight } from "lucide-react";
 interface RightPanel {
+  permissions: PermissionTypes;
   editionControlGroup: CUControlGroupType | undefined;
 }
 
-export const RightPanel = ({ editionControlGroup }: RightPanel) => {
+export const RightPanel = ({
+  editionControlGroup,
+  permissions,
+}: RightPanel) => {
   return (
     <Panel minSize={60}>
       <Stack>
@@ -26,7 +33,7 @@ export const RightPanel = ({ editionControlGroup }: RightPanel) => {
           <>
             <Grid container spacing={1}>
               <Grid item xs={5.5}>
-                <Stack spacing={1} height="6rem" padding={1}>
+                <Stack spacing={1} height="6.5rem" padding={1}>
                   <Typography variant="h4" sx={{ textAlign: "center" }}>
                     Grupo
                   </Typography>
@@ -54,13 +61,13 @@ export const RightPanel = ({ editionControlGroup }: RightPanel) => {
               </Grid>
 
               <Grid item xs={6}>
-                <Stack spacing={1} height="6rem" padding={1}>
+                <Stack spacing={1} height="7rem" padding={1}>
                   <Typography variant="h4" sx={{ textAlign: "center" }}>
                     Objetivo
                   </Typography>
 
                   <Stack direction="row" spacing={1}>
-                    <Typography variant="h5">
+                    <Typography variant="h4">
                       {editionControlGroup.objectiveCode}
                     </Typography>
                     <Typography>{editionControlGroup?.objective}</Typography>
@@ -76,7 +83,7 @@ export const RightPanel = ({ editionControlGroup }: RightPanel) => {
         )}
 
         <Stack spacing={2}>
-          {dataGroupEspecific.length === 0 ? (
+          {editionControlGroup?.controls?.length === 0 ? (
             <Stack justifyContent="center" height="450px" alignItems="center">
               <Image
                 src="/images/support/no-data-2.png"
@@ -91,12 +98,69 @@ export const RightPanel = ({ editionControlGroup }: RightPanel) => {
               </Typography>
             </Stack>
           ) : (
-            <>
-              <MainCard>ejemplo</MainCard>
-              <MainCard>ejemplo</MainCard>
-              <MainCard>ejemplo</MainCard>
-              <MainCard>ejemplo</MainCard>
-            </>
+            <List sx={{ padding: "1rem", height: "100%", overflowY: "auto" }}>
+              {editionControlGroup?.controls?.map((specific, index) => (
+                <MainCard
+                  padding={false}
+                  key={`list-control-specific-${index}`}
+                  radius="0.5rem"
+                >
+                  <Stack padding="0.8rem">
+                    <Stack direction="row" justifyContent="space-between">
+                      <Stack>
+                        <Typography variant="h5">{specific.code}</Typography>
+                        <Typography variant="h5">{specific.name}</Typography>
+                      </Stack>
+                      <Stack direction="row" spacing={1}>
+                        {permissions.update && (
+                          <IconTooltip
+                            id={`edit-sub-control-specific-${specific.code}`}
+                            title={"Editar"}
+                            color={"primary"}
+                            action={() => {
+                              // editModule(section, idRole, true);
+                            }}
+                            icon={<Pencil />}
+                            name={"Editar control específico"}
+                          />
+                        )}
+
+                        {permissions.update && (
+                          <IconTooltip
+                            id={`change-status-control-specific-${specific.code}`}
+                            title={
+                              // section.status == "ACTIVO" ? "Inactivar" : "Activar"
+                              "Activar"
+                            }
+                            color={"success"}
+                            action={() => {
+                              // changeState(section, true);
+                            }}
+                            icon={<ToggleRight />}
+                            name={"Activar control específico"}
+                          />
+                        )}
+                        {permissions.delete && (
+                          <IconTooltip
+                            id="Eliminar"
+                            name="Eliminar"
+                            title="Eliminar"
+                            color="error"
+                            action={() => {
+                              // deleteModule(section, true);
+                            }}
+                            icon={<Trash2Icon />}
+                          />
+                        )}
+                      </Stack>
+                    </Stack>
+
+                    <Box height={5} />
+                    <Typography>{specific.description}</Typography>
+                  </Stack>
+                </MainCard>
+              ))}
+            </List>
           )}
         </Stack>
       </Stack>

@@ -24,11 +24,13 @@ interface LeftPanel {
   idTemplate: string;
   exists: boolean;
   dataControls: ControlGroupType[];
+  editionControlGroup: CUControlGroupType | undefined;
   setEditionControlGroup: (data: CUControlGroupType) => void;
 }
 
 export const LeftPanel = ({
   idTemplate,
+  editionControlGroup,
   exists,
   dataControls,
   setEditionControlGroup,
@@ -53,11 +55,11 @@ export const LeftPanel = ({
             borderRight: `1px solid ${theme.palette.divider}`,
           }}
         >
-          <Stack padding={2} height="6rem">
+          <Stack padding={2} height="7rem">
             <Typography variant="h5" sx={{ textAlign: "center" }}>
               Grupo de controles
             </Typography>
-            <Box height={5} />
+            <Box height={10} />
             <FormInputAutocomplete
               control={control}
               disabled={!exists}
@@ -91,17 +93,27 @@ export const LeftPanel = ({
                       objective: elem.objective,
                       objectiveCode: elem.objectiveCode,
                       objectiveDescription: elem.objectiveDescription,
+                      controls: elem.controls,
                     });
                   }}
                 >
                   <Box
                     width={"100%"}
                     border={1}
-                    borderColor={`${theme.palette.primary.main}80`}
+                    borderColor={`${
+                      elem.id === editionControlGroup?.id
+                        ? theme.palette.primary.main
+                        : theme.palette.divider + "80"
+                    }`}
                     paddingX={2}
                     paddingY={1}
                     borderRadius={1}
                     sx={{
+                      backgroundColor: `${
+                        elem.id === editionControlGroup?.id
+                          ? theme.palette.primary.light + "15"
+                          : "transparent !important"
+                      }`,
                       cursor: "pointer",
                       transition: "all .3s ease-in",
                       "&:hover": {

@@ -34,6 +34,8 @@ interface ControlProps {
 }
 
 const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
+  console.log(`*********************\n${idTemplate}`);
+
   const { sessionRequest, getPermissions } = useSession();
 
   const [dataControls, setDataControls] = useState<ControlGroupType[]>([]);
@@ -98,13 +100,14 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
   useEffect(() => {
     const getPermissionsClient = async () => {
       const data = await getPermissions("/admin/controles");
+      console.log(data);
       if (data !== undefined) setPermissions(data);
     };
     getPermissionsClient().finally(() => {
       getTemplateRequest().finally(() => {});
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [, idTemplate]);
 
   const closeModalControl = async () => {
     setEditionControlGroup(undefined);
@@ -117,7 +120,7 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
     setEditionControlGroup(undefined);
     setEditionControlSpecific(undefined);
     await delay(100);
-    // TODO: Obtener los valores actualizados
+    await getTemplateRequest();
     setAddModalInfo(initialAddModalInfo);
   };
 
@@ -156,7 +159,9 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
 
                 {actualTemplate !== undefined && idTemplate !== undefined && (
                   <ControlsHeader
+                    idControlGroup={editionControlGroup?.id}
                     exists={exists}
+                    permissions={permissions}
                     title={actualTemplate.name}
                     actionGroup={() => {
                       setAddModalInfo({
@@ -167,10 +172,11 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                         idTemplate,
                       });
                     }}
-                    actionControlSpecific={() => {
+                    actionControlSpecific={(groupId: string) => {
                       setAddModalInfo({
                         state: true,
                         isGroup: false,
+                        groupId,
                       });
                     }}
                   />
@@ -181,15 +187,20 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                 <MainCard padding={false} radius="0.4rem">
                   <PanelGroup
                     direction="horizontal"
-                    style={{ minHeight: "80vh" }}
+                    style={{ minHeight: "78vh" }}
                   >
                     <LeftPanel
                       exists={exists}
                       idTemplate={idTemplate ?? ""}
                       dataControls={dataControls}
+                      editionControlGroup={editionControlGroup}
                       setEditionControlGroup={setEditionControlGroup}
                     />
-                    <RightPanel editionControlGroup={editionControlGroup} />
+
+                    <RightPanel
+                      permissions={permissions}
+                      editionControlGroup={editionControlGroup}
+                    />
                   </PanelGroup>
                 </MainCard>
               </>
