@@ -10,11 +10,12 @@ import {
   useTheme,
 } from "@mui/material";
 import { FormInputAutocomplete } from "@/components/forms";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, GripVertical } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import { ControlGroupType } from "../types";
 import { CUControlGroupType } from "../types";
+import { CONSTANTS } from "../../../../../../config";
 
 interface SearchGroup {
   group: string;
@@ -48,6 +49,7 @@ export const LeftPanel = ({
     <>
       <Panel defaultSize={33.33} minSize={20} maxSize={80}>
         <Box
+          position="relative"
           sx={{
             height: "100%",
             overflow: "hidden",
@@ -55,10 +57,10 @@ export const LeftPanel = ({
             borderRight: `1px solid ${theme.palette.divider}`,
           }}
         >
-          <Stack padding={2} height="7rem">
-            <Typography variant="h5" sx={{ textAlign: "center" }}>
+          <Stack padding={2}>
+            {/* <Typography variant="h5" sx={{ textAlign: "center" }}>
               Grupo de controles
-            </Typography>
+            </Typography> */}
             <Box height={10} />
             <FormInputAutocomplete
               control={control}
@@ -68,6 +70,7 @@ export const LeftPanel = ({
               }}
               id="group"
               name="group"
+              searchIcon={true}
               options={optionsGroup}
               label=""
               freeSolo
@@ -77,7 +80,7 @@ export const LeftPanel = ({
               renderOption={(option) => <>{option.label}</>}
             />
           </Stack>
-          <Divider />
+          {/* <Divider /> */}
           <List>
             {idTemplate !== undefined &&
               dataControls.map((elem) => (
@@ -107,6 +110,11 @@ export const LeftPanel = ({
                     }`}
                     paddingX={2}
                     paddingY={1}
+                    boxShadow={
+                      elem.id === editionControlGroup?.id
+                        ? CONSTANTS.boxShadow
+                        : ""
+                    }
                     borderRadius={1}
                     sx={{
                       backgroundColor: `${

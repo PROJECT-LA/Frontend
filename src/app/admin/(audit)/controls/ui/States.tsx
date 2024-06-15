@@ -169,57 +169,14 @@ export const ControlsHeader = ({
   return (
     <Stack direction="row" justifyContent="space-between" alignItems="center">
       <Typography variant="h4">{`Plantilla: ${title}`}</Typography>
-
-      <Stack direction="row" alignItems="center">
-        {idControlGroup && permissions.update && (
-          <IconTooltip
-            id={`edit-sub-control-group-${idControlGroup}`}
-            title={"Editar"}
-            color={"primary"}
-            action={() => {
-              // editModule(section, idRole, true);
-            }}
-            icon={<Pencil />}
-            name={"Editar control específico"}
-          />
-        )}
-
-        {idControlGroup && permissions.update && (
-          <IconTooltip
-            id={`change-status-control-group-${idControlGroup}`}
-            title={
-              // section.status == "ACTIVO" ? "Inactivar" : "Activar"
-              "Activar"
-            }
-            color={"success"}
-            action={() => {
-              // changeState(section, true);
-            }}
-            icon={<ToggleRight />}
-            name={"Activar control específico"}
-          />
-        )}
-        {idControlGroup && permissions.delete && (
-          <IconTooltip
-            id={`delete-control-group-${idControlGroup}`}
-            name="Eliminar"
-            title="Eliminar"
-            color="error"
-            action={() => {
-              // deleteModule(section, true);
-            }}
-            icon={<Trash2Icon />}
-          />
-        )}
-        <ActionsButton
-          id={"addControlOrGroup"}
-          text={"Agregar"}
-          deactivate={!exists}
-          alter={xs ? "icono" : "boton"}
-          label={"Agregar nuevo control o grupo"}
-          actions={idControlGroup ? actions : action}
-        />
-      </Stack>
+      <ActionsButton
+        id={"addControlOrGroup"}
+        text={"Agregar"}
+        deactivate={!exists}
+        alter={xs ? "icono" : "boton"}
+        label={"Agregar nuevo control o grupo"}
+        actions={idControlGroup ? actions : action}
+      />
     </Stack>
   );
 };

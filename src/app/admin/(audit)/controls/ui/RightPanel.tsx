@@ -9,14 +9,26 @@ import {
   ListItem,
   Card,
   useTheme,
+  Button,
 } from "@mui/material";
 import { Panel } from "react-resizable-panels";
 import MainCard from "@/components/cards/MainCard";
 import Image from "next/image";
 import { CUControlGroupType } from "../types";
 import { PermissionTypes } from "@/utils/permissions";
-import { IconTooltip } from "@/components/buttons";
-import { Pencil, Trash2Icon, ToggleRight } from "lucide-react";
+import { ActionsButton, IconTooltip } from "@/components/buttons";
+import { Pencil, Trash2Icon, ToggleRight, Check } from "lucide-react";
+import { styled } from "@mui/material/styles";
+
+const TruncatedTypography = styled(Typography)(({ theme }) => ({
+  display: "-webkit-box",
+  WebkitBoxOrient: "vertical",
+  overflow: "hidden",
+  textOverflow: "ellipsis",
+  WebkitLineClamp: 3,
+  lineClamp: 3,
+}));
+
 interface RightPanel {
   permissions: PermissionTypes;
   editionControlGroup: CUControlGroupType | undefined;
@@ -26,26 +38,80 @@ export const RightPanel = ({
   editionControlGroup,
   permissions,
 }: RightPanel) => {
+  const theme = useTheme();
   return (
     <Panel minSize={60}>
       <Stack>
         {editionControlGroup !== undefined && (
           <>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              borderBottom={1}
+              alignItems="center"
+              padding={2}
+              borderColor={theme.palette.divider}
+            >
+              <Typography variant="h4">Control de accesos</Typography>
+              <Stack direction="row" alignItems="center">
+                {permissions.update && (
+                  <IconTooltip
+                    id={`edit-sub-control-group-${editionControlGroup.id}`}
+                    title={"Editar"}
+                    color={"primary"}
+                    action={() => {
+                      // editModule(section, idRole, true);
+                    }}
+                    icon={<Pencil />}
+                    name={"Editar control específico"}
+                  />
+                )}
+
+                {permissions.update && (
+                  <IconTooltip
+                    id={`change-status-control-group-${editionControlGroup.id}`}
+                    title={
+                      // section.status == "ACTIVO" ? "Inactivar" : "Activar"
+                      "Activar"
+                    }
+                    color={"success"}
+                    action={() => {
+                      // changeState(section, true);
+                    }}
+                    icon={<ToggleRight />}
+                    name={"Activar control específico"}
+                  />
+                )}
+                {permissions.delete && (
+                  <IconTooltip
+                    id={`delete-control-group-${editionControlGroup.id}`}
+                    name="Eliminar"
+                    title="Eliminar"
+                    color="error"
+                    action={() => {
+                      // deleteModule(section, true);
+                    }}
+                    icon={<Trash2Icon />}
+                  />
+                )}
+              </Stack>
+            </Stack>
             <Grid container spacing={1}>
-              <Grid item xs={5.5}>
-                <Stack spacing={1} height="6.5rem" padding={1}>
+              <Grid item xs={5.5} height="7.5rem">
+                <Stack padding={1}>
                   <Typography variant="h4" sx={{ textAlign: "center" }}>
                     Grupo
                   </Typography>
+                  <Box height={5} />
                   <Stack direction="row" spacing={1}>
                     <Typography variant="h4">
                       {editionControlGroup?.groupCode}
                     </Typography>
                     <Typography>{editionControlGroup?.group}</Typography>
                   </Stack>
-                  <Typography variant="subtitle2">
+                  <TruncatedTypography variant="subtitle2">
                     {editionControlGroup?.groupDescription}
-                  </Typography>
+                  </TruncatedTypography>
                 </Stack>
               </Grid>
 
@@ -60,11 +126,12 @@ export const RightPanel = ({
                 </Box>
               </Grid>
 
-              <Grid item xs={6}>
-                <Stack spacing={1} height="7rem" padding={1}>
+              <Grid item xs={6} height="7.5rem">
+                <Stack padding={1}>
                   <Typography variant="h4" sx={{ textAlign: "center" }}>
                     Objetivo
                   </Typography>
+                  <Box height={5} />
 
                   <Stack direction="row" spacing={1}>
                     <Typography variant="h4">
@@ -72,9 +139,9 @@ export const RightPanel = ({
                     </Typography>
                     <Typography>{editionControlGroup?.objective}</Typography>
                   </Stack>
-                  <Typography variant="subtitle2">
+                  <TruncatedTypography variant="subtitle2">
                     {editionControlGroup?.objectiveDescription}
-                  </Typography>
+                  </TruncatedTypography>
                 </Stack>
               </Grid>
             </Grid>
@@ -98,69 +165,73 @@ export const RightPanel = ({
               </Typography>
             </Stack>
           ) : (
-            <List sx={{ padding: "1rem", height: "100%", overflowY: "auto" }}>
-              {editionControlGroup?.controls?.map((specific, index) => (
-                <MainCard
-                  padding={false}
-                  key={`list-control-specific-${index}`}
-                  radius="0.5rem"
-                >
-                  <Stack padding="0.8rem">
-                    <Stack direction="row" justifyContent="space-between">
-                      <Stack>
+            <Box height="100%">
+              <Stack
+                sx={{ padding: "1.2rem", overflowY: "auto" }}
+                spacing={2.5}
+              >
+                {editionControlGroup?.controls?.map((specific, index) => (
+                  <MainCard
+                    padding={false}
+                    key={`list-control-specific-${index}`}
+                    radius="0.5rem"
+                  >
+                    <Stack padding="1.4rem">
+                      <Stack direction="row" justifyContent="space-between">
+                        <Typography variant="h4">{specific.name}</Typography>
                         <Typography variant="h5">{specific.code}</Typography>
-                        <Typography variant="h5">{specific.name}</Typography>
                       </Stack>
-                      <Stack direction="row" spacing={1}>
-                        {permissions.update && (
-                          <IconTooltip
-                            id={`edit-sub-control-specific-${specific.code}`}
-                            title={"Editar"}
-                            color={"primary"}
-                            action={() => {
-                              // editModule(section, idRole, true);
-                            }}
-                            icon={<Pencil />}
-                            name={"Editar control específico"}
-                          />
-                        )}
 
-                        {permissions.update && (
-                          <IconTooltip
-                            id={`change-status-control-specific-${specific.code}`}
-                            title={
-                              // section.status == "ACTIVO" ? "Inactivar" : "Activar"
-                              "Activar"
-                            }
-                            color={"success"}
-                            action={() => {
-                              // changeState(section, true);
-                            }}
-                            icon={<ToggleRight />}
-                            name={"Activar control específico"}
-                          />
-                        )}
+                      <Box height={5} />
+                      <Typography>{specific.description}</Typography>
+
+                      <Box height={20} />
+
+                      <Stack
+                        direction="row"
+                        spacing={1}
+                        justifyContent="space-between"
+                      >
+                        <Stack direction="row" spacing={1}>
+                          {permissions.update && (
+                            <Button
+                              variant="outlined"
+                              color="secondary"
+                              startIcon={<Pencil />}
+                              onClick={() => {}}
+                            >
+                              Editar
+                            </Button>
+                          )}
+
+                          {permissions.update && (
+                            <Button
+                              variant="outlined"
+                              color="info"
+                              startIcon={<Check />}
+                              onClick={() => {}}
+                            >
+                              Activado
+                            </Button>
+                          )}
+                        </Stack>
+
                         {permissions.delete && (
-                          <IconTooltip
-                            id="Eliminar"
-                            name="Eliminar"
-                            title="Eliminar"
+                          <Button
+                            variant="outlined"
                             color="error"
-                            action={() => {
-                              // deleteModule(section, true);
-                            }}
-                            icon={<Trash2Icon />}
-                          />
+                            onClick={() => {}}
+                            startIcon={<Trash2Icon />}
+                          >
+                            Eliminar
+                          </Button>
                         )}
                       </Stack>
                     </Stack>
-
-                    <Box height={5} />
-                    <Typography>{specific.description}</Typography>
-                  </Stack>
-                </MainCard>
-              ))}
-            </List>
+                  </MainCard>
+                ))}
+              </Stack>
+            </Box>
           )}
         </Stack>
       </Stack>

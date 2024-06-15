@@ -25,6 +25,8 @@ import { OutlinedInputProps } from "@mui/material/OutlinedInput";
 import { Icono } from "@/components/Icono";
 import { print } from "@/utils";
 import { optionType } from "@/components/forms/FormInputDropdown";
+import { CONSTANTS } from "../../../config";
+import { Search } from "lucide-react";
 
 export type CustomOptionType<K> = K & { key: string };
 
@@ -111,6 +113,10 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
         render={({ field, fieldState: { error } }) => (
           <>
             <Autocomplete
+              sx={{
+                borderRadius: "2rem !important",
+                boxShadow: CONSTANTS.boxShadow,
+              }}
               id={id}
               multiple={multiple}
               freeSolo={freeSolo}
@@ -221,9 +227,7 @@ export const FormInputAutocomplete = <K, T extends FieldValues>({
                                 pl: 1,
                               }}
                             >
-                              <Icono color="secondary" fontSize="small">
-                                search
-                              </Icono>
+                              <Search size={17} />
                             </Box>
                           )}
                           {params.InputProps.startAdornment}
