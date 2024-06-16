@@ -5,9 +5,6 @@ import {
   Typography,
   Divider,
   Box,
-  List,
-  ListItem,
-  Card,
   useTheme,
   Button,
 } from "@mui/material";
@@ -16,11 +13,11 @@ import MainCard from "@/components/cards/MainCard";
 import Image from "next/image";
 import { CUControlGroupType } from "../types";
 import { PermissionTypes } from "@/utils/permissions";
-import { ActionsButton, IconTooltip } from "@/components/buttons";
+import { IconTooltip } from "@/components/buttons";
 import { Pencil, Trash2Icon, ToggleRight, Check } from "lucide-react";
 import { styled } from "@mui/material/styles";
 
-const TruncatedTypography = styled(Typography)(({ theme }) => ({
+const TruncatedTypography = styled(Typography)(() => ({
   display: "-webkit-box",
   WebkitBoxOrient: "vertical",
   overflow: "hidden",
@@ -40,7 +37,7 @@ export const RightPanel = ({
 }: RightPanel) => {
   const theme = useTheme();
   return (
-    <Panel minSize={60}>
+    <Panel defaultSize={75} minSize={65}>
       <Stack>
         {editionControlGroup !== undefined && (
           <>
@@ -97,12 +94,13 @@ export const RightPanel = ({
               </Stack>
             </Stack>
             <Grid container spacing={1}>
-              <Grid item xs={5.5} height="7.5rem">
-                <Stack padding={1}>
+              <Grid item xs={5.7} height="7.5rem">
+                <Stack paddingY={1} paddingLeft={3}>
                   <Typography variant="h4" sx={{ textAlign: "center" }}>
                     Grupo
                   </Typography>
                   <Box height={5} />
+
                   <Stack direction="row" spacing={1}>
                     <Typography variant="h4">
                       {editionControlGroup?.groupCode}
@@ -115,7 +113,7 @@ export const RightPanel = ({
                 </Stack>
               </Grid>
 
-              <Grid item xs={0.5}>
+              <Grid item xs={0.4}>
                 <Box
                   display="flex"
                   justifyContent="center"
@@ -126,7 +124,7 @@ export const RightPanel = ({
                 </Box>
               </Grid>
 
-              <Grid item xs={6} height="7.5rem">
+              <Grid item xs={5.7} height="7.5rem">
                 <Stack padding={1}>
                   <Typography variant="h4" sx={{ textAlign: "center" }}>
                     Objetivo
@@ -165,10 +163,12 @@ export const RightPanel = ({
               </Typography>
             </Stack>
           ) : (
-            <Box height="100%">
+            <Box height="550px" sx={{ overflowY: "auto" }}>
               <Stack
-                sx={{ padding: "1.2rem", overflowY: "auto" }}
+                sx={{ padding: "1.2rem" }}
                 spacing={2.5}
+                height="100%"
+                bgcolor={theme.palette.background.default}
               >
                 {editionControlGroup?.controls?.map((specific, index) => (
                   <MainCard
@@ -184,7 +184,6 @@ export const RightPanel = ({
 
                       <Box height={5} />
                       <Typography>{specific.description}</Typography>
-
                       <Box height={20} />
 
                       <Stack

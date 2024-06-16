@@ -20,12 +20,14 @@ interface ModalControlView {
   data?: CUControlSpecificType | undefined;
   correctAction: () => void;
   cancelAction: () => void;
+  groupId: string;
 }
 
 export const ModalControlSpecific = ({
   data,
   correctAction,
   cancelAction,
+  groupId,
 }: ModalControlView) => {
   const { sessionRequest } = useSession();
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
@@ -35,7 +37,7 @@ export const ModalControlSpecific = ({
       code: data?.code,
       description: data?.description,
       id: data?.id,
-      idControlGroup: data?.idControlGroup,
+      idControlGroup: groupId,
     },
   });
 

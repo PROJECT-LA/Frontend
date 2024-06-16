@@ -34,22 +34,24 @@ interface ControlProps {
 }
 
 const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
-  console.log(`*********************\n${idTemplate}`);
-
   const { sessionRequest, getPermissions } = useSession();
-
   const [dataControls, setDataControls] = useState<ControlGroupType[]>([]);
+
+  /*************************************************************************/
   const [editionControlGroup, setEditionControlGroup] = useState<
     CUControlGroupType | undefined
   >(undefined);
-
   const [editionControlSpecific, setEditionControlSpecific] = useState<
     CUControlSpecificType | undefined
+  >(undefined);
+  /*************************************************************************/
+
+  const [selectedControlGroup, setSelectedControlGroup] = useState<
+    CUControlGroupType | undefined
   >(undefined);
 
   const [addModalInfo, setAddModalInfo] =
     useState<AddModalInfo>(initialAddModalInfo);
-
   const [permissions, setPermissions] =
     useState<PermissionTypes>(initialPermissions);
   const [templatesData, setTemplatesData] = useState<TemplatesData[]>([]);
@@ -109,6 +111,62 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [, idTemplate]);
 
+  const getControlSpecificRequest = async (id: string) => {
+    try {
+      setLoading(true);
+      await delay(100);
+      const res2 = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/controls`,
+        params: {
+          page: 1,
+          limit: 30,
+          idControlGroup: id,
+        },
+      });
+      const dos: CUControlSpecificType[] = res2.data.rows;
+      if (idTemplate) {
+        setEditionControlGroup({
+          ...editionControlGroup,
+          controls: dos,
+          idTemplate,
+        });
+      }
+    } catch (error) {
+      toast.error(MessagesInterpreter(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getControlGroupRequest = async () => {
+    try {
+      setLoading(true);
+      await delay(100);
+      if (idTemplate) {
+        const res = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/control-groups`,
+          params: {
+            page: 1,
+            limit: 30,
+            idTemplate,
+          },
+        });
+        const data: ControlGroupType[] = res.data.rows;
+        const uniqueSimil: ControlGroupType | undefined = data.find(
+          (elem) => elem.id === selectedControlGroup?.id
+        );
+        setDataControls(res.data.rows);
+        if (uniqueSimil !== undefined)
+          setSelectedControlGroup({ ...uniqueSimil, idTemplate });
+      }
+    } catch (error) {
+      toast.error(MessagesInterpreter(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {}, [selectedControlGroup, setSelectedControlGroup]);
   const closeModalControl = async () => {
     setEditionControlGroup(undefined);
     setEditionControlSpecific(undefined);
@@ -116,11 +174,17 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
     setAddModalInfo(initialAddModalInfo);
   };
 
-  const acceptModalControl = async () => {
-    setEditionControlGroup(undefined);
-    setEditionControlSpecific(undefined);
+  const acceptModalControlSpecific = async () => {
+    // setEditionControlGroup(undefined);
+    const id = editionControlGroup?.id;
     await delay(100);
-    await getTemplateRequest();
+    if (id) await getControlSpecificRequest(id);
+    setAddModalInfo(initialAddModalInfo);
+  };
+
+  const acceptModalControlGroup = async () => {
+    await getControlGroupRequest();
+    await delay(100);
     setAddModalInfo(initialAddModalInfo);
   };
 
@@ -132,17 +196,18 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
         handleClose={() => setAddModalInfo(initialAddModalInfo)}
         title={addModalInfo.isGroup ? "Nuevo grupo" : "Nuevo control"}
       >
-        {addModalInfo.isGroup ? (
+        {!addModalInfo.isGroup && addModalInfo.groupId !== undefined ? (
+          <ModalControlSpecific
+            data={editionControlSpecific}
+            groupId={addModalInfo.groupId}
+            cancelAction={closeModalControl}
+            correctAction={acceptModalControlSpecific}
+          />
+        ) : (
           <ModalControlGroup
             data={editionControlGroup}
             cancelAction={closeModalControl}
-            correctAction={acceptModalControl}
-          />
-        ) : (
-          <ModalControlSpecific
-            data={editionControlSpecific}
-            cancelAction={closeModalControl}
-            correctAction={acceptModalControl}
+            correctAction={acceptModalControlGroup}
           />
         )}
       </CustomDialog>
@@ -159,7 +224,7 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
 
                 {actualTemplate !== undefined && idTemplate !== undefined && (
                   <ControlsHeader
-                    idControlGroup={editionControlGroup?.id}
+                    idControlGroup={selectedControlGroup?.id}
                     exists={exists}
                     permissions={permissions}
                     title={actualTemplate.name}
@@ -168,9 +233,7 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                         state: true,
                         isGroup: true,
                       });
-                      setEditionControlGroup({
-                        idTemplate,
-                      });
+                      setEditionControlGroup({ idTemplate });
                     }}
                     actionControlSpecific={(groupId: string) => {
                       setAddModalInfo({
@@ -193,13 +256,13 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                       exists={exists}
                       idTemplate={idTemplate ?? ""}
                       dataControls={dataControls}
-                      editionControlGroup={editionControlGroup}
-                      setEditionControlGroup={setEditionControlGroup}
+                      editionControlGroup={selectedControlGroup}
+                      setEditionControlGroup={setSelectedControlGroup}
                     />
 
                     <RightPanel
                       permissions={permissions}
-                      editionControlGroup={editionControlGroup}
+                      editionControlGroup={selectedControlGroup}
                     />
                   </PanelGroup>
                 </MainCard>

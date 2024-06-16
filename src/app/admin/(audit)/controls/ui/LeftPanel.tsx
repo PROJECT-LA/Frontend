@@ -47,7 +47,7 @@ export const LeftPanel = ({
 
   return (
     <>
-      <Panel defaultSize={33.33} minSize={20} maxSize={80}>
+      <Panel defaultSize={25} minSize={20} maxSize={70}>
         <Box
           position="relative"
           sx={{
@@ -108,8 +108,8 @@ export const LeftPanel = ({
                         ? theme.palette.primary.main
                         : theme.palette.divider + "80"
                     }`}
-                    paddingX={2}
-                    paddingY={1}
+                    paddingX={3}
+                    paddingY={2}
                     boxShadow={
                       elem.id === editionControlGroup?.id
                         ? CONSTANTS.boxShadow
@@ -119,7 +119,7 @@ export const LeftPanel = ({
                     sx={{
                       backgroundColor: `${
                         elem.id === editionControlGroup?.id
-                          ? theme.palette.primary.light + "15"
+                          ? theme.palette.primary.light + "50"
                           : "transparent !important"
                       }`,
                       cursor: "pointer",
