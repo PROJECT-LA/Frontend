@@ -17,17 +17,19 @@ export const FilterLevels = ({
 }: FilterLevelsType) => {
   const { control, watch } = useForm<LevelFilter>({
     defaultValues: {
-      level: filterLevel,
+      name: filterLevel,
+      grade: filterLevel,
       status: "none",
     },
   });
 
-  const newLevelFilter: string | undefined = watch("level");
+  const newLevelFilter: string | undefined = watch("grade");
   const status: StatusLevelFilter = watch("status");
 
   useEffect(() => {
     filterUpdate({
-      level: newLevelFilter,
+      name: newLevelFilter,
+      grade: newLevelFilter,
       status,
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,8 +48,8 @@ export const FilterLevels = ({
       <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
         <Grid item xs={12} sm={12} md={6}>
           <FormInputText
-            id={"level"}
-            name={"level"}
+            id={"grade"}
+            name={"grade"}
             control={control}
             label={"Buscar nivel"}
             bgcolor={"background.paper"}

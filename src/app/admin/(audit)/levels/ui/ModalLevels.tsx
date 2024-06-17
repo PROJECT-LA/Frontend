@@ -4,14 +4,7 @@ import React, { useState } from "react";
 import { CULevel } from "../types";
 import { useSession } from "@/hooks/useSession";
 import { useForm } from "react-hook-form";
-import {
-  Box,
-  Button,
-  DialogActions,
-  DialogContent,
-  Grid,
-  Typography,
-} from "@mui/material";
+import { Box, Button, DialogActions, DialogContent, Grid } from "@mui/material";
 import { LinealLoader } from "@/components/loaders";
 import { FormInputText, FormInputSlider } from "@/components/forms";
 import { toast } from "sonner";
@@ -33,11 +26,12 @@ export const LevelsModalView = ({
   const { control, watch, handleSubmit, setValue } = useForm<CULevel>({
     defaultValues: {
       id: level?.id,
+      name: level?.name,
       description: level?.description,
-      level: level?.level ?? 0,
+      grade: level?.grade ?? 0,
     },
   });
-  const levelValue = watch("level");
+  const levelValue = watch("grade");
 
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
   const saveUpdateTemplate = async (template: CULevel) => {
@@ -66,6 +60,16 @@ export const LevelsModalView = ({
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Grid item xs={12} sm={12} md={12}>
               <FormInputText
+                id={"name"}
+                control={control}
+                name="name"
+                label="Nombre del nivel"
+                disabled={loadingModal}
+                rules={{ required: "Este campo es requerido" }}
+              />
+            </Grid>
+            <Grid item xs={12} sm={12} md={12}>
+              <FormInputText
                 id={"description"}
                 control={control}
                 name="description"
@@ -79,12 +83,12 @@ export const LevelsModalView = ({
                 id={"level"}
                 control={control}
                 setValue={setValue}
-                name="level"
-                label="Nivel"
+                name="grade"
+                label="Grado"
                 steps={1}
                 min={0}
                 max={10}
-                initialValue={level?.level}
+                initialValue={level?.grade}
                 rules={{ required: "Este campo es requerido" }}
               />
             </Grid>

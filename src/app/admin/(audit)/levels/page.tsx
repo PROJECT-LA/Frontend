@@ -42,6 +42,7 @@ export default function Levels() {
   /********************MODALS*****************************/
   const [alertStateLevel, setAlertStateLevel] = useState<boolean>(false);
   const [alertDeleteLevel, setAlertDeleteLevel] = useState<boolean>(false);
+  const [alertStatusLevel, setAlertStatusLevel] = useState<boolean>(false);
   const [modalLevel, setModalLevel] = useState<boolean>(false);
   /********************MODALS*****************************/
 
@@ -57,20 +58,25 @@ export default function Levels() {
   const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
-    { field: "description", name: "Descripción" },
-    { field: "level", name: "Nivel" },
-    { field: "estado", name: "Estado" },
+    { field: "name", name: "Nombre", sort: true },
+    { field: "description", name: "Descripción", sort: true },
+    { field: "grade", name: "Nivel", sort: true },
+    { field: "estado", name: "Estado", sort: true },
     { field: "acciones", name: "Acciones" },
   ]);
 
   const contenidoTabla: Array<Array<ReactNode>> = levelsData.map(
     (levelData, indexLevel) => [
       <Typography
+        key={`${levelData.id}-${indexLevel}-name`}
+        variant={"body2"}
+      >{`${levelData.name}`}</Typography>,
+      <Typography
         key={`${levelData.id}-${indexLevel}-description`}
         variant={"body2"}
       >{`${levelData.description}`}</Typography>,
       <Typography key={`${levelData.id}-${indexLevel}-level`} variant={"body2"}>
-        {`${levelData.level}`}
+        {`${levelData.grade}`}
       </Typography>,
 
       <CustomMessageState
@@ -98,9 +104,8 @@ export default function Levels() {
             title={levelData.status == "ACTIVO" ? "Inactivar" : "Activar"}
             color={levelData.status == "ACTIVO" ? "success" : "error"}
             action={async () => {
-              // await editarEstadoParametroModal(levelData);
+              await editLevelModalState(levelData);
             }}
-            deactivate={levelData.status == "PENDIENTE"}
             icon={
               levelData.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />
             }
@@ -182,7 +187,6 @@ export default function Levels() {
       />
     ),
   ];
-
   /*************************REQUEST**********************/
   const getLevelsRequest = async () => {
     try {
@@ -222,6 +226,24 @@ export default function Levels() {
     } catch (e) {
       setErrorData(e);
       toast.error(MessagesInterpreter(e));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const changeLevelState = async (level: LevelData) => {
+    try {
+      setLoading(true);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/levels/${level.id}/change-status`,
+        type: "patch",
+      });
+      print(`respuesta inactivar usuario: ${res}`);
+      toast.success("Éxito", { description: MessagesInterpreter(res) });
+      await getLevelsRequest();
+    } catch (e) {
+      print(`Error al inactivar niveles`, e);
+      toast.error("Error", { description: MessagesInterpreter(e) });
     } finally {
       setLoading(false);
     }
@@ -288,11 +310,23 @@ export default function Levels() {
     setModalLevel(false);
   };
 
-  const acceptAlertLevelState = () => {
-    setAlertStateLevel(false);
+  const editLevelModalState = (level: LevelData) => {
+    setLevelEdition(level);
+    setAlertStateLevel(true);
   };
+
+  const acceptAlertLevelState = async () => {
+    if (levelEdition !== undefined) {
+      await changeLevelState(levelEdition);
+    }
+    setAlertStateLevel(false);
+    await delay(500);
+    setLevelEdition(undefined);
+  };
+
   const cancelAlertLevelState = () => {
     setAlertStateLevel(false);
+    setLevelEdition(undefined);
   };
 
   const closeCreateEditLevelModal = async () => {
@@ -321,7 +355,7 @@ export default function Levels() {
         title={"Alerta"}
         text={`¿Está seguro de ${
           levelEdition?.status == "ACTIVO" ? "inactivar" : "activar"
-        } el parámetro: ${titleCase(levelEdition?.description ?? "")} ?`}
+        } el nivel: ${titleCase(levelEdition?.description ?? "")} ?`}
       >
         <Button onClick={cancelAlertLevelState}>Cancelar</Button>
         <Button onClick={acceptAlertLevelState}>Aceptar</Button>
