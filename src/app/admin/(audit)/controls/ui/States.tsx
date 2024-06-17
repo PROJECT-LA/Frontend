@@ -20,7 +20,7 @@ import {
   FileSliders,
 } from "lucide-react";
 import { FormInputDropdown } from "@/components/forms";
-import { TemplatesData } from "../../plantillas/types";
+import { TemplatesData } from "../../templates/types";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { ActionsButton } from "@/components/buttons";

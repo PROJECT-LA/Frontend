@@ -11,11 +11,7 @@ import {
 import { Panel } from "react-resizable-panels";
 import MainCard from "@/components/cards/MainCard";
 import Image from "next/image";
-import {
-  CUControlGroupType,
-  CUControlSpecificType,
-  ControlSpecificType,
-} from "../types";
+import { CUControlGroupType, ControlSpecificType } from "../types";
 import { PermissionTypes } from "@/utils/permissions";
 import { IconTooltip } from "@/components/buttons";
 import {

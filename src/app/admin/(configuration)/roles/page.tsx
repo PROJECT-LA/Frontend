@@ -89,9 +89,9 @@ const RolesClient = () => {
   };
 
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
-    { field: "rol", name: "Rol", sort: true },
-    { field: "nombre", name: "Nombre", sort: true },
-    { field: "estado", name: "Estado", sort: true },
+    { field: "rol", name: "Rol" },
+    { field: "nombre", name: "Nombre" },
+    { field: "estado", name: "Estado" },
     { field: "actions", name: "Acciones" },
   ]);
 

@@ -103,11 +103,11 @@ export default function ParametersClient() {
   };
 
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
-    { field: "codigo", name: "Código", sort: true },
-    { field: "name", name: "Nombre", sort: true },
-    { field: "descripcion", name: "Descripción", sort: true },
-    { field: "grupo", name: "Grupo", sort: true },
-    { field: "estado", name: "Estado", sort: true },
+    { field: "codigo", name: "Código" },
+    { field: "name", name: "Nombre" },
+    { field: "descripcion", name: "Descripción" },
+    { field: "grupo", name: "Grupo" },
+    { field: "estado", name: "Estado" },
     { field: "acciones", name: "Acciones" },
   ]);
 

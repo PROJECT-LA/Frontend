@@ -13,9 +13,8 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { FC, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { PlusCircle, RefreshCcw } from "lucide-react";
-import { IconTooltip } from "@/components/buttons";
 import { CONSTANTS } from "../../../../../config";
 import { MessagesInterpreter, delay, siteName, titleCase } from "@/utils";
 import { useSession } from "@/hooks/useSession";
@@ -24,7 +23,6 @@ import { ModulesModalView, DragSection } from "./ui";
 import { AlertDialog, CustomDialog } from "@/components/modals";
 import {
   FrontendURL,
-  ModuleCRUDType,
   RolModules,
   TabPanelProps,
   URLFrontendByRole,

@@ -25,12 +25,8 @@ import {
   ToggleRight,
   Trash2,
 } from "lucide-react";
-import {
-  GlobalPermissionsProps,
-  PermissionTypes,
-  initialPermissions,
-} from "@/utils/permissions";
-import { CULevel, LevelData } from "./types";
+import { PermissionTypes, initialPermissions } from "@/utils/permissions";
+import { LevelData } from "./types";
 import { FilterLevels, LevelsModalView } from "./ui";
 
 export default function Levels() {
@@ -61,9 +57,9 @@ export default function Levels() {
   const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
-    { field: "description", name: "Descripción", sort: true },
-    { field: "level", name: "Nivel", sort: true },
-    { field: "estado", name: "Estado", sort: true },
+    { field: "description", name: "Descripción" },
+    { field: "level", name: "Nivel" },
+    { field: "estado", name: "Estado" },
     { field: "acciones", name: "Acciones" },
   ]);
 

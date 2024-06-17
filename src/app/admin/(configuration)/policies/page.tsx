@@ -70,11 +70,11 @@ export default function PoliticsPage() {
 
   const [ordenCriterios, setOrdenCriterios] = useState<Array<SortTypeCriteria>>(
     [
-      { field: "subject", name: "Sujeto", sort: true },
-      { field: "object", name: "Objeto", sort: true },
-      { field: "action", name: "Acción", sort: true },
-      { field: "app", name: "App", sort: true },
-      { field: "status", name: "Estado", sort: true },
+      { field: "subject", name: "Sujeto" },
+      { field: "object", name: "Objeto" },
+      { field: "action", name: "Acción" },
+      { field: "app", name: "App" },
+      { field: "status", name: "Estado" },
       { field: "actions", name: "Acciones" },
     ]
   );

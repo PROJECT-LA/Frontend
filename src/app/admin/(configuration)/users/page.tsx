@@ -72,12 +72,12 @@ export default function UsersClientPage() {
   const [showUsersFilter, setShowUsersFilter] = useState(false);
 
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
-    { field: "names", name: "Nombres", sort: true },
-    { field: "lastNames", name: "Apellidos", sort: true },
-    { field: "email", name: "Correo electrónico", sort: true },
+    { field: "names", name: "Nombres" },
+    { field: "lastNames", name: "Apellidos" },
+    { field: "email", name: "Correo electrónico" },
     { field: "phone", name: "Número de telefono" },
     { field: "roles", name: "Roles" },
-    { field: "status", name: "Estado", sort: true },
+    { field: "status", name: "Estado" },
     { field: "acciones", name: "Acciones" },
   ]);
 

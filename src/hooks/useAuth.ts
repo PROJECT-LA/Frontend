@@ -13,7 +13,7 @@ export const useAuth = () => {
   const { deleteUserInfo, setUserData, setLoginLoader } = useAuthStore();
   const router = useRouter();
   const { showFullScreen, hideFullScreen } = useFullScreenLoading();
-  const { sessionRequest, deleteSessionCookie } = useSession();
+  const { sessionRequest, deleteSessionCookie, logoutSession } = useSession();
 
   const deleteUserSession = () => {
     deleteUserInfo();
@@ -29,9 +29,11 @@ export const useAuth = () => {
         idRole,
       },
     });
+    if (res.status === 401) await logoutSession();
+
+    print(`Token nuevo Rol ✅: ${res.data.token}`);
 
     saveCookie("token", res.data.token);
-    print(`Token nuevo Rol ✅: ${res.data.token}`);
 
     setUserData(res.data);
     router.push("/admin/home");

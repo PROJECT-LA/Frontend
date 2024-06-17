@@ -143,6 +143,7 @@ export const useSession = () => {
       const res = await Services.post({
         url: `${CONSTANTS.baseUrl}/auth/refresh`,
       });
+
       if (res.status !== 201) {
         await logoutSession();
       }

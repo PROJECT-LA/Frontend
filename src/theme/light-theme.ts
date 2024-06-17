@@ -155,7 +155,17 @@ export const lightTheme = createTheme({
         input: {
           color: colors.grey900,
           "&::placeholder": {
-            color: colors.darkTextSecondary,
+            color: colors.grey700,
+            fontSize: "0.875rem",
+          },
+        },
+      },
+    },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          "&::placeholder": {
+            color: colors.grey700,
             fontSize: "0.875rem",
           },
         },

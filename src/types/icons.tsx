@@ -1,6 +1,6 @@
-import { optionType } from "@/components/forms/FormInputDropdown";
 import {
   FileSliders,
+  FileStack,
   Home,
   LineChart,
   Lock,
@@ -73,6 +73,10 @@ export const icons: IconMapper[] = [
   {
     name: "file-sliders",
     icon: <FileSliders />,
+  },
+  {
+    name: "file-stack",
+    icon: <FileStack />,
   },
 ];
 

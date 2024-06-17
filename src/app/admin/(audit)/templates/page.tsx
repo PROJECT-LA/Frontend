@@ -2,7 +2,6 @@
 import Typography from "@mui/material/Typography";
 import { ReactNode, useEffect, useState } from "react";
 import { useSession } from "@/hooks/useSession";
-import { RolType } from "../users/types";
 import {
   print,
   MessagesInterpreter,
@@ -20,7 +19,6 @@ import {
 } from "@/components/buttons";
 import { CONSTANTS } from "../../../../../config";
 import { AlertDialog, CustomDialog } from "@/components/modals";
-import { UsersModalView } from "../users/ui/UsersModal";
 import { Pagination } from "@/components/datatable";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
 import { toast } from "sonner";
@@ -59,8 +57,6 @@ export default function PoliticsPage() {
 
   const [showAlertDeletePolicy, setShowAlertDeletePolicy] = useState(false);
 
-  const [rolesData, setRolesData] = useState<RolType[]>([]);
-
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
@@ -72,10 +68,10 @@ export default function PoliticsPage() {
 
   const [ordenCriterios, setOrdenCriterios] = useState<Array<SortTypeCriteria>>(
     [
-      { field: "nombre", name: "Nombre", sort: true },
-      { field: "description", name: "Descripción", sort: true },
-      { field: "version", name: "Versión", sort: true },
-      { field: "status", name: "Estado", sort: true },
+      { field: "nombre", name: "Nombre" },
+      { field: "description", name: "Descripción" },
+      { field: "version", name: "Versión" },
+      { field: "status", name: "Estado" },
       { field: "control", name: "Control" },
       { field: "actions", name: "Acciones" },
     ]
@@ -281,7 +277,7 @@ export default function PoliticsPage() {
 
   useEffect(() => {
     const getPermissionsClient = async () => {
-      const data = await getPermissions("/admin/plantillas");
+      const data = await getPermissions("/admin/templates");
       if (data !== undefined) setPermissions(data);
     };
     getPermissionsClient().finally(() => {

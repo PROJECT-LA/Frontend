@@ -3,7 +3,7 @@ import MainCard from "@/components/cards/MainCard";
 import { MessagesInterpreter, delay, siteName } from "@/utils";
 import { Box, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { TemplatesData } from "../plantillas/types";
+import { TemplatesData } from "../templates/types";
 import { PermissionTypes, initialPermissions } from "@/utils/permissions";
 import { useSession } from "@/hooks/useSession";
 import { CONSTANTS } from "../../../../../config";
