@@ -16,8 +16,12 @@ import { FormInputAutocomplete, FormInputDropdown } from "@/components/forms";
 import { useForm } from "react-hook-form";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import CustomTabAudit from "./ui/CustomTabAudit";
-import { useAuthStore } from "@/store";
+import { useAuthStore, useGlobalStore } from "@/store";
 import { useSession } from "@/hooks/useSession";
+import { toast } from "sonner";
+import { MessagesInterpreter, delay, print } from "@/utils";
+import { CONSTANTS } from "../../../../../config";
+import { UserAudit } from "./types";
 
 function CustomTabPanel(props: any) {
   const { children, value, index, ...other } = props;
@@ -37,7 +41,10 @@ function CustomTabPanel(props: any) {
 
 const AuditPage = () => {
   const theme = useTheme();
-  const { getPermissions } = useSession();
+  const { getPermissions, sessionRequest } = useSession();
+  const { user } = useAuthStore();
+
+  const [usersData, setUsersData] = useState<UserAudit[]>([]);
   const xs = useMediaQuery(theme.breakpoints.only("md"));
 
   const { control } = useForm<{ searchUser: string }>({
@@ -51,9 +58,30 @@ const AuditPage = () => {
     useState<PermissionTypes>(initialPermissions);
   const [loading, setLoading] = useState<boolean>(true);
 
-  const [value, setValue] = React.useState(0);
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+  const [value, setValue] = React.useState("1");
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
+  };
+
+  const getUsersAuditRequest = async () => {
+    try {
+      setLoading(true);
+      if (user?.idRole !== undefined) {
+        const res = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/users/${user?.idRole}/role`,
+        });
+
+        await delay(100);
+
+        setUsersData(res.data);
+
+        toast.success(MessagesInterpreter(res));
+      }
+    } catch (e) {
+      toast.error(MessagesInterpreter(e));
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -61,10 +89,12 @@ const AuditPage = () => {
       const data = await getPermissions("/admin/audits");
       if (data !== undefined) setPermissions(data);
     };
-    getPermissionsClient();
+    getPermissionsClient()
+      .then(() => getUsersAuditRequest().finally(() => {}))
+      .finally(() => {});
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -101,27 +131,26 @@ const AuditPage = () => {
           scrollButtons
           allowScrollButtonsMobile
         >
-          {Array(10)
-            .fill(0)
-            .map((elem, index) => (
-              <Tab
-                key={`simple-tab-${index}`}
-                label="Item One"
-                id={`simple-tab-${index}`}
-                aria-controls={`simple-tabpanel-${index}`}
-              />
-            ))}
+          {usersData.map((elem) => (
+            <Tab
+              key={`user-audit-tab-${elem.id}`}
+              label={elem.names}
+              id={`user-audit-tab-${elem.id}`}
+              aria-controls={`user-audit-tab-${elem.id}`}
+              value={elem.id}
+            />
+          ))}
         </Tabs>
       </Box>
-      <CustomTabPanel value={value} index={0}>
-        <CustomTabAudit permissions={permissions} />
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={1}>
-        Item Two
-      </CustomTabPanel>
-      <CustomTabPanel value={value} index={2}>
-        Item Three
-      </CustomTabPanel>
+      {usersData.map((elem) => (
+        <CustomTabPanel
+          value={value}
+          index={elem.id}
+          key={`user-audit-content-${elem.id}`}
+        >
+          <CustomTabAudit idUser={elem.id} permissions={permissions} />
+        </CustomTabPanel>
+      ))}
     </Box>
   );
 };

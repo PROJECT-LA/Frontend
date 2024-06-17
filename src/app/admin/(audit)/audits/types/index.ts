@@ -21,3 +21,24 @@ export const ArrayFilterCustomTab: FilterCustomTab[] = [
     value: "Concluidos",
   },
 ];
+
+export interface UserAudit {
+  id: string;
+  ci: string;
+  names: string;
+  lastNames: string;
+  status: string;
+}
+export interface AuditData {
+  id: string;
+
+  idClient: string;
+  idLevel: string;
+  idTemplate: string;
+  objective: string;
+  status: string;
+  acceptanceLevel: number;
+  beginDate: string;
+  finalDate: string;
+  description: string;
+}
