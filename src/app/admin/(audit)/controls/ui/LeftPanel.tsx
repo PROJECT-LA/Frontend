@@ -10,7 +10,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { FormInputAutocomplete } from "@/components/forms";
-import { ChevronRight, GripVertical } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import { ControlGroupType } from "../types";
@@ -36,9 +35,8 @@ export const LeftPanel = ({
   dataControls,
   setEditionControlGroup,
 }: LeftPanel) => {
-  const [optionsGroup, setOptionsGroup] = useState<Array<optionType>>([]);
-
   const theme = useTheme();
+  const [optionsGroup, setOptionsGroup] = useState<Array<optionType>>([]);
   const { control } = useForm<SearchGroup>({
     defaultValues: {
       group: "",
@@ -58,10 +56,6 @@ export const LeftPanel = ({
           }}
         >
           <Stack padding={2}>
-            {/* <Typography variant="h5" sx={{ textAlign: "center" }}>
-              Grupo de controles
-            </Typography> */}
-            <Box height={10} />
             <FormInputAutocomplete
               control={control}
               disabled={!exists}
@@ -80,7 +74,6 @@ export const LeftPanel = ({
               renderOption={(option) => <>{option.label}</>}
             />
           </Stack>
-          {/* <Divider /> */}
           <List>
             {idTemplate !== undefined &&
               dataControls.map((elem) => (
@@ -97,6 +90,7 @@ export const LeftPanel = ({
                       objectiveCode: elem.objectiveCode,
                       objectiveDescription: elem.objectiveDescription,
                       controls: elem.controls,
+                      status: elem.status,
                     });
                   }}
                 >
@@ -130,10 +124,11 @@ export const LeftPanel = ({
                     }}
                   >
                     <Stack spacing={1}>
-                      <Stack direction="row" spacing={1} alignItems="center">
+                      <Stack spacing={0.3}>
                         <Typography variant="h5">{elem.groupCode}</Typography>
-                        <ChevronRight size={12} />
-                        <Typography>{elem.group}</Typography>
+                        <Typography variant="subtitle2">
+                          {elem.group}
+                        </Typography>
                       </Stack>
                     </Stack>
                   </Box>

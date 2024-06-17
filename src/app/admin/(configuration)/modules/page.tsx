@@ -174,13 +174,11 @@ const ModulesClient2 = () => {
         idRole: rolId,
         data: updatedOrders,
       };
-      console.log(sendOrder);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/modules/change/order`,
         type: "PATCH",
         body: sendOrder,
       });
-      console.log(res);
 
       toast.success(MessagesInterpreter(res));
       await getModulesRoles();

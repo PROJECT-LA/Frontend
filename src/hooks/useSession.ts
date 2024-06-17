@@ -2,7 +2,6 @@ import { MessagesInterpreter, delay } from "@/utils";
 import { readCookie, deleteCookie, print } from "../utils";
 import { Services, forbiddenStates, methodFormatRequest } from "../services";
 import { checkToken } from "@/utils/token";
-import {} from "@/context/FullScreenLoadingProvider";
 import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
 import { CONSTANTS } from "../../config";
 import { useRouter } from "next/navigation";
@@ -24,6 +23,8 @@ export const useSession = () => {
     withCredentials,
   }: methodFormatRequest) => {
     try {
+      if (!readCookie("token")) await logoutSession();
+
       if (!checkToken(readCookie("token") ?? "")) {
         print(`Token caducado ⏳`);
         await updateSession();
@@ -59,6 +60,8 @@ export const useSession = () => {
       print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
+      console.log(e);
+
       if (e.code === "ECONNABORTED") {
         throw new Error("La petición está tardando demasiado");
       }
@@ -122,11 +125,11 @@ export const useSession = () => {
         },
         url: `${CONSTANTS.baseUrl}/auth/logout`,
       });
-      print(`finalizando con respuesta`, response);
-      if (response === "OK") {
-        router.refresh();
-        router.push("/login");
-      }
+      print(`logout with response: `, response);
+      // if (response === "OK") {
+      router.refresh();
+      router.push("/login");
+      // }
     } catch (e) {
       print(`Error al cerrar sesión: `, e);
     } finally {
@@ -137,13 +140,16 @@ export const useSession = () => {
   const updateSession = async () => {
     print(`Actualizando token 🚨`);
     try {
-      await Services.post({
+      const res = await Services.post({
         url: `${CONSTANTS.baseUrl}/auth/refresh`,
       });
+      if (res.status !== 201) {
+        await logoutSession();
+      }
 
       await delay(500);
     } catch (e) {
-      await logoutSession();
+      print(MessagesInterpreter(e));
     }
   };
 

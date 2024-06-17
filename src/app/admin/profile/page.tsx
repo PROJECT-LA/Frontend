@@ -12,24 +12,19 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { PlusCircle, PlusIcon, Save, UserCircle2 } from "lucide-react";
+import { PlusCircle, UserCircle2 } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { CONSTANTS } from "../../../../config";
 import { useAuthStore } from "@/store";
 import { PermissionTypes, initialPermissions } from "@/utils/permissions";
 import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
-import {
-  RolCRUDType,
-  RolType,
-  UserRolCRUDType,
-} from "../(configuration)/users/types";
+import { RolType } from "../(configuration)/users/types";
 import { MessagesInterpreter, delay, siteName } from "@/utils";
 import { CustomDialog } from "@/components/modals";
 import { ModalProfile, UserInfomation } from "./ui";
-import { SendUpdatedInfo, UserCUInformation, UserProfileInfo } from "./types";
+import { UserCUInformation, UserProfileInfo } from "./types";
 import { ChangePassword } from "./ui";
-import { handleAddBase64Image } from "@/utils/utilities";
 
 const ProfileClient = () => {
   const { user } = useAuthStore();
@@ -54,7 +49,6 @@ const ProfileClient = () => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
 
-  /***********************************************************/
   const getProfileInfo = async () => {
     try {
       setLoading(true);
@@ -96,8 +90,6 @@ const ProfileClient = () => {
       setLoading(false);
     }
   };
-
-  /***********************************************************/
 
   useEffect(() => {
     const getPermissionsClient = async () => {

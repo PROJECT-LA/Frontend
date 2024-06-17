@@ -54,10 +54,6 @@ const ProfileSection = () => {
   };
 
   useEffect(() => {
-    console.log("*************************");
-    print(user);
-    console.log("*************************");
-
     interpretarRoles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [, user]);

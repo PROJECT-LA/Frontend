@@ -39,7 +39,7 @@ export const ModalControlGroup = ({
       groupCode: data?.groupCode,
       groupDescription: data?.groupDescription,
       objective: data?.objective,
-      objectiveCode: data?.objective,
+      objectiveCode: data?.objectiveCode,
       objectiveDescription: data?.objectiveDescription,
     },
   });

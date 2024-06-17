@@ -1,7 +1,10 @@
 export interface ControlSpecificType {
+  id: string;
+
   name: string;
   description: string;
   code: string;
+  status: string;
 }
 export interface ControlGroupType {
   id: string;
@@ -30,6 +33,8 @@ export interface CUControlGroupType {
   groupCode?: string;
 
   controls?: ControlSpecificType[];
+
+  status?: string;
 }
 
 export interface CUControlSpecificType {

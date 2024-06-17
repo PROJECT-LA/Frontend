@@ -17,9 +17,6 @@ import {
   PlusCircle,
   ArrowBigRightDash,
   Group,
-  Pencil,
-  ToggleRight,
-  Trash2Icon,
   FileSliders,
 } from "lucide-react";
 import { FormInputDropdown } from "@/components/forms";
@@ -28,7 +25,6 @@ import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { ActionsButton } from "@/components/buttons";
 import { PermissionTypes } from "@/utils/permissions";
-import { IconTooltip } from "@/components/buttons";
 
 export const NoTemplate = () => {
   return (

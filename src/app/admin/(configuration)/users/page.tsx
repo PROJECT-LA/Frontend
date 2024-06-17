@@ -342,7 +342,6 @@ export default function UsersClientPage() {
   };
   const editUserModal = (usuario: UserRolCRUDType) => {
     setUserEdition(usuario);
-    console.log(usuario);
     setModalUser(true);
   };
 
@@ -392,7 +391,6 @@ export default function UsersClientPage() {
 
   const deleteUserModal = (usuario: UserRolCRUDType) => {
     setUserEdition(usuario);
-    console.log(usuario);
     setShowAlertRemoveUser(true);
   };
 

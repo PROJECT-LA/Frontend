@@ -1,7 +1,7 @@
 "use client";
 import MainCard from "@/components/cards/MainCard";
 import { MessagesInterpreter, delay, siteName } from "@/utils";
-import { Box, Divider, Grid, Stack, Typography, useTheme } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { TemplatesData } from "../plantillas/types";
 import { PermissionTypes, initialPermissions } from "@/utils/permissions";
@@ -24,10 +24,10 @@ import {
   CUControlGroupType,
   CUControlSpecificType,
   ControlGroupType,
+  ControlSpecificType,
   initialAddModalInfo,
 } from "./types";
-import { CustomDialog } from "@/components/modals";
-
+import { AlertDialog, CustomDialog } from "@/components/modals";
 interface ControlProps {
   idTemplate?: string;
   exists: boolean;
@@ -35,35 +35,46 @@ interface ControlProps {
 
 const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
   const { sessionRequest, getPermissions } = useSession();
+  const [permissions, setPermissions] =
+    useState<PermissionTypes>(initialPermissions);
+  const [templatesData, setTemplatesData] = useState<TemplatesData[]>([]);
   const [dataControls, setDataControls] = useState<ControlGroupType[]>([]);
-
-  /*************************************************************************/
   const [editionControlGroup, setEditionControlGroup] = useState<
     CUControlGroupType | undefined
   >(undefined);
   const [editionControlSpecific, setEditionControlSpecific] = useState<
     CUControlSpecificType | undefined
   >(undefined);
-  /*************************************************************************/
+  const [deleteControlGroup, setDeleteControlGroup] = useState<boolean>(false);
+  const [deleteControlSpecific, setDeleteControlSpecific] =
+    useState<boolean>(false);
 
   const [selectedControlGroup, setSelectedControlGroup] = useState<
     CUControlGroupType | undefined
   >(undefined);
-
   const [addModalInfo, setAddModalInfo] =
     useState<AddModalInfo>(initialAddModalInfo);
-  const [permissions, setPermissions] =
-    useState<PermissionTypes>(initialPermissions);
-  const [templatesData, setTemplatesData] = useState<TemplatesData[]>([]);
   const [actualTemplate, setActualTemplate] = useState<
     TemplatesData | undefined
   >(undefined);
   const [loading, setLoading] = useState<boolean>(true);
 
+  useEffect(() => {
+    const getPermissionsClient = async () => {
+      const data = await getPermissions("/admin/controls");
+      if (data !== undefined) setPermissions(data);
+    };
+    getPermissionsClient().finally(() => {
+      getTemplateRequest().finally(() => {});
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [, idTemplate]);
+  /****************************  ESTADOS  *******************************/
+
+  /***************************  REQUESTS  *******************************/
   const getTemplateRequest = async () => {
     try {
       setLoading(true);
-
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/templates`,
         params: {
@@ -80,7 +91,6 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
         setActualTemplate(actualTemplate);
       }
       await delay(100);
-
       if (idTemplate !== undefined) {
         const res2 = await sessionRequest({
           url: `${CONSTANTS.baseUrl}/control-groups`,
@@ -98,19 +108,6 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const getPermissionsClient = async () => {
-      const data = await getPermissions("/admin/controles");
-      console.log(data);
-      if (data !== undefined) setPermissions(data);
-    };
-    getPermissionsClient().finally(() => {
-      getTemplateRequest().finally(() => {});
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [, idTemplate]);
-
   const getControlSpecificRequest = async (id: string) => {
     try {
       setLoading(true);
@@ -123,7 +120,7 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
           idControlGroup: id,
         },
       });
-      const dos: CUControlSpecificType[] = res2.data.rows;
+      const dos: ControlSpecificType[] = res2.data.rows;
       if (idTemplate) {
         setEditionControlGroup({
           ...editionControlGroup,
@@ -137,7 +134,6 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
       setLoading(false);
     }
   };
-
   const getControlGroupRequest = async () => {
     try {
       setLoading(true);
@@ -165,28 +161,141 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
       setLoading(false);
     }
   };
+  const changeControlGroupStatus = async (id: string) => {
+    try {
+      setLoading(true);
+      await delay(100);
+      if (id) {
+        const res = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/control-groups/${id}/change-status`,
+          type: "PATCH",
+        });
+        toast.success(MessagesInterpreter(res));
+        await getTemplateRequest();
+        await delay(100);
+        const res2 = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/control-groups`,
+          params: {
+            page: 1,
+            limit: 30,
+            idTemplate,
+          },
+        });
+        const findSelected = res2.data.rows.find((elem: any) => elem.id === id);
+        if (findSelected !== undefined && idTemplate !== undefined)
+          setSelectedControlGroup({
+            ...findSelected,
+            idTemplate,
+          });
+      }
+    } catch (error) {
+      toast.error(MessagesInterpreter(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+  const changeControlSpecificStatus = async (id: string) => {
+    try {
+      setLoading(true);
+      await delay(100);
+      if (id) {
+        const res = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/controls/${id}/change-status`,
+          type: "PATCH",
+        });
+        toast.success(MessagesInterpreter(res));
+        await delay(100);
+        await getTemplateRequest();
 
-  useEffect(() => {}, [selectedControlGroup, setSelectedControlGroup]);
+        if (editionControlGroup !== undefined && editionControlGroup.id)
+          await getControlSpecificRequest(editionControlGroup.id);
+      }
+    } catch (error) {
+      toast.error(MessagesInterpreter(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+  const deleteControlGroupDelete = async (id: string) => {
+    try {
+      setLoading(true);
+      await delay(100);
+      if (id) {
+        const res = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/control-groups/${id}`,
+          type: "DELETE",
+        });
+        await getTemplateRequest();
+
+        toast.success(MessagesInterpreter(res));
+      }
+    } catch (error) {
+      toast.error(MessagesInterpreter(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+  const deleteControlSpecificRequest = async (id: string) => {
+    try {
+      setLoading(true);
+      await delay(100);
+      if (id) {
+        const res = await sessionRequest({
+          url: `${CONSTANTS.baseUrl}/controls/${id}`,
+          type: "DELETE",
+        });
+        await getTemplateRequest();
+
+        toast.success(MessagesInterpreter(res));
+      }
+    } catch (error) {
+      toast.error(MessagesInterpreter(error));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /***************************  METHODS  ********************************/
   const closeModalControl = async () => {
     setEditionControlGroup(undefined);
     setEditionControlSpecific(undefined);
     await delay(100);
     setAddModalInfo(initialAddModalInfo);
   };
-
   const acceptModalControlSpecific = async () => {
-    // setEditionControlGroup(undefined);
     const id = editionControlGroup?.id;
     await delay(100);
     if (id) await getControlSpecificRequest(id);
+
     setAddModalInfo(initialAddModalInfo);
   };
-
   const acceptModalControlGroup = async () => {
     await getControlGroupRequest();
     await delay(100);
     setAddModalInfo(initialAddModalInfo);
   };
+  const acceptDeleteControlGroup = async () => {
+    if (selectedControlGroup !== undefined && selectedControlGroup.id)
+      await deleteControlGroupDelete(selectedControlGroup.id);
+    setSelectedControlGroup(undefined);
+    cancelDeleteControlGroup();
+  };
+  const cancelDeleteControlGroup = () => {
+    setDeleteControlGroup(false);
+  };
+  const acceptDeleteControlSpecific = async () => {
+    if (editionControlSpecific !== undefined && editionControlSpecific.id)
+      await deleteControlSpecificRequest(editionControlSpecific.id);
+
+    if (editionControlGroup !== undefined && editionControlGroup.id)
+      await getControlSpecificRequest(editionControlGroup.id);
+    setDeleteControlSpecific(false);
+  };
+  const cancelDeleteControlSpecific = async () => {
+    setEditionControlSpecific(undefined);
+    setDeleteControlSpecific(false);
+  };
+  /***************************  METHODS  ********************************/
 
   return (
     <>
@@ -211,6 +320,23 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
           />
         )}
       </CustomDialog>
+      <AlertDialog
+        isOpen={deleteControlGroup}
+        title={"Alerta"}
+        text={`¿Está seguro de eliminar el control-group "${selectedControlGroup?.groupCode} - ${selectedControlGroup?.group}"?`}
+      >
+        <Button onClick={cancelDeleteControlGroup}>Cancelar</Button>
+        <Button onClick={acceptDeleteControlGroup}>Aceptar</Button>
+      </AlertDialog>
+      <AlertDialog
+        isOpen={deleteControlSpecific}
+        title={"Alerta"}
+        text={`¿Está seguro de eliminar el control-specific "${editionControlSpecific?.code} - ${editionControlSpecific?.name}"?`}
+      >
+        <Button onClick={cancelDeleteControlSpecific}>Cancelar</Button>
+        <Button onClick={acceptDeleteControlSpecific}>Aceptar</Button>
+      </AlertDialog>
+
       <>
         {loading ? (
           <LoadingControlsSkeleton />
@@ -246,7 +372,6 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                 )}
 
                 <Box height={20} />
-
                 <MainCard padding={false} radius="0.4rem">
                   <PanelGroup
                     direction="horizontal"
@@ -259,10 +384,48 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                       editionControlGroup={selectedControlGroup}
                       setEditionControlGroup={setSelectedControlGroup}
                     />
-
                     <RightPanel
                       permissions={permissions}
                       editionControlGroup={selectedControlGroup}
+                      onEditControlGroup={() => {
+                        setAddModalInfo({
+                          state: true,
+                          isGroup: true,
+                        });
+                        setEditionControlGroup(selectedControlGroup);
+                      }}
+                      onChangeState={async () => {
+                        if (selectedControlGroup?.id)
+                          await changeControlGroupStatus(
+                            selectedControlGroup?.id
+                          );
+                      }}
+                      onDeleteControlGroup={() => {
+                        setDeleteControlGroup(true);
+                      }}
+                      onChangeStateControlSpecific={changeControlSpecificStatus}
+                      onEditControlSpecific={(
+                        editionSpecific: ControlSpecificType
+                      ) => {
+                        setEditionControlSpecific({
+                          ...editionSpecific,
+                          idControlGroup: selectedControlGroup?.id ?? "",
+                        });
+                        setAddModalInfo({
+                          state: true,
+                          isGroup: false,
+                          groupId: selectedControlGroup?.id,
+                        });
+                      }}
+                      onDeleteControlSpecific={(
+                        editionSpecific: ControlSpecificType
+                      ) => {
+                        setEditionControlSpecific({
+                          ...editionSpecific,
+                          idControlGroup: selectedControlGroup?.id ?? "",
+                        });
+                        setDeleteControlSpecific(true);
+                      }}
                     />
                   </PanelGroup>
                 </MainCard>
@@ -274,5 +437,4 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
     </>
   );
 };
-
 export default ControlsPage;

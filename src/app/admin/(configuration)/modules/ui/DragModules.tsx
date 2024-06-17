@@ -277,8 +277,6 @@ const Module = ({
   deleteModule,
   editModule,
 }: ModuleProps) => {
-  console.log(idSection);
-  console.log(nameSection);
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 

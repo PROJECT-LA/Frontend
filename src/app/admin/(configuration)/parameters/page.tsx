@@ -231,8 +231,6 @@ export default function ParametersClient() {
   const obtenerParametrosPeticion = async () => {
     try {
       setLoading(true);
-      console.log(`${CONSTANTS.baseUrl}/parameters`);
-
       const respuesta = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/parameters`,
         params: {

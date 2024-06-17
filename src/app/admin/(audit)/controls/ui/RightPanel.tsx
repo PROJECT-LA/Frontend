@@ -11,10 +11,22 @@ import {
 import { Panel } from "react-resizable-panels";
 import MainCard from "@/components/cards/MainCard";
 import Image from "next/image";
-import { CUControlGroupType } from "../types";
+import {
+  CUControlGroupType,
+  CUControlSpecificType,
+  ControlSpecificType,
+} from "../types";
 import { PermissionTypes } from "@/utils/permissions";
 import { IconTooltip } from "@/components/buttons";
-import { Pencil, Trash2Icon, ToggleRight, Check } from "lucide-react";
+import {
+  Pencil,
+  Trash2Icon,
+  ToggleRight,
+  Check,
+  ToggleLeft,
+  Cross,
+  X,
+} from "lucide-react";
 import { styled } from "@mui/material/styles";
 
 const TruncatedTypography = styled(Typography)(() => ({
@@ -29,17 +41,46 @@ const TruncatedTypography = styled(Typography)(() => ({
 interface RightPanel {
   permissions: PermissionTypes;
   editionControlGroup: CUControlGroupType | undefined;
+  onChangeState: () => void;
+  onEditControlGroup: () => void;
+  onDeleteControlGroup: () => void;
+
+  onEditControlSpecific: (editionSpecific: ControlSpecificType) => void;
+  onDeleteControlSpecific: (editionSpecific: ControlSpecificType) => void;
+  onChangeStateControlSpecific: (id: string) => void;
 }
 
 export const RightPanel = ({
   editionControlGroup,
   permissions,
+  onEditControlGroup,
+  onChangeState,
+  onDeleteControlGroup,
+
+  onEditControlSpecific,
+  onDeleteControlSpecific,
+  onChangeStateControlSpecific,
 }: RightPanel) => {
   const theme = useTheme();
+
   return (
     <Panel defaultSize={75} minSize={65}>
       <Stack>
-        {editionControlGroup !== undefined && (
+        {editionControlGroup == undefined ? (
+          <Stack justifyContent="center" height="600px" alignItems="center">
+            <Image
+              src="/images/support/no-data-hd.png"
+              height={250}
+              width={230}
+              alt="No data support impaget"
+            />
+            <Box height={20} />
+            <Typography variant="h4">No hay datos que mostrar</Typography>
+            <Typography variant="caption">
+              Por favor busque algún grupo de control.
+            </Typography>
+          </Stack>
+        ) : (
           <>
             <Stack
               direction="row"
@@ -55,9 +96,9 @@ export const RightPanel = ({
                   <IconTooltip
                     id={`edit-sub-control-group-${editionControlGroup.id}`}
                     title={"Editar"}
-                    color={"primary"}
+                    color={"secondary"}
                     action={() => {
-                      // editModule(section, idRole, true);
+                      onEditControlGroup();
                     }}
                     icon={<Pencil />}
                     name={"Editar control específico"}
@@ -68,14 +109,25 @@ export const RightPanel = ({
                   <IconTooltip
                     id={`change-status-control-group-${editionControlGroup.id}`}
                     title={
-                      // section.status == "ACTIVO" ? "Inactivar" : "Activar"
-                      "Activar"
+                      editionControlGroup.status === "ACTIVO"
+                        ? "Inactivar"
+                        : "Activar"
                     }
-                    color={"success"}
+                    color={
+                      editionControlGroup.status === "ACTIVO"
+                        ? "success"
+                        : "error"
+                    }
                     action={() => {
-                      // changeState(section, true);
+                      onChangeState();
                     }}
-                    icon={<ToggleRight />}
+                    icon={
+                      editionControlGroup.status === "ACTIVO" ? (
+                        <ToggleRight />
+                      ) : (
+                        <ToggleLeft />
+                      )
+                    }
                     name={"Activar control específico"}
                   />
                 )}
@@ -86,7 +138,7 @@ export const RightPanel = ({
                     title="Eliminar"
                     color="error"
                     action={() => {
-                      // deleteModule(section, true);
+                      onDeleteControlGroup();
                     }}
                     icon={<Trash2Icon />}
                   />
@@ -96,9 +148,11 @@ export const RightPanel = ({
             <Grid container spacing={1}>
               <Grid item xs={5.7} height="7.5rem">
                 <Stack paddingY={1} paddingLeft={3}>
-                  <Typography variant="h4" sx={{ textAlign: "center" }}>
-                    Grupo
-                  </Typography>
+                  <Stack>
+                    <Typography variant="h4" sx={{ textAlign: "center" }}>
+                      Grupo
+                    </Typography>
+                  </Stack>
                   <Box height={5} />
 
                   <Stack direction="row" spacing={1}>
@@ -144,30 +198,10 @@ export const RightPanel = ({
               </Grid>
             </Grid>
             <Divider />
-          </>
-        )}
-
-        <Stack spacing={2}>
-          {editionControlGroup?.controls?.length === 0 ? (
-            <Stack justifyContent="center" height="450px" alignItems="center">
-              <Image
-                src="/images/support/no-data-2.png"
-                height={125}
-                width={200}
-                alt="No data support impaget"
-              />
-              <Box height={10} />
-              <Typography>No hay datos que mostrar</Typography>
-              <Typography variant="subtitle2">
-                Por favor busque algún grupo de control.
-              </Typography>
-            </Stack>
-          ) : (
-            <Box height="550px" sx={{ overflowY: "auto" }}>
+            <Box height="550px" overflow="auto">
               <Stack
                 sx={{ padding: "1.2rem" }}
                 spacing={2.5}
-                height="100%"
                 bgcolor={theme.palette.background.default}
               >
                 {editionControlGroup?.controls?.map((specific, index) => (
@@ -197,7 +231,9 @@ export const RightPanel = ({
                               variant="outlined"
                               color="secondary"
                               startIcon={<Pencil />}
-                              onClick={() => {}}
+                              onClick={() => {
+                                onEditControlSpecific(specific);
+                              }}
                             >
                               Editar
                             </Button>
@@ -206,11 +242,21 @@ export const RightPanel = ({
                           {permissions.update && (
                             <Button
                               variant="outlined"
-                              color="info"
-                              startIcon={<Check />}
-                              onClick={() => {}}
+                              color={
+                                specific.status === "ACTIVO"
+                                  ? "success"
+                                  : "error"
+                              }
+                              startIcon={
+                                specific.status === "ACTIVO" ? <Check /> : <X />
+                              }
+                              onClick={() => {
+                                onChangeStateControlSpecific(specific.id);
+                              }}
                             >
-                              Activado
+                              {specific.status === "ACTIVO"
+                                ? "Activo"
+                                : "Inactivo"}
                             </Button>
                           )}
                         </Stack>
@@ -219,7 +265,9 @@ export const RightPanel = ({
                           <Button
                             variant="outlined"
                             color="error"
-                            onClick={() => {}}
+                            onClick={() => {
+                              onDeleteControlSpecific(specific);
+                            }}
                             startIcon={<Trash2Icon />}
                           >
                             Eliminar
@@ -231,8 +279,8 @@ export const RightPanel = ({
                 ))}
               </Stack>
             </Box>
-          )}
-        </Stack>
+          </>
+        )}
       </Stack>
     </Panel>
   );
