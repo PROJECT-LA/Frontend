@@ -47,20 +47,10 @@ export const useSession = () => {
         withCredentials,
       });
 
-      if (isPermissions) {
-        if (response.status == 403) {
-          return router.push("/not-found");
-        }
-        if (response.status == 401) {
-          await logoutSession();
-          return router.push("/login");
-        }
-      }
-
       print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
-      console.log(e);
+      console.log(e.response.status);
 
       if (e.code === "ECONNABORTED") {
         throw new Error("La petición está tardando demasiado");
@@ -70,12 +60,14 @@ export const useSession = () => {
         throw new Error("Error en la conexión 🌎");
       }
 
-      if (forbiddenStates.includes(e.response?.status)) {
-        showFullScreen();
-        await logoutSession();
-        hideFullScreen();
-        return;
+      if (e.response?.status === 403 || e.response?.status === 401) {
+        router.push("/forbidden");
       }
+
+      if (e.response?.status === 404) {
+        router.push("/not-found");
+      }
+
       throw e.response?.data || "Ocurrió un error desconocido";
     }
   };
@@ -93,12 +85,14 @@ export const useSession = () => {
           route,
         },
       });
+
       const resPolicies: PermissionTypes = getPermissionsBoolean(
         res.data.policie
       );
+
       return resPolicies;
-    } catch (e) {
-      toast.error(MessagesInterpreter(e));
+    } catch (error) {
+      console.log(error);
     }
   };
 

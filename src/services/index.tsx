@@ -22,7 +22,7 @@ export type formatRequest = {
 };
 
 export const correctStates: number[] = [200, 201, 202, 204];
-export const forbiddenStates: number[] = [401];
+export const forbiddenStates: number[] = [401, 403, 404];
 
 class ServicesClass {
   httpRequest({
