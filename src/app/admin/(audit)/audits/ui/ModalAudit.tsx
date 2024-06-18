@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { CUAudit } from "../types";
 import { useSession } from "@/hooks/useSession";
 import { useForm } from "react-hook-form";
+import { Grid } from "@mui/material";
+import { FormInputSlider, FormInputText } from "@/components/forms";
 
 interface AuditModalView {
   audit?: CUAudit | undefined;
@@ -45,7 +47,48 @@ const AuditModalView = ({
     }
   };
 
-  return <div>ModalAudit</div>;
+  return (
+    <div>
+      <form onSubmit={handleSubmit(saveUpdateTemplate)}>
+        <Grid item xs={12} sm={12} md={12}>
+          <FormInputText
+            id={"objective"}
+            control={control}
+            name="objective"
+            label="Objetivo"
+            disabled={loadingModal}
+            rules={{ required: "Este campo es requerido" }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={12}>
+          <FormInputText
+            id={"description"}
+            control={control}
+            name="description"
+            label="Description"
+            disabled={loadingModal}
+            rules={{ required: "Este campo es requerido" }}
+          />
+        </Grid>
+
+        <Grid item xs={12} sm={12} md={12}>
+          <FormInputSlider
+            id={"level"}
+            control={control}
+            setValue={setValue}
+            name="grade"
+            label="Grado"
+            steps={1}
+            min={0}
+            max={10}
+            initialValue={level?.grade}
+            rules={{ required: "Este campo es requerido" }}
+          />
+        </Grid>
+      </form>
+    </div>
+  );
 };
 
 export default AuditModalView;
