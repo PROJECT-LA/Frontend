@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { CustomMessageState } from "@/components/states";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
+import { stringToDate, stringToDateISO } from "@/utils/dates";
 
 interface CustomTabAudit {
   permissions: PermissionTypes;
@@ -89,7 +90,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
       >{`${audit.description}`}</Typography>,
 
       <Typography key={`initial-date-${audit.id}-${index}`} variant={"body2"}>
-        {audit.beginDate}
+        {`${stringToDateISO(audit.beginDate)}`}
       </Typography>,
 
       <Typography key={`final-date-${audit.id}-${index}`} variant={"body2"}>

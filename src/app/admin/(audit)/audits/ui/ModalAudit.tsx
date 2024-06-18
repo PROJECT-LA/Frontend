@@ -4,6 +4,9 @@ import { useSession } from "@/hooks/useSession";
 import { useForm } from "react-hook-form";
 import { Grid } from "@mui/material";
 import { FormInputSlider, FormInputText } from "@/components/forms";
+import { toast } from "sonner";
+import { MessagesInterpreter } from "@/utils";
+import { CONSTANTS } from "../../../../../../config";
 
 interface AuditModalView {
   audit?: CUAudit | undefined;
@@ -16,7 +19,7 @@ const AuditModalView = ({
   correctAction,
   cancelAction,
 }: AuditModalView) => {
-  const [loadingModa, setLoadingModal] = useState<boolean>(false);
+  const [loadingModal, setLoadingModal] = useState<boolean>(false);
   const { sessionRequest } = useSession();
   const { control, handleSubmit } = useForm<CUAudit>({
     defaultValues: {
@@ -37,11 +40,13 @@ const AuditModalView = ({
     try {
       setLoadingModal(true);
       const res = await sessionRequest({
-        url: ``,
+        url: `${CONSTANTS.baseUrl}/audits`,
         type: !!audit.id ? "patch" : "post",
-        body: sendModule,
+        body: audit,
       });
+      toast.success(MessagesInterpreter(res));
     } catch (error) {
+      toast.error(MessagesInterpreter(error));
     } finally {
       setLoadingModal(false);
     }
@@ -49,7 +54,7 @@ const AuditModalView = ({
 
   return (
     <div>
-      <form onSubmit={handleSubmit(saveUpdateTemplate)}>
+      <form onSubmit={handleSubmit(saveUpdateAudit)}>
         <Grid item xs={12} sm={12} md={12}>
           <FormInputText
             id={"objective"}
@@ -72,20 +77,7 @@ const AuditModalView = ({
           />
         </Grid>
 
-        <Grid item xs={12} sm={12} md={12}>
-          <FormInputSlider
-            id={"level"}
-            control={control}
-            setValue={setValue}
-            name="grade"
-            label="Grado"
-            steps={1}
-            min={0}
-            max={10}
-            initialValue={level?.grade}
-            rules={{ required: "Este campo es requerido" }}
-          />
-        </Grid>
+        <Grid item xs={12} sm={12} md={12}></Grid>
       </form>
     </div>
   );

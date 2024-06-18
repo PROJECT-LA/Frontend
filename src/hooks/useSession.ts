@@ -1,4 +1,4 @@
-import { MessagesInterpreter, delay } from "@/utils";
+import { MessagesInterpreter, delay, saveCookie } from "@/utils";
 import { readCookie, deleteCookie, print } from "../utils";
 import { Services, forbiddenStates, methodFormatRequest } from "../services";
 import { checkToken } from "@/utils/token";
@@ -143,6 +143,9 @@ export const useSession = () => {
       const res = await Services.post({
         url: `${CONSTANTS.baseUrl}/auth/refresh`,
       });
+
+      print(res.data.token);
+      saveCookie("token", res.data.token);
 
       if (res.status !== 201) {
         await logoutSession();
