@@ -28,6 +28,7 @@ import {
   CirclePlus,
   Edit,
   RotateCcw,
+  Sparkles,
   ToggleLeft,
   ToggleRight,
   Trash2,
@@ -96,15 +97,22 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
       </Typography>,
 
       <Typography key={`level-${audit.id}-${index}`} variant={"body2"}>
-        {levelsData.find((elem) => elem.id === audit.idLevel)?.level}
+        {levelsData.find((elem) => elem.id === audit.idLevel)?.name}
       </Typography>,
 
-      <Typography
+      <Stack
         key={`acceptance-level-${audit.id}-${index}`}
-        variant={"body2"}
+        direction="row"
+        alignItems="center"
+        justifyContent="center"
+        spacing={1}
       >
-        {audit.acceptanceLevel}
-      </Typography>,
+        <Sparkles size={18} color={theme.palette.secondary.main} />
+        <Typography variant={"body1"}>
+          {audit.acceptanceLevel}&nbsp;/&nbsp;
+          {levelsData.find((elem) => elem.id === audit.idLevel)?.grade}
+        </Typography>
+      </Stack>,
 
       <CustomMessageState
         key={`status-${audit.id}-${index}`}

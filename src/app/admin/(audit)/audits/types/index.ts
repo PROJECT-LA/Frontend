@@ -42,3 +42,17 @@ export interface AuditData {
   finalDate: string;
   description: string;
 }
+
+export interface CUAudit {
+  id?: string;
+
+  idClient: string;
+  idLevel: string;
+  idTemplate: string;
+  objective: string;
+  status: string;
+  acceptanceLevel: number;
+  beginDate: string;
+  finalDate: string;
+  description: string;
+}
