@@ -40,7 +40,6 @@ export default function Levels() {
   const [errorData, setErrorData] = useState<any>();
 
   /********************MODALS*****************************/
-  const [alertStateLevel, setAlertStateLevel] = useState<boolean>(false);
   const [alertDeleteLevel, setAlertDeleteLevel] = useState<boolean>(false);
   const [alertStatusLevel, setAlertStatusLevel] = useState<boolean>(false);
   const [modalLevel, setModalLevel] = useState<boolean>(false);
@@ -312,20 +311,20 @@ export default function Levels() {
 
   const editLevelModalState = (level: LevelData) => {
     setLevelEdition(level);
-    setAlertStateLevel(true);
+    setAlertStatusLevel(true);
   };
 
   const acceptAlertLevelState = async () => {
     if (levelEdition !== undefined) {
       await changeLevelState(levelEdition);
     }
-    setAlertStateLevel(false);
+    setAlertStatusLevel(false);
     await delay(500);
     setLevelEdition(undefined);
   };
 
   const cancelAlertLevelState = () => {
-    setAlertStateLevel(false);
+    setAlertStatusLevel(false);
     setLevelEdition(undefined);
   };
 
@@ -351,7 +350,7 @@ export default function Levels() {
         <Button onClick={acceptDeleteLevelModal}>Aceptar</Button>
       </AlertDialog>
       <AlertDialog
-        isOpen={alertStateLevel}
+        isOpen={alertStatusLevel}
         title={"Alerta"}
         text={`¿Está seguro de ${
           levelEdition?.status == "ACTIVO" ? "inactivar" : "activar"
