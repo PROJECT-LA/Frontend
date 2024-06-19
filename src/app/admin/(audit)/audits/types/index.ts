@@ -50,7 +50,6 @@ export interface CUAudit {
   idLevel: string;
   idTemplate: string;
   objective: string;
-  status: string;
   acceptanceLevel: number;
   beginDate: string;
   finalDate: string;

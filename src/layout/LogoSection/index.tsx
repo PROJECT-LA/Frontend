@@ -1,18 +1,17 @@
 import Link from "next/link";
-
-import { ButtonBase, Stack, Typography, useTheme } from "@mui/material";
-
+import { Stack, Typography, useTheme } from "@mui/material";
 import { CONSTANTS } from "../../../config";
-
-import { FilePieChart } from "lucide-react";
-import { IconoLogo } from "./Logo";
+import LogoImg from "@/assets/logo.png";
+import Image from "next/image";
 
 export const LogoCorto = () => {
-  const theme = useTheme();
-
   return (
     <Link href={CONSTANTS.sitePath}>
-      <IconoLogo />
+      <Image
+        style={{ width: "40px", height: "40px" }}
+        src={LogoImg}
+        alt="logo auditorías"
+      />
     </Link>
   );
 };
@@ -23,7 +22,11 @@ export const Logo = () => {
   return (
     <Link style={{ textDecoration: "none" }} href={CONSTANTS.sitePath}>
       <Stack direction="row" gap={1} alignItems="center">
-        <IconoLogo />
+        <Image
+          style={{ width: "40px", height: "40px" }}
+          src={LogoImg}
+          alt="logo auditorías"
+        />
         <Stack>
           <Typography variant="h3" color={theme.palette.primary.main}>
             Auditoría

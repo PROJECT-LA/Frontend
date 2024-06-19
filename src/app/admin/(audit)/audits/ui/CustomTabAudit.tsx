@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import { FormInputAutocomplete } from "@/components/forms";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import { PermissionTypes } from "@/utils/permissions";
-import { ArrayFilterCustomTab, AuditData } from "../types";
+import { ArrayFilterCustomTab, AuditData, CUAudit } from "../types";
 import { useSession } from "@/hooks/useSession";
 import { MessagesInterpreter, delay } from "@/utils";
 import { toast } from "sonner";
@@ -36,6 +36,9 @@ import {
 import { CustomMessageState } from "@/components/states";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
 import { stringToDate, stringToDateISO } from "@/utils/dates";
+import dayjs from "dayjs";
+import { CustomDialog } from "@/components/modals";
+import AuditModalView from "./ModalAudit";
 
 interface CustomTabAudit {
   permissions: PermissionTypes;
@@ -47,6 +50,11 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.only("md"));
   const [options, setOptions] = useState<Array<optionType>>([]);
+  const [auditEdition, setAuditEdition] = useState<CUAudit | undefined>(
+    undefined
+  );
+  const [modalAudit, setModalAudit] = useState<boolean>(false);
+
   const { control } = useForm<{ searchAudit: string }>({
     defaultValues: {
       searchAudit: "",
@@ -90,11 +98,11 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
       >{`${audit.description}`}</Typography>,
 
       <Typography key={`initial-date-${audit.id}-${index}`} variant={"body2"}>
-        {`${stringToDateISO(audit.beginDate)}`}
+        {`${dayjs(audit.beginDate).format("D/M/YYYY")}`}
       </Typography>,
 
       <Typography key={`final-date-${audit.id}-${index}`} variant={"body2"}>
-        {audit.finalDate}
+        {dayjs(audit.finalDate).format("D/M/YYYY")}
       </Typography>,
 
       <Typography key={`level-${audit.id}-${index}`} variant={"body2"}>
@@ -206,6 +214,9 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
       await delay(100);
       const res3 = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/audits`,
+        params: {
+          idClient: idUser,
+        },
       });
       await delay(100);
       console.log(res3.data.rows);
@@ -231,8 +242,28 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const closeModalAudit = () => {
+    setAuditEdition(undefined);
+    setModalAudit(false);
+  };
+
   return (
     <>
+      <CustomDialog
+        isOpen={modalAudit}
+        handleClose={closeModalAudit}
+        title={auditEdition ? "Editar auditoría" : "Nueva auditoría"}
+      >
+        <AuditModalView
+          idClient={idUser}
+          cancelAction={closeModalAudit}
+          correctAction={() => {}}
+          audit={auditEdition}
+          levelsData={levelsData}
+          templatesData={templatesData}
+        />
+      </CustomDialog>
+
       {loading ? (
         <CustomTabSkeleton />
       ) : (
@@ -298,7 +329,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
                   icon={<CirclePlus />}
                   description={"Agregar auditoría"}
                   action={() => {
-                    // addLevelModal();
+                    setModalAudit(true);
                   }}
                 />
               )}
