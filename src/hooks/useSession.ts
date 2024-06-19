@@ -111,7 +111,6 @@ export const useSession = () => {
       }
 
       deleteCookie("token");
-
       const response = await Services.post({
         headers: {
           accept: "application/json",
@@ -120,12 +119,11 @@ export const useSession = () => {
         url: `${CONSTANTS.baseUrl}/auth/logout`,
       });
       print(`logout with response: `, response);
-      // if (response === "OK") {
-      router.refresh();
-      router.push("/login");
-      // }
     } catch (e) {
       print(`Error al cerrar sesión: `, e);
+      deleteCookie("token");
+      router.refresh();
+      router.push("/login");
     } finally {
       hideFullScreen();
     }

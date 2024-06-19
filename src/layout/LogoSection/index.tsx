@@ -28,7 +28,7 @@ export const Logo = () => {
           alt="logo auditorías"
         />
         <Stack>
-          <Typography variant="h3" color={theme.palette.primary.main}>
+          <Typography variant="h3" color="secondary">
             Auditoría
           </Typography>
         </Stack>
