@@ -118,7 +118,9 @@ export const useSession = () => {
         },
         url: `${CONSTANTS.baseUrl}/auth/logout`,
       });
+
       print(`logout with response: `, response);
+      router.push("/login");
     } catch (e) {
       print(`Error al cerrar sesión: `, e);
       deleteCookie("token");

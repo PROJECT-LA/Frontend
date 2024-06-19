@@ -30,6 +30,8 @@ export const LoginForm = () => {
   const { loginLoader } = useAuthStore();
   const { handleSubmit, control } = useForm<LoginType>();
   const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
+  const xlUp = useMediaQuery(theme.breakpoints.up("xl"));
+  const mdUp = useMediaQuery(theme.breakpoints.up("md"));
 
   const loginSesion = async ({ username, password }: LoginType) => {
     await login({ username, password });
@@ -43,14 +45,14 @@ export const LoginForm = () => {
       </Stack>
 
       <Stack>
-        <Box height={30} />
+        <Box height={mdUp ? 30 : 20} />
         <Divider />
-        <Box height={30} />
-        <Typography variant="h1" color="primary">
+        <Box height={mdUp ? 30 : 20} />
+        <Typography variant={mdUp ? "h1" : "h2"} color="primary">
           Inicia sesión
         </Typography>
         <Box height={5} />
-        <Stack direction="row" spacing={1}>
+        <Stack direction={xlUp ? "row" : "column"} spacing={1}>
           <Typography variant="h5" fontWeight="300">
             ¿Sin cuenta?
           </Typography>
@@ -58,9 +60,9 @@ export const LoginForm = () => {
             Contacta con un administrador
           </Typography>
         </Stack>
-        <Box height={30} />
+        <Box height={mdUp ? 30 : 20} />
         <Divider />
-        <Box height={30} />
+        <Box height={mdUp ? 30 : 20} />
 
         <FormInputText
           id={"username"}
@@ -108,7 +110,7 @@ export const LoginForm = () => {
           </Stack>
         </Box>
 
-        <Stack gap={4} width="100%" marginTop={4} alignItems="center">
+        <Stack gap={3} width="100%" marginTop={4} alignItems="center">
           <Grid item xs={12} sx={{ width: "100%" }}>
             <Button
               type="submit"
@@ -134,14 +136,17 @@ export const LoginForm = () => {
               print("Login Google");
             }}
             fullWidth
+            sx={{
+              backgroundColor: "#F9F9F9",
+            }}
             variant="outlined"
           >
             <Box display="flex" justifyContent="center" alignItems="center">
               <Image
                 src="/images/google.svg"
                 alt="logo google"
-                width={30}
-                height={30}
+                width={20}
+                height={20}
                 style={{ marginRight: matchDownSM ? 8 : 16 }}
               />
               Ingresar con Google

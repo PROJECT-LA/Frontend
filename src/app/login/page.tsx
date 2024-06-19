@@ -1,5 +1,5 @@
 "use client";
-import { Card, Grid, useTheme } from "@mui/material";
+import { Card, Grid, useMediaQuery, useTheme } from "@mui/material";
 import LightLogin from "@/assets/login/light.jpeg";
 import DarkLogin from "@/assets/login/dark.jpeg";
 import Box from "@mui/material/Box";
@@ -9,24 +9,34 @@ import { LoginForm } from "./ui";
 
 export default function LoginPage() {
   const theme = useTheme();
+  const lgUp = useMediaQuery(theme.breakpoints.up("lg"));
+  const xlUp = useMediaQuery(theme.breakpoints.up("xl"));
+  const smUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   return (
     <Box
       height="100vh"
-      paddingX={20}
-      paddingY={10}
+      paddingX={lgUp ? 10 : xlUp ? 15 : smUp ? 5 : 0}
+      paddingY={lgUp ? 8 : xlUp ? 10 : smUp ? 1 : 0}
       display="flex"
       justifyContent="center"
     >
       <Card
         sx={{
-          borderRadius: "1rem",
+          borderRadius: `${smUp ? "1rem" : 0}`,
           height: "100%",
           boxShadow: CONSTANTS.boxShadow,
         }}
       >
-        <Grid container borderRadius={CONSTANTS.borderRadius}>
-          <Grid item xs={8} zIndex={1}>
+        <Grid container>
+          <Grid
+            item
+            xs={12}
+            lg={7}
+            xl={8}
+            zIndex={1}
+            height={lgUp ? "100%" : "10vh"}
+          >
             {theme.palette.mode === "light" ? (
               <Image
                 src={LightLogin}
@@ -49,7 +59,15 @@ export default function LoginPage() {
               />
             )}
           </Grid>
-          <Grid item xs={4} position="relative" paddingX={10} paddingY={5}>
+          <Grid
+            item
+            xs={12}
+            lg={5}
+            xl={4}
+            position="relative"
+            paddingX={5}
+            paddingY={lgUp ? 8 : 4}
+          >
             <Box
               sx={{
                 position: "absolute",
@@ -71,6 +89,18 @@ export default function LoginPage() {
                 height: "170px",
                 borderRadius: "50%",
                 backgroundColor: "#FF76CE",
+                filter: "blur(160px)",
+              }}
+            />
+            <Box
+              sx={{
+                position: "absolute",
+                bottom: 10,
+                right: -10,
+                width: "300px",
+                height: "300px",
+                borderRadius: "50%",
+                backgroundColor: "#FDFFC2",
                 filter: "blur(160px)",
               }}
             />
