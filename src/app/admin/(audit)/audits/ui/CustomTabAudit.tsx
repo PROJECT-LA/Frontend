@@ -78,8 +78,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
     { field: "finalDate", name: "Fecha fin" },
     { field: "level", name: "Nivel" },
     { field: "acceptanceLevel", name: "Aceptación" },
-
-    { field: "estado", name: "Estado" },
+    // { field: "estado", name: "Estado" },
     { field: "acciones", name: "Acciones" },
   ]);
   const tableContent: Array<Array<ReactNode>> = auditData.map(
@@ -123,18 +122,18 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
         </Typography>
       </Stack>,
 
-      <CustomMessageState
-        key={`status-${audit.id}-${index}`}
-        title={audit.status}
-        description={audit.status}
-        color={
-          audit.status == "ACTIVO"
-            ? "success"
-            : audit.status == "INACTIVO"
-            ? "error"
-            : "info"
-        }
-      />,
+      // <CustomMessageState
+      //   key={`status-${audit.id}-${index}`}
+      //   title={audit.status}
+      //   description={audit.status}
+      //   color={
+      //     audit.status == "ACTIVO"
+      //       ? "success"
+      //       : audit.status == "INACTIVO"
+      //       ? "error"
+      //       : "info"
+      //   }
+      // />,
 
       <Grid
         container
@@ -144,29 +143,14 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
       >
         {permissions.update && (
           <IconTooltip
-            id={`cambiarEstadoParametro-${audit.id}`}
-            title={audit.status == "ACTIVO" ? "Inactivar" : "Activar"}
-            color={audit.status == "ACTIVO" ? "success" : "error"}
-            action={async () => {
-              // await editarEstadoParametroModal(levelData);
-            }}
-            deactivate={audit.status == "PENDIENTE"}
-            icon={audit.status == "ACTIVO" ? <ToggleRight /> : <ToggleLeft />}
-            name={
-              audit.status == "ACTIVO"
-                ? "Inactivar auditoría"
-                : "Activar auditoría"
-            }
-          />
-        )}
-
-        {permissions.update && (
-          <IconTooltip
             id={`edit-audit-${audit.id}`}
             name={"Auditoría"}
             title={"Editar"}
             color={"secondary"}
-            action={() => {}}
+            action={() => {
+              setAuditEdition(audit);
+              setModalAudit(true);
+            }}
             icon={<Edit />}
           />
         )}
@@ -206,10 +190,6 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
           limit: 30,
         },
       });
-      console.log("LEVELS");
-      console.log(res2.data?.rows);
-      console.log("LEVELS");
-
       setLevelsData(res2.data?.rows);
       await delay(100);
       const res3 = await sessionRequest({
@@ -219,7 +199,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
         },
       });
       await delay(100);
-      console.log(res3.data.rows);
+      setTotal(res3.data?.total);
       setAuditData(res3.data?.rows);
     } catch (e) {
       toast.error(MessagesInterpreter(e));
@@ -246,6 +226,11 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
     setAuditEdition(undefined);
     setModalAudit(false);
   };
+  const acceptModalAudit = async () => {
+    await getAuditsRequest();
+    setAuditEdition(undefined);
+    setModalAudit(false);
+  };
 
   return (
     <>
@@ -257,7 +242,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
         <AuditModalView
           idClient={idUser}
           cancelAction={closeModalAudit}
-          correctAction={() => {}}
+          correctAction={acceptModalAudit}
           audit={auditEdition}
           levelsData={levelsData}
           templatesData={templatesData}
@@ -268,6 +253,8 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
         <CustomTabSkeleton />
       ) : (
         <Stack>
+          <Typography variant="h4">Lista de Auditorías</Typography>
+          <Box height={15} />
           <Stack direction="row" justifyContent="space-between">
             <Stack direction="row" spacing={3} alignItems="end">
               <ToggleButtonGroup
@@ -315,7 +302,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
                 title={"Actualizar"}
                 key={`accionActualizarAuditoria`}
                 action={async () => {
-                  // await getLevelsRequest();
+                  await getAuditsRequest();
                 }}
                 icon={<RotateCcw />}
                 name={"Actualizar lista de auditorías"}
@@ -335,9 +322,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
               )}
             </Stack>
           </Stack>
-          <Box height={20} />
           <CustomDataTable
-            title="Auditorías"
             error={false}
             loading={loading}
             actions={[]}

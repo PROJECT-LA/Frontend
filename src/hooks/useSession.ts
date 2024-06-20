@@ -61,7 +61,7 @@ export const useSession = () => {
       }
 
       if (e.response?.status === 403 || e.response?.status === 401) {
-        router.push("/forbidden");
+        router.push("/not-found");
       }
 
       if (e.response?.status === 404) {

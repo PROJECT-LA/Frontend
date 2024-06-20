@@ -107,7 +107,7 @@ export default function PoliticsPage() {
 
       <Grid key={`${template.name}-${indexTemplate}-controls`}>
         <Link
-          href={`${CONSTANTS.sitePath}/admin/controles?template=${template.id}`}
+          href={`${CONSTANTS.sitePath}/admin/controls?template=${template.id}`}
         >
           <Button variant="text" endIcon={<SquareArrowOutUpRight />}>
             Ver controles

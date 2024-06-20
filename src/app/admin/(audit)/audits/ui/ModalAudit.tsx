@@ -64,19 +64,16 @@ const AuditModalView = ({
         idClient: audit.idClient,
         idLevel: audit.idLevel,
         idTemplate: audit.idTemplate,
-        beginDate: dayjs(audit.beginDate).format("D-M-YYYY"),
-        finalDate: dayjs(audit.finalDate).format("D-M-YYYY"),
+        beginDate: dayjs(audit.beginDate).format("YYYY-MM-DD"),
+        finalDate: dayjs(audit.finalDate).format("YYYY-MM-DD"),
       };
-      console.log("*******************************");
-      console.log(sendAudit);
-      console.log("*******************************");
-
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/audits`,
         type: !!audit.id ? "patch" : "post",
         body: sendAudit,
       });
       toast.success(MessagesInterpreter(res));
+      await correctAction();
     } catch (error) {
       toast.error(MessagesInterpreter(error));
     } finally {

@@ -42,8 +42,8 @@ export default function LoginPage() {
                 src={LightLogin}
                 alt="light login background"
                 style={{
-                  height: "100%",
                   width: "100%",
+                  height: "1010%",
                   objectFit: "cover",
                 }}
               />
