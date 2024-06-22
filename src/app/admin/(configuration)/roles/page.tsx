@@ -12,13 +12,7 @@ import { CustomMessageState } from "@/components/states";
 import { AlertDialog, CustomDialog } from "@/components/modals";
 import { SortTypeCriteria } from "@/types";
 import { RolCRUDType } from "./types";
-import {
-  print,
-  MessagesInterpreter,
-  delay,
-  siteName,
-  titleCase,
-} from "@/utils";
+import { MessagesInterpreter, delay, titleCase } from "@/utils";
 import { sortFilter } from "@/types";
 import {
   Button,
@@ -31,7 +25,6 @@ import { toast } from "sonner";
 import { RoleModalView } from "./ui/RoleModal";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
 import { RoleFilter } from "./ui/RoleFilter";
-import { usePathname } from "next/navigation";
 import {
   CirclePlus,
   Edit,
@@ -203,9 +196,7 @@ const RolesClient = () => {
     try {
       setLoading(true);
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/roles/${rol.id}/${
-          rol.status == "ACTIVO" ? "inactivacion" : "activacion"
-        }`,
+        url: `${CONSTANTS.baseUrl}/roles/${rol.id}/change-status`,
         type: "patch",
       });
       toast.success(MessagesInterpreter(res));

@@ -17,7 +17,7 @@ export default function LoginPage() {
     <Box
       height="100vh"
       paddingX={lgUp ? 10 : xlUp ? 15 : smUp ? 5 : 0}
-      paddingY={lgUp ? 8 : xlUp ? 10 : smUp ? 1 : 0}
+      paddingY={lgUp ? 3 : xlUp ? 10 : smUp ? 1 : 0}
       display="flex"
       justifyContent="center"
     >
@@ -66,7 +66,10 @@ export default function LoginPage() {
             xl={4}
             position="relative"
             paddingX={5}
-            paddingY={lgUp ? 8 : 4}
+            paddingY={lgUp ? 4 : xlUp ? 8 : 4}
+            sx={{
+              overflowY: "auto",
+            }}
           >
             <Box
               sx={{

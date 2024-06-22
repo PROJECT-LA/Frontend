@@ -30,6 +30,7 @@ export const LoginForm = () => {
   const { loginLoader } = useAuthStore();
   const { handleSubmit, control } = useForm<LoginType>();
   const matchDownSM = useMediaQuery(theme.breakpoints.down("md"));
+  const lgUp = useMediaQuery(theme.breakpoints.up("lg"));
   const xlUp = useMediaQuery(theme.breakpoints.up("xl"));
   const mdUp = useMediaQuery(theme.breakpoints.up("md"));
 
@@ -45,24 +46,28 @@ export const LoginForm = () => {
       </Stack>
 
       <Stack>
-        <Box height={mdUp ? 30 : 20} />
+        <Box height={mdUp ? 25 : 20} />
         <Divider />
-        <Box height={mdUp ? 30 : 20} />
-        <Typography variant={mdUp ? "h1" : "h2"} color="primary">
+        <Box height={mdUp ? 25 : 20} />
+        <Typography variant={xlUp ? "h1" : "h2"} color="primary">
           Inicia sesión
         </Typography>
         <Box height={5} />
-        <Stack direction={xlUp ? "row" : "column"} spacing={1}>
-          <Typography variant="h5" fontWeight="300">
+        <Stack direction={lgUp ? "row" : "column"} spacing={1}>
+          <Typography variant={xlUp ? "h5" : "h6"} fontWeight="300">
             ¿Sin cuenta?
           </Typography>
-          <Typography variant="h5" fontWeight="400" color="secondary">
+          <Typography
+            variant={xlUp ? "h5" : "h6"}
+            fontWeight="400"
+            color="secondary"
+          >
             Contacta con un administrador
           </Typography>
         </Stack>
-        <Box height={mdUp ? 30 : 20} />
+        <Box height={mdUp ? 25 : 20} />
         <Divider />
-        <Box height={mdUp ? 30 : 20} />
+        <Box height={mdUp ? 25 : 20} />
 
         <FormInputText
           id={"username"}

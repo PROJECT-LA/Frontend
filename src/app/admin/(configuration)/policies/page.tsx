@@ -4,13 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { PoliticsCRUDType } from "./types";
 import { useSession } from "@/hooks/useSession";
 import { RolType } from "../users/types";
-import {
-  print,
-  MessagesInterpreter,
-  siteName,
-  delay,
-  titleCase,
-} from "@/utils";
+import { print, MessagesInterpreter, delay, titleCase } from "@/utils";
 import { Button, Chip, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { SortTypeCriteria, sortFilter } from "@/types";
 import {
@@ -21,7 +15,6 @@ import {
 } from "@/components/buttons";
 import { CONSTANTS } from "../../../../../config";
 import { AlertDialog, CustomDialog } from "@/components/modals";
-import { UsersModalView } from "../users/ui/UsersModal";
 import { Pagination } from "@/components/datatable";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
 import { PoliticsFilter } from "./ui/PoliticsFilter";
@@ -265,7 +258,7 @@ export default function PoliticsPage() {
     try {
       setLoading(true);
       const res = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/policies/status`,
+        url: `${CONSTANTS.baseUrl}/policies/change-status`,
         type: "patch",
         body: policy,
       });

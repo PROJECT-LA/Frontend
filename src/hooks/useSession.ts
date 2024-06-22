@@ -60,12 +60,14 @@ export const useSession = () => {
         throw new Error("Error en la conexión 🌎");
       }
 
-      if (e.response?.status === 403 || e.response?.status === 401) {
-        router.push("/not-found");
-      }
+      if (isPermissions) {
+        if (e.response?.status === 403 || e.response?.status === 401) {
+          router.push("/not-found");
+        }
 
-      if (e.response?.status === 404) {
-        router.push("/not-found");
+        if (e.response?.status === 404) {
+          router.push("/not-found");
+        }
       }
 
       throw e.response?.data || "Ocurrió un error desconocido";
