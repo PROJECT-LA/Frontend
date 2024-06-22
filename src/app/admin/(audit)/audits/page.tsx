@@ -4,22 +4,20 @@ import { PermissionTypes, initialPermissions } from "@/utils/permissions";
 import {
   Box,
   Grid,
-  Input,
   Stack,
   Tab,
   Tabs,
-  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { FormInputAutocomplete, FormInputDropdown } from "@/components/forms";
+import { FormInputAutocomplete } from "@/components/forms";
 import { useForm } from "react-hook-form";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import CustomTabAudit from "./ui/CustomTabAudit";
-import { useAuthStore, useGlobalStore } from "@/store";
+import { useAuthStore } from "@/store";
 import { useSession } from "@/hooks/useSession";
 import { toast } from "sonner";
-import { MessagesInterpreter, delay, print } from "@/utils";
+import { MessagesInterpreter, delay } from "@/utils";
 import { CONSTANTS } from "../../../../../config";
 import { UserAudit } from "./types";
 
