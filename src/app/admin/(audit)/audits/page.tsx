@@ -68,9 +68,7 @@ const AuditPage = () => {
         const res = await sessionRequest({
           url: `${CONSTANTS.baseUrl}/users/${user?.idRole}/role`,
         });
-
         await delay(100);
-
         setUsersData(res.data);
 
         toast.success(MessagesInterpreter(res));
