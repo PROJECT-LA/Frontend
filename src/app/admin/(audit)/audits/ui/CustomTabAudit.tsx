@@ -24,18 +24,8 @@ import { TemplatesData } from "../../templates/types";
 import { Pagination } from "@/components/datatable";
 import { SortTypeCriteria } from "@/types";
 import { IconTooltip, OwnIconButton } from "@/components/buttons";
-import {
-  CirclePlus,
-  Edit,
-  RotateCcw,
-  Sparkles,
-  ToggleLeft,
-  ToggleRight,
-  Trash2,
-} from "lucide-react";
-import { CustomMessageState } from "@/components/states";
+import { CirclePlus, Edit, RotateCcw, Sparkles, Trash2 } from "lucide-react";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
-import { stringToDate, stringToDateISO } from "@/utils/dates";
 import dayjs from "dayjs";
 import { CustomDialog } from "@/components/modals";
 import AuditModalView from "./ModalAudit";
@@ -77,8 +67,6 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
     { field: "beginDate", name: "Fecha inicio" },
     { field: "finalDate", name: "Fecha fin" },
     { field: "level", name: "Nivel" },
-    { field: "acceptanceLevel", name: "Aceptación" },
-    // { field: "estado", name: "Estado" },
     { field: "acciones", name: "Acciones" },
   ]);
   const tableContent: Array<Array<ReactNode>> = auditData.map(
@@ -107,33 +95,6 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
       <Typography key={`level-${audit.id}-${index}`} variant={"body2"}>
         {levelsData.find((elem) => elem.id === audit.idLevel)?.name}
       </Typography>,
-
-      <Stack
-        key={`acceptance-level-${audit.id}-${index}`}
-        direction="row"
-        alignItems="center"
-        justifyContent="center"
-        spacing={1}
-      >
-        <Sparkles size={18} color={theme.palette.secondary.main} />
-        <Typography variant={"body1"}>
-          {audit.acceptanceLevel}&nbsp;/&nbsp;
-          {levelsData.find((elem) => elem.id === audit.idLevel)?.grade}
-        </Typography>
-      </Stack>,
-
-      // <CustomMessageState
-      //   key={`status-${audit.id}-${index}`}
-      //   title={audit.status}
-      //   description={audit.status}
-      //   color={
-      //     audit.status == "ACTIVO"
-      //       ? "success"
-      //       : audit.status == "INACTIVO"
-      //       ? "error"
-      //       : "info"
-      //   }
-      // />,
 
       <Grid
         container

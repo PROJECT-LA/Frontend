@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { CUAudit } from "../types";
+import { CUAudit, CreateAudit, initialCreateAudit } from "../types";
 import { useSession } from "@/hooks/useSession";
 import { useForm } from "react-hook-form";
 import {
@@ -16,31 +16,28 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import {
-  FormInputDropdown,
-  FormInputSlider,
-  FormInputText,
-} from "@/components/forms";
+import { FormInputDropdown, FormInputText } from "@/components/forms";
 import { toast } from "sonner";
 import { MessagesInterpreter } from "@/utils";
 import { CONSTANTS } from "../../../../../../config";
 import { LinealLoader } from "@/components/loaders";
 import { FormInputDate } from "@/components/forms/FormInputDate";
-import dayjs from "dayjs";
 import { TemplatesData } from "../../templates/types";
 import { LevelData } from "../../levels/types";
 import {
+  Check,
   ChevronLeft,
   ChevronRight,
-  LoaderCircle,
-  MoveLeft,
-  MoveRight,
+  CircleCheck,
+  Save,
+  UserCheck,
 } from "lucide-react";
 import { ControlGroupType } from "../../controls/types";
 import { SortTypeCriteria } from "@/types";
 import { Pagination } from "@/components/datatable";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
 import { UserRolCRUDType } from "@/app/admin/(configuration)/users/types";
+import dayjs from "dayjs";
 
 interface AuditModalView {
   audit?: CUAudit | undefined;
@@ -57,9 +54,10 @@ interface StepAudit {
 }
 
 const initialSteps: StepAudit[] = [
-  { name: "Audtoría", completed: false },
+  { name: "Configuración", completed: false },
   { name: "Grupos de control", completed: false },
-  { name: "Auditores", completed: false },
+  { name: "Asignar auditores", completed: false },
+  { name: "Finalizar", completed: false },
 ];
 
 const AuditModalView = ({
@@ -71,8 +69,11 @@ const AuditModalView = ({
   cancelAction,
 }: AuditModalView) => {
   const theme = useTheme();
+
   const [loadingControl, setLoadingControl] = useState<boolean>(true);
   const [loadingAuditor, setLoadingAuditor] = useState<boolean>(true);
+  const [createAudit, setCreateAudit] =
+    useState<CreateAudit>(initialCreateAudit);
 
   const [dataControl, setDataControl] = useState<ControlGroupType[]>([]);
   const [dataAuditors, setDataAuditors] = useState<UserRolCRUDType[]>([]);
@@ -115,6 +116,27 @@ const AuditModalView = ({
       <Checkbox
         key={`check-control-group-${indexGroupData}`}
         color="secondary"
+        checked={createAudit.groupControls.includes(controlGroupData.id)}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          if (event.target.checked) {
+            setCreateAudit({
+              ...createAudit,
+              groupControls: [
+                ...createAudit.groupControls,
+                controlGroupData.id,
+              ],
+            });
+          } else {
+            const newGroupControls: string[] | undefined =
+              createAudit?.groupControls.filter(
+                (elem) => elem !== controlGroupData.id
+              );
+            setCreateAudit({
+              ...createAudit,
+              groupControls: newGroupControls,
+            });
+          }
+        }}
       />,
     ]
   );
@@ -150,6 +172,23 @@ const AuditModalView = ({
       <Checkbox
         key={`check-auditor-user-${indexAuditorData}`}
         color="secondary"
+        checked={createAudit.auditors.includes(auditorData.id)}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          if (event.target.checked) {
+            setCreateAudit({
+              ...createAudit,
+              auditors: [...createAudit.auditors, auditorData.id],
+            });
+          } else {
+            const newAudit: string[] | undefined = createAudit?.auditors.filter(
+              (elem) => elem !== auditorData.id
+            );
+            setCreateAudit({
+              ...createAudit,
+              auditors: newAudit,
+            });
+          }
+        }}
       />,
     ]
   );
@@ -166,11 +205,11 @@ const AuditModalView = ({
 
   const paginationAuditors = (
     <Pagination
-      page={pageControls}
-      limit={limitControls}
-      total={totalControls}
-      changePage={setPageControls}
-      changeLimit={setLimitControls}
+      page={pageAuditors}
+      limit={limitAuditors}
+      total={totalAuditors}
+      changePage={setPageAuditors}
+      changeLimit={setLimitAuditors}
     />
   );
 
@@ -179,7 +218,6 @@ const AuditModalView = ({
   const { control, handleSubmit, watch, setValue } = useForm<CUAudit>({
     defaultValues: {
       id: audit?.id,
-      acceptanceLevel: audit?.acceptanceLevel,
       beginDate: audit?.beginDate,
       finalDate: audit?.finalDate,
       description: audit?.description,
@@ -191,16 +229,10 @@ const AuditModalView = ({
     },
   });
 
-  const idLevelValue = watch("idLevel");
   const idTemplateValue = watch("idTemplate");
 
   const [activeStep, setActiveStep] = React.useState(0);
   const [steps, setSteps] = useState<StepAudit[]>(initialSteps);
-
-  const onClickStep = (step: number) => () => {
-    console.log(step);
-    setActiveStep(step);
-  };
 
   const getControlGroupData = async () => {
     try {
@@ -225,21 +257,22 @@ const AuditModalView = ({
 
   const getAuditorData = async () => {
     try {
-      setLoadingControl(true);
+      setLoadingAuditor(true);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/users`,
         params: {
           page: pageAuditors,
           limit: limitAuditors,
           status: "ACTIVE",
+          idRole: 4, // TODO: Se puso manualmente
         },
       });
-      setDataControl(res.data.rows);
-      setTotalControls(res.data.total);
+      setDataAuditors(res.data.rows);
+      setTotalAuditors(res.data.total);
     } catch (error) {
       toast.error(MessagesInterpreter(error));
     } finally {
-      setLoadingControl(false);
+      setLoadingAuditor(false);
     }
   };
 
@@ -249,27 +282,36 @@ const AuditModalView = ({
         .then(() => {})
         .finally(() => {});
     }
+    if (idTemplateValue && activeStep == 2) {
+      getAuditorData()
+        .then(() => {})
+        .finally(() => {});
+    }
     // eslint-disable-next-line
-  }, [activeStep, pageControls, limitControls]);
+  }, [activeStep, pageControls, limitControls, pageAuditors, limitAuditors]);
 
-  const saveUpdateAudit = async (audit: CUAudit) => {
+  const temporalSaveForm = async (audit: CUAudit) => {
+    setCreateAudit({
+      objective: audit.objective,
+      description: audit.description,
+      idClient: audit.idClient,
+      idLevel: audit.idLevel,
+      idTemplate: audit.idTemplate,
+      beginDate: dayjs(audit.beginDate).format("YYYY-MM-DD"),
+      finalDate: dayjs(audit.finalDate).format("YYYY-MM-DD"),
+      auditors: [],
+      groupControls: [],
+    });
+    setActiveStep(1);
+  };
+
+  const saveAudit = async () => {
     try {
       setLoadingModal(true);
-      const sendAudit: CUAudit = {
-        id: audit.id,
-        acceptanceLevel: audit.acceptanceLevel,
-        objective: audit.objective,
-        description: audit.description,
-        idClient: audit.idClient,
-        idLevel: audit.idLevel,
-        idTemplate: audit.idTemplate,
-        beginDate: dayjs(audit.beginDate).format("YYYY-MM-DD"),
-        finalDate: dayjs(audit.finalDate).format("YYYY-MM-DD"),
-      };
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/audits`,
-        type: !!audit.id ? "patch" : "post",
-        body: sendAudit,
+        type: "post",
+        body: createAudit,
       });
       toast.success(MessagesInterpreter(res));
       await correctAction();
@@ -281,27 +323,21 @@ const AuditModalView = ({
   };
 
   return (
-    <form onSubmit={handleSubmit(saveUpdateAudit)}>
+    <form onSubmit={handleSubmit(temporalSaveForm)}>
       <DialogContent dividers>
         <Stepper nonLinear activeStep={activeStep}>
           {steps.map((label, index) => (
             <Step key={label.name} completed={label.completed}>
-              <StepButton color="inherit" onClick={onClickStep(index)}>
-                {label.name}
-              </StepButton>
+              <StepButton color="inherit">{label.name}</StepButton>
             </Step>
           ))}
         </Stepper>
+
         <Box height={20} />
 
         <>
           {activeStep === 0 && (
-            <Grid
-              container
-              direction={"column"}
-              justifyContent="space-evenly"
-              paddingX={{ lg: 6 }}
-            >
+            <Grid container direction={"column"} justifyContent="space-evenly">
               <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
                 <Grid item xs={12} sm={12} md={12}>
                   <FormInputText
@@ -359,6 +395,7 @@ const AuditModalView = ({
                     name="idTemplate"
                     control={control}
                     label="Selecciona un plantilla"
+                    rules={{ required: "Este campo es requerido" }}
                     options={templatesData.map((elem) => ({
                       key: elem.id,
                       value: elem.id,
@@ -372,6 +409,7 @@ const AuditModalView = ({
                     name="idLevel"
                     control={control}
                     label="Selecciona un nivel"
+                    rules={{ required: "Este campo es requerido" }}
                     options={levelsData.map((elem) => ({
                       key: elem.id,
                       value: elem.id,
@@ -380,29 +418,6 @@ const AuditModalView = ({
                   />
                 </Grid>
               </Grid>
-
-              <Box height={10} />
-              {idLevelValue && idLevelValue.length > 0 && (
-                <Grid item xs={12} sm={12} md={12}>
-                  <FormInputSlider
-                    id={"level"}
-                    control={control}
-                    setValue={setValue}
-                    name="acceptanceLevel"
-                    label="Nivel de aceptación"
-                    steps={1}
-                    min={0}
-                    max={Number(
-                      levelsData.find((elem) => elem.id === idLevelValue)?.grade
-                    )}
-                    initialValue={0}
-                    rules={{ required: "Este campo es requerido" }}
-                  />
-                </Grid>
-              )}
-
-              <Box height={"20px"} />
-              <LinealLoader mostrar={loadingModal} />
             </Grid>
           )}
 
@@ -444,8 +459,9 @@ const AuditModalView = ({
                 {idTemplateValue.length > 0 ? (
                   <CustomDataTable
                     error={undefined}
-                    loading={loadingControl}
+                    loading={loadingAuditor}
                     actions={[]}
+                    inModal={true}
                     columns={auditorCriteria}
                     changeOrderCriteria={setAuditorCriteria}
                     pagination={paginationAuditors}
@@ -466,37 +482,173 @@ const AuditModalView = ({
               </>
             </Grid>
           )}
+
+          {activeStep === 3 && (
+            <Grid container spacing={1} justifyContent="space-evenly">
+              <Grid item xs={4}>
+                <Stack
+                  border={0.2}
+                  borderColor={theme.palette.secondary.main}
+                  borderRadius={1}
+                  padding={1.5}
+                >
+                  <Box textAlign="center" marginBottom={1.5}>
+                    <Typography variant="h5">Configuración</Typography>
+                  </Box>
+
+                  <Stack direction="row" alignItems="center" spacing={1.3}>
+                    <Check size={18} color={theme.palette.secondary.main} />
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Objetivo
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {createAudit.objective}
+                    </Typography>
+                  </Stack>
+
+                  <Stack direction="row" alignItems="center" spacing={1.3}>
+                    <Check size={18} color={theme.palette.secondary.main} />
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Descripción
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {createAudit.description}
+                    </Typography>
+                  </Stack>
+
+                  <Stack direction="row" alignItems="center" spacing={1.3}>
+                    <Check size={18} color={theme.palette.secondary.main} />
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Fecha de inicio
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {createAudit.beginDate}
+                    </Typography>
+                  </Stack>
+
+                  <Stack direction="row" alignItems="center" spacing={1.3}>
+                    <Check size={18} color={theme.palette.secondary.main} />
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Fecha final
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {createAudit.finalDate}
+                    </Typography>
+                  </Stack>
+
+                  <Stack direction="row" alignItems="center" spacing={1.3}>
+                    <Check size={18} color={theme.palette.secondary.main} />
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Plantilla
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {(() => {
+                        const templateInfo = templatesData.find(
+                          (elem) => elem.id === createAudit.idTemplate
+                        );
+                        return templateInfo
+                          ? `${templateInfo.version} - ${templateInfo.name}`
+                          : "Plantilla no encontrada";
+                      })()}
+                    </Typography>
+                  </Stack>
+
+                  <Stack direction="row" alignItems="center" spacing={1.3}>
+                    <Check size={18} color={theme.palette.secondary.main} />
+                    <Typography variant="subtitle2" fontWeight="bold">
+                      Nivel
+                    </Typography>
+                    <Typography variant="subtitle2">
+                      {
+                        levelsData.find(
+                          (elem) => elem.id == createAudit.idLevel
+                        )?.name
+                      }
+                    </Typography>
+                  </Stack>
+                </Stack>
+              </Grid>
+              <Grid item xs={4}>
+                <Stack
+                  border={0.2}
+                  borderColor={theme.palette.secondary.main}
+                  borderRadius={1}
+                  paddingY={1.5}
+                  paddingX={3}
+                >
+                  <Box textAlign="center" marginBottom={1.5}>
+                    <Typography variant="h5">Grupos de control</Typography>
+                  </Box>
+                  {createAudit.groupControls.map((elem) => {
+                    const control = dataControl.find(
+                      (control) => control.id === elem
+                    );
+                    return (
+                      <Stack
+                        key={`control-group-summary-${elem}`}
+                        direction="row"
+                        alignItems="center"
+                        spacing={1.3}
+                      >
+                        <CircleCheck
+                          size={18}
+                          color={theme.palette.secondary.main}
+                        />
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          {control?.groupCode}
+                        </Typography>
+                        <Typography variant="subtitle2">
+                          {control?.group}
+                        </Typography>
+                      </Stack>
+                    );
+                  })}
+                </Stack>
+              </Grid>
+
+              <Grid item xs={4}>
+                <Stack
+                  border={0.2}
+                  borderColor={theme.palette.secondary.main}
+                  borderRadius={1}
+                  paddingY={1.5}
+                  paddingX={3}
+                >
+                  <Box textAlign="center" marginBottom={1.5}>
+                    <Typography variant="h5">Auditores asignados</Typography>
+                  </Box>
+                  {createAudit.auditors.map((elem) => {
+                    const auditor = dataAuditors.find(
+                      (control) => control.id === elem
+                    );
+                    return (
+                      <Stack
+                        key={`control-group-summary-${elem}`}
+                        direction="row"
+                        alignItems="center"
+                        spacing={1.3}
+                      >
+                        <UserCheck
+                          size={18}
+                          color={theme.palette.secondary.main}
+                        />
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          {auditor?.names}
+                        </Typography>
+                        <Typography variant="subtitle2">
+                          {auditor?.lastNames}
+                        </Typography>
+                      </Stack>
+                    );
+                  })}
+                </Stack>
+              </Grid>
+            </Grid>
+          )}
         </>
 
-        <Stack direction="row" justifyContent="space-between">
-          <div>
-            {activeStep > 0 && (
-              <Button
-                startIcon={<ChevronLeft size={15} />}
-                variant={"contained"}
-                onClick={onClickStep(activeStep - 1)}
-              >
-                Anterior
-              </Button>
-            )}
-          </div>
-
-          <div>
-            {activeStep < 2 && (
-              <Button
-                endIcon={<ChevronRight size={15} />}
-                sx={{ paddingY: 0.4 }}
-                variant={"contained"}
-                onClick={onClickStep(activeStep + 1)}
-              >
-                Siguiente
-              </Button>
-            )}
-          </div>
-        </Stack>
-
-        <Box height={"10px"} />
         <LinealLoader mostrar={loadingModal} />
+        <Box height={"10px"} />
       </DialogContent>
       <DialogActions
         sx={{
@@ -512,9 +664,56 @@ const AuditModalView = ({
         >
           Cancelar
         </Button>
-        <Button variant={"contained"} disabled={true} type={"submit"}>
-          Guardar
-        </Button>
+        <Stack direction="row" spacing={1}>
+          <div>
+            {activeStep > 0 && (
+              <Button
+                startIcon={<ChevronLeft size={15} />}
+                sx={{ paddingY: 0.4 }}
+                variant={"contained"}
+                onClick={() => setActiveStep(activeStep - 1)}
+              >
+                Anterior
+              </Button>
+            )}
+          </div>
+
+          <div>
+            {activeStep < 3 && activeStep !== 0 && (
+              <Button
+                endIcon={<ChevronRight size={15} />}
+                sx={{ paddingY: 0.4 }}
+                variant={"contained"}
+                onClick={() => setActiveStep(activeStep + 1)}
+              >
+                Siguiente
+              </Button>
+            )}
+
+            {activeStep === 0 && (
+              <Button
+                endIcon={<ChevronRight size={15} />}
+                type="submit"
+                sx={{ paddingY: 0.4 }}
+                variant={"contained"}
+              >
+                Siguiente
+              </Button>
+            )}
+
+            {activeStep === 3 && (
+              <Button
+                endIcon={<Save size={16} />}
+                type="submit"
+                sx={{ paddingY: 0.4 }}
+                variant={"contained"}
+                onClick={() => saveAudit()}
+              >
+                Guardar
+              </Button>
+            )}
+          </div>
+        </Stack>
       </DialogActions>
     </form>
   );

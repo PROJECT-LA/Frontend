@@ -50,8 +50,31 @@ export interface CUAudit {
   idLevel: string;
   idTemplate: string;
   objective: string;
-  acceptanceLevel: number;
   beginDate: string;
   finalDate: string;
   description: string;
 }
+
+export interface CreateAudit {
+  objective: string;
+  description: string;
+  beginDate: string;
+  finalDate: string;
+  idClient: string;
+  idTemplate: string;
+  idLevel: string;
+  groupControls: string[];
+  auditors: string[];
+}
+
+export const initialCreateAudit: CreateAudit = {
+  auditors: [],
+  beginDate: "",
+  description: "",
+  finalDate: "",
+  groupControls: [],
+  idClient: "",
+  idLevel: "",
+  idTemplate: "",
+  objective: "",
+};
