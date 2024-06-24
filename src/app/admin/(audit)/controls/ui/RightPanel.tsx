@@ -194,12 +194,12 @@ export const RightPanel = ({
               </Grid>
             </Grid>
             <Divider />
-            <Box height="550px" overflow="auto">
-              <Stack
-                sx={{ padding: "1.2rem" }}
-                spacing={2.5}
-                bgcolor={theme.palette.background.default}
-              >
+            <Box
+              height="550px"
+              overflow="auto"
+              bgcolor={theme.palette.background.default}
+            >
+              <Stack sx={{ padding: "1.2rem" }} spacing={2.5}>
                 {editionControlGroup?.controls?.map((specific, index) => (
                   <MainCard
                     padding={false}

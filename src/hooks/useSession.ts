@@ -50,7 +50,7 @@ export const useSession = () => {
       print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
-      console.log(e.response.status);
+      print(`${e.response.status}`);
 
       if (e.code === "ECONNABORTED") {
         throw new Error("La petición está tardando demasiado");

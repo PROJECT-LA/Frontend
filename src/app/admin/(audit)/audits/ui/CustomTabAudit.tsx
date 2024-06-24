@@ -199,6 +199,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
         },
       });
       await delay(100);
+
       setTotal(res3.data?.total);
       setAuditData(res3.data?.rows);
     } catch (e) {
@@ -237,6 +238,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
       <CustomDialog
         isOpen={modalAudit}
         handleClose={closeModalAudit}
+        maxWidth="lg"
         title={auditEdition ? "Editar auditoría" : "Nueva auditoría"}
       >
         <AuditModalView

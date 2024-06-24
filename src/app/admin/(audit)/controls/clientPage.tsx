@@ -134,7 +134,8 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
       setLoading(false);
     }
   };
-  const getControlGroupRequest = async () => {
+
+  const getControlGroupRequest = async (specific: boolean) => {
     try {
       setLoading(true);
       await delay(100);
@@ -263,14 +264,15 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
     setAddModalInfo(initialAddModalInfo);
   };
   const acceptModalControlSpecific = async () => {
-    const id = editionControlGroup?.id;
+    // const id = editionControlGroup?.id;
+    // // if (id) await getControlSpecificRequest(id);
     await delay(100);
-    if (id) await getControlSpecificRequest(id);
+    await getControlGroupRequest(true);
 
     setAddModalInfo(initialAddModalInfo);
   };
   const acceptModalControlGroup = async () => {
-    await getControlGroupRequest();
+    await getControlGroupRequest(false);
     await delay(100);
     setAddModalInfo(initialAddModalInfo);
   };
