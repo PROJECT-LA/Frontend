@@ -36,6 +36,7 @@ export interface CustomDataTableType {
   tableContent: Array<Array<ReactNode>>;
   pagination?: ReactNode;
   isSelectable?: boolean;
+  inModal?: boolean;
   selected?: (indices: Array<number>) => void;
 }
 
@@ -44,6 +45,7 @@ export const CustomDataTable = ({
   customTitle,
   error = false,
   loading = false,
+  inModal = false,
   actions = [],
   columns,
   changeOrderCriteria,
@@ -376,7 +378,7 @@ export const CustomDataTable = ({
                                   }}
                                 >
                                   <Typography
-                                    variant="h4"
+                                    variant="h5"
                                     fontWeight={"medium"}
                                     align={"left"}
                                   >
@@ -395,7 +397,7 @@ export const CustomDataTable = ({
                                 </Button>
                               ) : (
                                 <Typography
-                                  variant="h4"
+                                  variant="h5"
                                   fontWeight={"medium"}
                                   align={`${
                                     columna.field === "acciones"
@@ -446,15 +448,32 @@ export const CustomDataTable = ({
                                   </TableCell>
                                 )}
                                 {contenidoFila.map(
-                                  (contenido, indexContenidoFila) => (
-                                    <TableCell
-                                      key={`celda-id-${indexContenidoTabla}-${indexContenidoFila}`}
-                                    >
-                                      <Fade in={!loading} timeout={1000}>
-                                        <Box>{contenido}</Box>
-                                      </Fade>
-                                    </TableCell>
-                                  )
+                                  (contenido, indexContenidoFila) => {
+                                    if (inModal) {
+                                      return (
+                                        <TableCell
+                                          key={`celda-id-${indexContenidoTabla}-${indexContenidoFila}`}
+                                          sx={{
+                                            paddingY: 0,
+                                          }}
+                                        >
+                                          <Fade in={!loading} timeout={1000}>
+                                            <Box>{contenido}</Box>
+                                          </Fade>
+                                        </TableCell>
+                                      );
+                                    } else {
+                                      return (
+                                        <TableCell
+                                          key={`celda-id-${indexContenidoTabla}-${indexContenidoFila}`}
+                                        >
+                                          <Fade in={!loading} timeout={1000}>
+                                            <Box>{contenido}</Box>
+                                          </Fade>
+                                        </TableCell>
+                                      );
+                                    }
+                                  }
                                 )}
                               </TableRow>
                             )

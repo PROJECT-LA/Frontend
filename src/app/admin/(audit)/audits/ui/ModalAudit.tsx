@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import { CUAudit } from "../types";
 import { useSession } from "@/hooks/useSession";
 import { useForm } from "react-hook-form";
@@ -37,6 +37,10 @@ import {
   MoveRight,
 } from "lucide-react";
 import { ControlGroupType } from "../../controls/types";
+import { SortTypeCriteria } from "@/types";
+import { Pagination } from "@/components/datatable";
+import { CustomDataTable } from "@/components/datatable/CustomDataTable";
+import { UserRolCRUDType } from "@/app/admin/(configuration)/users/types";
 
 interface AuditModalView {
   audit?: CUAudit | undefined;
@@ -68,7 +72,107 @@ const AuditModalView = ({
 }: AuditModalView) => {
   const theme = useTheme();
   const [loadingControl, setLoadingControl] = useState<boolean>(true);
+  const [loadingAuditor, setLoadingAuditor] = useState<boolean>(true);
+
   const [dataControl, setDataControl] = useState<ControlGroupType[]>([]);
+  const [dataAuditors, setDataAuditors] = useState<UserRolCRUDType[]>([]);
+
+  const [limitControls, setLimitControls] = useState<number>(10);
+  const [pageControls, setPageControls] = useState<number>(1);
+  const [totalControls, setTotalControls] = useState<number>(0);
+
+  const [limitAuditors, setLimitAuditors] = useState<number>(10);
+  const [pageAuditors, setPageAuditors] = useState<number>(1);
+  const [totalAuditors, setTotalAuditors] = useState<number>(0);
+
+  const [controlCriteria, setControlCriteria] = useState<
+    Array<SortTypeCriteria>
+  >([
+    { field: "group", name: "Código grupo" },
+    { field: "groupName", name: "Nombre grupo" },
+    { field: "object", name: "Código objetivo" },
+    { field: "objectName", name: "Nombre objetivo" },
+    { field: "add", name: "Añadir" },
+  ]);
+  const controlTable: Array<Array<ReactNode>> = dataControl.map(
+    (controlGroupData, indexGroupData) => [
+      <Typography
+        key={`${controlGroupData.id}-${indexGroupData}-code`}
+        variant={"subtitle2"}
+      >{`${controlGroupData.groupCode}`}</Typography>,
+      <Typography
+        key={`${controlGroupData.id}-${indexGroupData}-name`}
+        variant={"subtitle2"}
+      >{`${controlGroupData.group}`}</Typography>,
+      <Typography
+        key={`${controlGroupData.id}-${indexGroupData}-code`}
+        variant={"subtitle2"}
+      >{`${controlGroupData.groupCode}`}</Typography>,
+      <Typography
+        key={`${controlGroupData.id}-${indexGroupData}-name`}
+        variant={"subtitle2"}
+      >{`${controlGroupData.group}`}</Typography>,
+      <Checkbox
+        key={`check-control-group-${indexGroupData}`}
+        color="secondary"
+      />,
+    ]
+  );
+
+  const [auditorCriteria, setAuditorCriteria] = useState<
+    Array<SortTypeCriteria>
+  >([
+    { field: "names", name: "Nombres" },
+    { field: "lastNames", name: "Apellidos" },
+    { field: "email", name: "Correo" },
+    { field: "phone", name: "Teléfono" },
+    { field: "add", name: "Asignar" },
+  ]);
+
+  const auditorTable: Array<Array<ReactNode>> = dataAuditors.map(
+    (auditorData, indexAuditorData) => [
+      <Typography
+        key={`${auditorData.id}-${indexAuditorData}-name`}
+        variant={"subtitle2"}
+      >{`${auditorData.names}`}</Typography>,
+      <Typography
+        key={`${auditorData.id}-${indexAuditorData}-last-name`}
+        variant={"subtitle2"}
+      >{`${auditorData.lastNames}`}</Typography>,
+      <Typography
+        key={`${auditorData.id}-${indexAuditorData}-email`}
+        variant={"subtitle2"}
+      >{`${auditorData.email}`}</Typography>,
+      <Typography
+        key={`${auditorData.id}-${indexAuditorData}-phone`}
+        variant={"subtitle2"}
+      >{`${auditorData.phone}`}</Typography>,
+      <Checkbox
+        key={`check-auditor-user-${indexAuditorData}`}
+        color="secondary"
+      />,
+    ]
+  );
+
+  const paginationControls = (
+    <Pagination
+      page={pageControls}
+      limit={limitControls}
+      total={totalControls}
+      changePage={setPageControls}
+      changeLimit={setLimitControls}
+    />
+  );
+
+  const paginationAuditors = (
+    <Pagination
+      page={pageControls}
+      limit={limitControls}
+      total={totalControls}
+      changePage={setPageControls}
+      changeLimit={setLimitControls}
+    />
+  );
 
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
   const { sessionRequest } = useSession();
@@ -99,21 +203,39 @@ const AuditModalView = ({
   };
 
   const getControlGroupData = async () => {
-    console.log(idTemplateValue);
-
-    console.log(idTemplateValue);
-
     try {
       setLoadingControl(true);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/control-groups`,
         params: {
-          page: 1,
-          limit: 30,
+          page: pageControls,
+          limit: limitControls,
           idTemplate: idTemplateValue,
+          status: "ACTIVE",
         },
       });
       setDataControl(res.data.rows);
+      setTotalControls(res.data.total);
+    } catch (error) {
+      toast.error(MessagesInterpreter(error));
+    } finally {
+      setLoadingControl(false);
+    }
+  };
+
+  const getAuditorData = async () => {
+    try {
+      setLoadingControl(true);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/users`,
+        params: {
+          page: pageAuditors,
+          limit: limitAuditors,
+          status: "ACTIVE",
+        },
+      });
+      setDataControl(res.data.rows);
+      setTotalControls(res.data.total);
     } catch (error) {
       toast.error(MessagesInterpreter(error));
     } finally {
@@ -128,7 +250,7 @@ const AuditModalView = ({
         .finally(() => {});
     }
     // eslint-disable-next-line
-  }, [activeStep]);
+  }, [activeStep, pageControls, limitControls]);
 
   const saveUpdateAudit = async (audit: CUAudit) => {
     try {
@@ -286,39 +408,19 @@ const AuditModalView = ({
 
           {activeStep === 1 && (
             <Grid container direction={"column"} justifyContent="space-evenly">
-              {/* <Box width="100%" textAlign="center">
-                <Typography variant="h4">Grupos de Control</Typography>
-              </Box> */}
-
               <>
                 {idTemplateValue.length > 0 ? (
                   <>
-                    {loadingControl ? (
-                      <LoaderCircle color={theme.palette.secondary.main} />
-                    ) : (
-                      <Grid
-                        container
-                        direction={"column"}
-                        justifyContent="space-evenly"
-                      >
-                        <Stack>
-                          {dataControl.map((elem) => (
-                            <Stack
-                              key={`control-group-${elem.id}-${elem.groupCode}`}
-                              direction="row"
-                              alignItems="center"
-                              spacing={1}
-                            >
-                              <Checkbox />
-                              <Typography variant="h6">
-                                {elem.groupCode}
-                              </Typography>
-                              <Typography>{elem.group}</Typography>
-                            </Stack>
-                          ))}
-                        </Stack>
-                      </Grid>
-                    )}
+                    <CustomDataTable
+                      error={undefined}
+                      loading={loadingControl}
+                      inModal={true}
+                      actions={[]}
+                      columns={controlCriteria}
+                      changeOrderCriteria={setControlCriteria}
+                      pagination={paginationControls}
+                      tableContent={controlTable}
+                    />
                   </>
                 ) : (
                   <Stack
@@ -333,8 +435,35 @@ const AuditModalView = ({
                   </Stack>
                 )}
               </>
+            </Grid>
+          )}
 
-              <Box height={10} />
+          {activeStep === 2 && (
+            <Grid container direction={"column"} justifyContent="space-evenly">
+              <>
+                {idTemplateValue.length > 0 ? (
+                  <CustomDataTable
+                    error={undefined}
+                    loading={loadingControl}
+                    actions={[]}
+                    columns={auditorCriteria}
+                    changeOrderCriteria={setAuditorCriteria}
+                    pagination={paginationAuditors}
+                    tableContent={auditorTable}
+                  />
+                ) : (
+                  <Stack
+                    justifyContent="center"
+                    alignItems="center"
+                    marginY={10}
+                  >
+                    <Typography>
+                      Debe de seleccionar una plantilla primero
+                    </Typography>
+                    <Typography variant="h5">Vuelva al paso 1</Typography>
+                  </Stack>
+                )}
+              </>
             </Grid>
           )}
         </>

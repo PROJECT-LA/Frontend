@@ -6,7 +6,6 @@ import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
 import { CONSTANTS } from "../../config";
 import { useRouter } from "next/navigation";
 import { PermissionTypes, getPermissionsBoolean } from "@/utils/permissions";
-import { toast } from "sonner";
 
 export const useSession = () => {
   const router = useRouter();
@@ -61,10 +60,9 @@ export const useSession = () => {
       }
 
       if (isPermissions) {
-        if (e.response?.status === 403 || e.response?.status === 401) {
+        if (e.response?.status === 403) {
           router.push("/not-found");
         }
-
         if (e.response?.status === 404) {
           router.push("/not-found");
         }
