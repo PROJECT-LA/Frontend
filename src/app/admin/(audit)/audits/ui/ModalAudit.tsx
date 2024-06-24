@@ -116,20 +116,19 @@ const AuditModalView = ({
       <Checkbox
         key={`check-control-group-${indexGroupData}`}
         color="secondary"
-        checked={createAudit.groupControls.includes(controlGroupData.id)}
+        checked={createAudit.groupControls.some(
+          (elemControl) => elemControl.id === controlGroupData.id
+        )}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           if (event.target.checked) {
             setCreateAudit({
               ...createAudit,
-              groupControls: [
-                ...createAudit.groupControls,
-                controlGroupData.id,
-              ],
+              groupControls: [...createAudit.groupControls, controlGroupData],
             });
           } else {
-            const newGroupControls: string[] | undefined =
+            const newGroupControls: ControlGroupType[] | undefined =
               createAudit?.groupControls.filter(
-                (elem) => elem !== controlGroupData.id
+                (elem) => elem.id !== controlGroupData.id
               );
             setCreateAudit({
               ...createAudit,
@@ -172,17 +171,20 @@ const AuditModalView = ({
       <Checkbox
         key={`check-auditor-user-${indexAuditorData}`}
         color="secondary"
-        checked={createAudit.auditors.includes(auditorData.id)}
+        checked={createAudit.auditors.some(
+          (elemAudit) => elemAudit.id === auditorData.id
+        )}
         onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
           if (event.target.checked) {
             setCreateAudit({
               ...createAudit,
-              auditors: [...createAudit.auditors, auditorData.id],
+              auditors: [...createAudit.auditors, auditorData],
             });
           } else {
-            const newAudit: string[] | undefined = createAudit?.auditors.filter(
-              (elem) => elem !== auditorData.id
-            );
+            const newAudit: UserRolCRUDType[] | undefined =
+              createAudit?.auditors.filter(
+                (elem) => elem.id !== auditorData.id
+              );
             setCreateAudit({
               ...createAudit,
               auditors: newAudit,
@@ -215,7 +217,7 @@ const AuditModalView = ({
 
   const [loadingModal, setLoadingModal] = useState<boolean>(false);
   const { sessionRequest } = useSession();
-  const { control, handleSubmit, watch, setValue } = useForm<CUAudit>({
+  const { control, handleSubmit, watch } = useForm<CUAudit>({
     defaultValues: {
       id: audit?.id,
       beginDate: audit?.beginDate,
@@ -579,30 +581,23 @@ const AuditModalView = ({
                   <Box textAlign="center" marginBottom={1.5}>
                     <Typography variant="h5">Grupos de control</Typography>
                   </Box>
-                  {createAudit.groupControls.map((elem) => {
-                    const control = dataControl.find(
-                      (control) => control.id === elem
-                    );
-                    return (
-                      <Stack
-                        key={`control-group-summary-${elem}`}
-                        direction="row"
-                        alignItems="center"
-                        spacing={1.3}
-                      >
-                        <CircleCheck
-                          size={18}
-                          color={theme.palette.secondary.main}
-                        />
-                        <Typography variant="subtitle2" fontWeight="bold">
-                          {control?.groupCode}
-                        </Typography>
-                        <Typography variant="subtitle2">
-                          {control?.group}
-                        </Typography>
-                      </Stack>
-                    );
-                  })}
+                  {createAudit.groupControls.map((elem) => (
+                    <Stack
+                      key={`control-group-summary-${elem}`}
+                      direction="row"
+                      alignItems="center"
+                      spacing={1.3}
+                    >
+                      <CircleCheck
+                        size={18}
+                        color={theme.palette.secondary.main}
+                      />
+                      <Typography variant="subtitle2" fontWeight="bold">
+                        {elem.groupCode}
+                      </Typography>
+                      <Typography variant="subtitle2">{elem.group}</Typography>
+                    </Stack>
+                  ))}
                 </Stack>
               </Grid>
 
@@ -617,30 +612,25 @@ const AuditModalView = ({
                   <Box textAlign="center" marginBottom={1.5}>
                     <Typography variant="h5">Auditores asignados</Typography>
                   </Box>
-                  {createAudit.auditors.map((elem) => {
-                    const auditor = dataAuditors.find(
-                      (control) => control.id === elem
-                    );
-                    return (
-                      <Stack
-                        key={`control-group-summary-${elem}`}
-                        direction="row"
-                        alignItems="center"
-                        spacing={1.3}
-                      >
-                        <UserCheck
-                          size={18}
-                          color={theme.palette.secondary.main}
-                        />
-                        <Typography variant="subtitle2" fontWeight="bold">
-                          {auditor?.names}
-                        </Typography>
-                        <Typography variant="subtitle2">
-                          {auditor?.lastNames}
-                        </Typography>
-                      </Stack>
-                    );
-                  })}
+                  {createAudit.auditors.map((elem) => (
+                    <Stack
+                      key={`control-group-summary-${elem}`}
+                      direction="row"
+                      alignItems="center"
+                      spacing={1.3}
+                    >
+                      <UserCheck
+                        size={18}
+                        color={theme.palette.secondary.main}
+                      />
+                      <Typography variant="subtitle2" fontWeight="bold">
+                        {elem?.names}
+                      </Typography>
+                      <Typography variant="subtitle2">
+                        {elem?.lastNames}
+                      </Typography>
+                    </Stack>
+                  ))}
                 </Stack>
               </Grid>
             </Grid>

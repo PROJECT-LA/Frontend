@@ -467,7 +467,7 @@ export const CustomDataTable = ({
                                         <TableCell
                                           key={`celda-id-${indexContenidoTabla}-${indexContenidoFila}`}
                                           sx={{
-                                            paddingY: 0.5,
+                                            paddingY: 1,
                                           }}
                                         >
                                           <Fade in={!loading} timeout={1000}>

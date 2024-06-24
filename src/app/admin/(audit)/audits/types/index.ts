@@ -1,3 +1,6 @@
+import { UserRolCRUDType } from "@/app/admin/(configuration)/users/types";
+import { ControlGroupType } from "../../controls/types";
+
 export interface FilterCustomTab {
   id: string;
   type: "ACTIVE" | "ONCOURSE" | "CLOSED";
@@ -63,8 +66,8 @@ export interface CreateAudit {
   idClient: string;
   idTemplate: string;
   idLevel: string;
-  groupControls: string[];
-  auditors: string[];
+  groupControls: ControlGroupType[];
+  auditors: UserRolCRUDType[];
 }
 
 export const initialCreateAudit: CreateAudit = {
