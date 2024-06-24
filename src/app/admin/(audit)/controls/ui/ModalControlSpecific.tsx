@@ -110,6 +110,8 @@ export const ModalControlSpecific = ({
             </Grid>
           </Grid>
 
+          <Box height={"15px"} />
+
           <LinealLoader mostrar={loadingModal} />
         </Grid>
       </DialogContent>

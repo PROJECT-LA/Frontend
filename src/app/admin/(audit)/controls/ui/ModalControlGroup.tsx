@@ -168,7 +168,7 @@ export const ModalControlGroup = ({
               />
             </Grid>
           </Grid>
-
+          <Box height={"15px"} />
           <LinealLoader mostrar={loadingModal} />
         </Grid>
       </DialogContent>

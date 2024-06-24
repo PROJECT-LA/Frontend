@@ -57,10 +57,10 @@ export default function Levels() {
   const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
-    { field: "name", name: "Nombre", sort: true },
-    { field: "description", name: "Descripción", sort: true },
-    { field: "grade", name: "Nivel", sort: true },
-    { field: "estado", name: "Estado", sort: true },
+    { field: "name", name: "Nombre" },
+    { field: "description", name: "Descripción" },
+    { field: "grade", name: "Nivel" },
+    { field: "estado", name: "Estado" },
     { field: "acciones", name: "Acciones" },
   ]);
 

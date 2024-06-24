@@ -30,7 +30,6 @@ import { toast } from "sonner";
 import {
   CirclePlus,
   KeyRound,
-  Mails,
   Pencil,
   RefreshCcw,
   ToggleLeft,

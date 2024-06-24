@@ -29,7 +29,9 @@ export const useAuth = () => {
         idRole,
       },
     });
-    if (res.status === 401) await logoutSession();
+    if (res.status === 401) {
+      await logoutSession();
+    }
 
     print(`Token nuevo Rol ✅: ${res.data.token}`);
 
