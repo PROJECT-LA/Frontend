@@ -5,6 +5,7 @@ import { useSession } from "@/hooks/useSession";
 import { MessagesInterpreter, delay } from "@/utils";
 import { PermissionTypes, initialPermissions } from "@/utils/permissions";
 import {
+  Avatar,
   Box,
   Button,
   Divider,
@@ -12,6 +13,8 @@ import {
   Stack,
   Tab,
   Tabs,
+  ToggleButton,
+  ToggleButtonGroup,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -36,6 +39,25 @@ interface VersionData {
 const versionData: VersionData[] = [
   { id: "1", nombre: "1ra Revisión" },
   { id: "2", nombre: "2da Revisión" },
+];
+
+interface TabSelector {
+  id: string;
+  type: "CONTROLS" | "DOCUMENTS";
+  value: string;
+}
+
+const ArrayFilterCustomTab: TabSelector[] = [
+  {
+    id: "1",
+    type: "CONTROLS",
+    value: "Controles",
+  },
+  {
+    id: "2",
+    type: "DOCUMENTS",
+    value: "Documentos",
+  },
 ];
 
 const AssessmentsPageClient = ({ idTemplate }: AssessmentsPageClient) => {
@@ -69,6 +91,13 @@ const AssessmentsPageClient = ({ idTemplate }: AssessmentsPageClient) => {
   });
 
   const idSelectAudit = watch("selectAudit");
+
+  const handleChangeToggleButton = (
+    event: React.MouseEvent<HTMLElement>,
+    newAlignment: string
+  ) => {
+    setAlignment(newAlignment);
+  };
 
   const getAssessmentsAndUsers = async () => {
     try {
@@ -154,6 +183,14 @@ const AssessmentsPageClient = ({ idTemplate }: AssessmentsPageClient) => {
   const [value, setValue] = React.useState("1");
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
+  };
+  const [alignment, setAlignment] = React.useState("web");
+
+  const handleChangeToo = (
+    event: React.MouseEvent<HTMLElement>,
+    newAlignment: string
+  ) => {
+    setAlignment(newAlignment);
   };
 
   useEffect(() => {
@@ -301,6 +338,7 @@ const AssessmentsPageClient = ({ idTemplate }: AssessmentsPageClient) => {
           </MainCard>
         </Grid>
         <Grid item xs={8}>
+          <Box height={10} />
           <Typography variant="h4">Registro de Auditoría</Typography>
           <Box height={10} />
 
@@ -339,8 +377,60 @@ const AssessmentsPageClient = ({ idTemplate }: AssessmentsPageClient) => {
               index={elem.id}
               key={`content-tab-audit-${elem.id}`}
             >
-              <MainCard radius="0.5rem">
-                <Typography>fasdfasd</Typography>
+              <MainCard radius="0.5rem" padding={false}>
+                <Box padding={1}>
+                  <Stack direction="row" justifyContent="space-between">
+                    <ToggleButtonGroup
+                      color="primary"
+                      value={alignment}
+                      exclusive
+                      onChange={handleChangeToggleButton}
+                      aria-label="Platform"
+                    >
+                      {ArrayFilterCustomTab.map((elem) => (
+                        <ToggleButton
+                          sx={{ paddingX: 2, paddingY: 0.6 }}
+                          key={`toggle-button-${elem.id}-${elem.type}`}
+                          value={elem.type}
+                        >
+                          {elem.value}
+                        </ToggleButton>
+                      ))}
+                    </ToggleButtonGroup>
+                    <Stack
+                      direction="row"
+                      padding={1}
+                      border={1}
+                      borderRadius={1}
+                      borderColor={theme.palette.secondary.main}
+                      bgcolor={`${theme.palette.secondary.light}80`}
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Typography>Nivel de Aceptación</Typography>
+                      <Typography variant="h5">3</Typography>
+                    </Stack>
+                  </Stack>
+                  <Box height={10} />
+                  <Stack direction="row" justifyContent="space-between">
+                    <Stack>
+                      <Typography>Fecha de Inicio: 2024-05-12</Typography>
+                      <Typography>Fecha conclusión: 2024-05-12</Typography>
+                    </Stack>
+                    <Stack
+                      direction="row"
+                      padding={1}
+                      spacing={1}
+                      alignItems="center"
+                    >
+                      <Stack>
+                        <Typography>Ivan Fernandez</Typography>
+                        <Typography>Auditor</Typography>
+                      </Stack>
+                      <Avatar src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Default_avatar_profile.jpg/600px-Default_avatar_profile.jpg?20231202140256" />
+                    </Stack>
+                  </Stack>
+                </Box>
               </MainCard>
             </CustomTabPanel>
           ))}
