@@ -20,6 +20,7 @@ import { ThemeToggler } from "@/components/buttons";
 import { usePathname } from "next/navigation";
 import { useAuthStore, useGlobalStore } from "@/store";
 import SearchSection from "./SearchSection";
+import { useEffect } from "react";
 
 const Header = ({
   handleLeftDrawerToggle,

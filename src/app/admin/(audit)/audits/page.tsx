@@ -1,15 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { PermissionTypes, initialPermissions } from "@/utils/permissions";
-import {
-  Box,
-  Grid,
-  Stack,
-  Tab,
-  Tabs,
-  useMediaQuery,
-  useTheme,
-} from "@mui/material";
+import { Box, Grid, Tab, Tabs, useMediaQuery, useTheme } from "@mui/material";
 import { FormInputAutocomplete } from "@/components/forms";
 import { useForm } from "react-hook-form";
 import { optionType } from "@/components/forms/FormInputDropdown";
@@ -43,7 +35,6 @@ const AuditPage = () => {
   const { user } = useAuthStore();
 
   const [usersData, setUsersData] = useState<UserAudit[]>([]);
-  const xs = useMediaQuery(theme.breakpoints.only("md"));
 
   const { control } = useForm<{ searchUser: string }>({
     defaultValues: {
@@ -70,7 +61,15 @@ const AuditPage = () => {
         });
         await delay(100);
         setUsersData(res.data);
-
+        const optionsUser: Array<optionType> = [];
+        for (const elemUser of res.data) {
+          optionsUser.push({
+            key: `options-user-search-${elemUser.id}`,
+            label: `${elemUser.names} ${elemUser.lastNames}`,
+            value: elemUser.id,
+          });
+        }
+        setOptions(optionsUser);
         toast.success(MessagesInterpreter(res));
       }
     } catch (e) {
@@ -92,52 +91,84 @@ const AuditPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  const [tab, setTab] = useState<string>("1");
+
   return (
     <Box sx={{ width: "100%" }}>
-      <Grid container>
-        <Grid item xs={12} md={6} lg={4}>
-          <Stack>
-            <FormInputAutocomplete
-              control={control}
-              InputProps={{
-                placeholder: "Busca usuario...",
-              }}
-              bgcolor={theme.palette.background.paper}
-              id="searchUser"
-              name="searchUser"
-              searchIcon={true}
-              options={options}
-              label=""
-              freeSolo
-              newValues
-              forcePopupIcon
-              getOptionLabel={(option) => option.label}
-              renderOption={(option) => <>{option.label}</>}
+      <Box height={20} />
+      <Grid container spacing={3}>
+        <Grid item xs={8}>
+          <Box position="relative">
+            <Box
+              position="absolute"
+              width="100%"
+              borderBottom={1.5}
+              bottom={0}
+              borderColor={theme.palette.primary.main}
+              zIndex={0}
             />
-          </Stack>
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="basic tabs example"
+              scrollButtons
+              allowScrollButtonsMobile
+              sx={{
+                zIndex: 10,
+              }}
+            >
+              {usersData.map((elem) => (
+                <Tab
+                  key={`user-audit-tab-${elem.id}`}
+                  label={elem.names}
+                  id={`user-audit-tab-${elem.id}`}
+                  aria-controls={`user-audit-tab-${elem.id}`}
+                  value={elem.id}
+                  onClick={(e) => setTab(elem.id)}
+                  sx={{
+                    backgroundColor:
+                      tab === elem.id
+                        ? theme.palette.background.default
+                        : "transparent",
+                    position: "relative",
+                    borderTop: tab === elem.id ? 1.5 : 0,
+                    borderLeft: tab === elem.id ? 1.5 : 0,
+                    borderRight: tab === elem.id ? 1.5 : 0,
+                    borderTopLeftRadius: tab === elem.id ? 4 : 0,
+                    borderTopRightRadius: tab === elem.id ? 4 : 0,
+                  }}
+                />
+              ))}
+            </Tabs>
+          </Box>
+        </Grid>
+        <Grid item xs={4}>
+          <FormInputAutocomplete
+            control={control}
+            InputProps={{
+              placeholder: "Busca usuario...",
+            }}
+            bgcolor={theme.palette.background.paper}
+            id="searchUser"
+            name="searchUser"
+            searchIcon={true}
+            onChange={(e: any) => {
+              if (e && e.value !== undefined) {
+                handleChange(e, e.value);
+                setTab(e.value);
+              }
+            }}
+            options={options}
+            label=""
+            freeSolo
+            newValues
+            forcePopupIcon
+            getOptionLabel={(option) => option.label}
+            renderOption={(option) => <>{option.label}</>}
+          />
         </Grid>
       </Grid>
 
-      <Box height={20} />
-      <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-        <Tabs
-          value={value}
-          onChange={handleChange}
-          aria-label="basic tabs example"
-          scrollButtons
-          allowScrollButtonsMobile
-        >
-          {usersData.map((elem) => (
-            <Tab
-              key={`user-audit-tab-${elem.id}`}
-              label={elem.names}
-              id={`user-audit-tab-${elem.id}`}
-              aria-controls={`user-audit-tab-${elem.id}`}
-              value={elem.id}
-            />
-          ))}
-        </Tabs>
-      </Box>
       {usersData.map((elem) => (
         <CustomTabPanel
           value={value}

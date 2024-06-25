@@ -11,20 +11,24 @@ import {
 import React, { ReactNode, useEffect, useState } from "react";
 import { CONSTANTS } from "../../../../../../config";
 import { useForm } from "react-hook-form";
-import { FormInputAutocomplete } from "@/components/forms";
+import { FormInputAutocomplete, FormInputText } from "@/components/forms";
 import { optionType } from "@/components/forms/FormInputDropdown";
 import { PermissionTypes } from "@/utils/permissions";
-import { ArrayFilterCustomTab, AuditData, CUAudit } from "../types";
+import {
+  ArrayFilterCustomTab,
+  AuditData,
+  CUAudit,
+  StatusCustomTab,
+} from "../types";
 import { useSession } from "@/hooks/useSession";
 import { MessagesInterpreter, delay } from "@/utils";
 import { toast } from "sonner";
-import { CustomTabSkeleton } from "./Skeletons";
 import { LevelData } from "../../levels/types";
 import { TemplatesData } from "../../templates/types";
 import { Pagination } from "@/components/datatable";
 import { SortTypeCriteria } from "@/types";
 import { IconTooltip, OwnIconButton } from "@/components/buttons";
-import { CirclePlus, Edit, RotateCcw, Sparkles, Trash2 } from "lucide-react";
+import { CirclePlus, Edit, RotateCcw, Trash2 } from "lucide-react";
 import { CustomDataTable } from "@/components/datatable/CustomDataTable";
 import dayjs from "dayjs";
 import { CustomDialog } from "@/components/modals";
@@ -39,13 +43,16 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
   const { sessionRequest } = useSession();
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.only("md"));
-  const [options, setOptions] = useState<Array<optionType>>([]);
+
+  const [statusAudit, setStatusAudit] = useState<StatusCustomTab>("CREADO");
+
+  const [optionsAudit, setOptionsAudit] = useState<Array<optionType>>([]);
   const [auditEdition, setAuditEdition] = useState<CUAudit | undefined>(
     undefined
   );
   const [modalAudit, setModalAudit] = useState<boolean>(false);
 
-  const { control } = useForm<{ searchAudit: string }>({
+  const { control, watch } = useForm<{ searchAudit: string }>({
     defaultValues: {
       searchAudit: "",
     },
@@ -59,6 +66,8 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
   const [limit, setLimit] = useState<number>(10);
   const [page, setPage] = useState<number>(1);
   const [total, setTotal] = useState<number>(0);
+
+  const changeSearchAudit = watch("searchAudit");
 
   const [orderCriteria, setOrderCriteria] = useState<Array<SortTypeCriteria>>([
     { field: "objective", name: "Objetivo" },
@@ -132,6 +141,7 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
   );
 
   const getAuditsRequest = async () => {
+    console.log(statusAudit);
     try {
       setLoading(true);
       await delay(100);
@@ -153,11 +163,12 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
       });
       setLevelsData(res2.data?.rows);
       await delay(100);
+      let url = `${CONSTANTS.baseUrl}/audits?idClient=${idUser}&status=${statusAudit}`;
+      if (changeSearchAudit.length > 0) {
+        url += `&filter=${changeSearchAudit}`;
+      }
       const res3 = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/audits`,
-        params: {
-          idClient: idUser,
-        },
+        url,
       });
       await delay(100);
 
@@ -170,13 +181,11 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
     }
   };
 
-  const [alignment, setAlignment] = React.useState("web");
-
   const handleChange = (
     event: React.MouseEvent<HTMLElement>,
-    newAlignment: string
+    newStatus: StatusCustomTab
   ) => {
-    setAlignment(newAlignment);
+    setStatusAudit(newStatus);
   };
 
   useEffect(() => {
@@ -193,6 +202,13 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
     setAuditEdition(undefined);
     setModalAudit(false);
   };
+
+  useEffect(() => {
+    getAuditsRequest()
+      .then(() => {})
+      .finally(() => {});
+    // eslint-disable-next-line
+  }, [statusAudit, changeSearchAudit]);
 
   return (
     <>
@@ -212,99 +228,98 @@ const CustomTabAudit = ({ permissions, idUser }: CustomTabAudit) => {
         />
       </CustomDialog>
 
-      {loading ? (
-        <CustomTabSkeleton />
-      ) : (
-        <Stack>
-          <Typography variant="h4">Lista de Auditorías</Typography>
-          <Box height={15} />
-          <Stack direction="row" justifyContent="space-between">
-            <Stack direction="row" spacing={3} alignItems="end">
+      <Stack>
+        <Stack direction="row" justifyContent="space-between">
+          <Grid container>
+            <Grid item xs={5} alignContent="end">
               <ToggleButtonGroup
                 color="primary"
-                value={alignment}
+                value={statusAudit}
                 exclusive
                 onChange={handleChange}
                 aria-label="Platform"
               >
                 {ArrayFilterCustomTab.map((elem) => (
                   <ToggleButton
-                    defaultChecked={elem.type === "ACTIVE"}
                     sx={{ paddingX: 2, paddingY: 0.6 }}
                     key={`toggle-button-${elem.id}-${elem.type}`}
+                    onClick={async (e) => {
+                      setStatusAudit(elem.type);
+                    }}
                     value={elem.type}
                   >
                     {elem.value}
                   </ToggleButton>
                 ))}
               </ToggleButtonGroup>
-              <Box width="300px">
-                <FormInputAutocomplete
+            </Grid>
+            <Grid item xs={5}>
+              <Box width="60%">
+                <FormInputText
                   control={control}
                   InputProps={{
-                    placeholder: "Busca auditoría...",
+                    placeholder: "Buscar auditoría...",
                   }}
                   bgcolor={theme.palette.background.paper}
                   id="searchAudit"
                   name="searchAudit"
-                  searchIcon={true}
-                  options={options}
                   label=""
-                  freeSolo
-                  newValues
-                  forcePopupIcon
-                  getOptionLabel={(option) => option.label}
-                  renderOption={(option) => <>{option.label}</>}
                 />
               </Box>
-            </Stack>
-
-            <Stack direction="row" spacing={3} alignItems="center">
-              <IconTooltip
-                id={"actualizarAuditoria"}
-                title={"Actualizar"}
-                key={`accionActualizarAuditoria`}
-                action={async () => {
-                  await getAuditsRequest();
-                }}
-                icon={<RotateCcw />}
-                name={"Actualizar lista de auditorías"}
-              />
-              {permissions.create && (
-                <OwnIconButton
-                  id={"agregarAuditoria"}
-                  key={"agregarAuditoria"}
-                  text={"Agregar"}
-                  alter={xs ? "icono" : "boton"}
-                  icon={<CirclePlus />}
-                  description={"Agregar auditoría"}
-                  action={() => {
-                    setModalAudit(true);
+            </Grid>
+            <Grid item xs={2}>
+              <Stack
+                direction="row"
+                spacing={1}
+                alignItems="center"
+                justifyContent="end"
+              >
+                <IconTooltip
+                  id={"actualizarAuditoria"}
+                  title={"Actualizar"}
+                  key={`accionActualizarAuditoria`}
+                  action={async () => {
+                    await getAuditsRequest();
                   }}
+                  icon={<RotateCcw />}
+                  name={"Actualizar lista de auditorías"}
                 />
-              )}
-            </Stack>
-          </Stack>
-          <CustomDataTable
-            error={false}
-            loading={loading}
-            actions={[]}
-            columns={orderCriteria}
-            changeOrderCriteria={setOrderCriteria}
-            pagination={
-              <Pagination
-                limit={limit}
-                page={page}
-                total={total}
-                changePage={setPage}
-                changeLimit={setLimit}
-              />
-            }
-            tableContent={tableContent}
-            filters={[]}
-          />
+                {permissions.create && (
+                  <OwnIconButton
+                    id={"agregarAuditoria"}
+                    key={"agregarAuditoria"}
+                    text={"Agregar"}
+                    alter={xs ? "icono" : "boton"}
+                    icon={<CirclePlus />}
+                    description={"Agregar auditoría"}
+                    action={() => {
+                      setModalAudit(true);
+                    }}
+                  />
+                )}
+              </Stack>
+            </Grid>
+          </Grid>
         </Stack>
-      )}
+        <CustomDataTable
+          error={false}
+          loading={loading}
+          actions={[]}
+          columns={orderCriteria}
+          changeOrderCriteria={setOrderCriteria}
+          pagination={
+            <Pagination
+              limit={limit}
+              page={page}
+              total={total}
+              changePage={setPage}
+              changeLimit={setLimit}
+            />
+          }
+          tableContent={tableContent}
+          filters={[]}
+        />
+      </Stack>
     </>
   );
 };

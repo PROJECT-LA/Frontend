@@ -149,7 +149,13 @@ export const lightTheme = createTheme({
         },
       },
     },
-
+    MuiTabs: {
+      styleOverrides: {
+        indicator: {
+          backgroundColor: "transparent",
+        },
+      },
+    },
     MuiInputBase: {
       styleOverrides: {
         input: {

@@ -1,27 +1,37 @@
 import { UserRolCRUDType } from "@/app/admin/(configuration)/users/types";
 import { ControlGroupType } from "../../controls/types";
 
+export type StatusCustomTab =
+  | "CREADO"
+  | "EN_CURSO"
+  | "FINALIZADO"
+  | "SUSPENDIDO";
 export interface FilterCustomTab {
   id: string;
-  type: "ACTIVE" | "ONCOURSE" | "CLOSED";
+  type: StatusCustomTab;
   value: string;
 }
 
 export const ArrayFilterCustomTab: FilterCustomTab[] = [
   {
     id: "1",
-    type: "ACTIVE",
-    value: "Activos",
+    type: "CREADO",
+    value: "Creados",
   },
   {
     id: "2",
-    type: "ONCOURSE",
+    type: "EN_CURSO",
     value: "En curso",
   },
   {
     id: "3",
-    type: "CLOSED",
-    value: "Concluidos",
+    type: "FINALIZADO",
+    value: "Finalizados",
+  },
+  {
+    id: "4",
+    type: "SUSPENDIDO",
+    value: "Suspendidos",
   },
 ];
 

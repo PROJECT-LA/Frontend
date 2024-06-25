@@ -1,6 +1,5 @@
 "use client";
-import { UserType, LoginType } from "@/types/auth";
-import { useRouter } from "next/router";
+import { UserType } from "@/types/auth";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -50,22 +49,30 @@ export const useAuthStore = create<AuthState>()(
   )
 );
 
-export const useGlobalStore = create<GlobalState>((set) => ({
-  titlePage: "",
-  setTitlePage: (newTitle: string) => {
-    set((state) => {
-      return { ...state, titlePage: newTitle };
-    });
-  },
-  openDrawer: true,
-  toggleDrawer: () => {
-    set((state) => {
-      return { ...state, openDrawer: !state.openDrawer };
-    });
-  },
-  cerrarDrawer: () => {
-    set((state) => {
-      return { ...state, openDrawer: false };
-    });
-  },
-}));
+export const useGlobalStore = create<GlobalState>()(
+  persist(
+    (set) => ({
+      titlePage: "",
+      setTitlePage: (newTitle: string) => {
+        set((state) => {
+          return { ...state, titlePage: newTitle };
+        });
+      },
+      openDrawer: true,
+      toggleDrawer: () => {
+        set((state) => {
+          return { ...state, openDrawer: !state.openDrawer };
+        });
+      },
+      cerrarDrawer: () => {
+        set((state) => {
+          return { ...state, openDrawer: false };
+        });
+      },
+    }),
+    {
+      name: "app-store",
+      storage: createJSONStorage(() => sessionStorage),
+    }
+  )
+);

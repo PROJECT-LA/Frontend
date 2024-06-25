@@ -5,7 +5,6 @@ export default async function Page({
 }: {
   searchParams?: { template?: string };
 }) {
-  let existsId: boolean = false;
   if (searchParams?.template) {
     return <ControlsPage exists={true} idTemplate={searchParams.template} />;
   } else {
