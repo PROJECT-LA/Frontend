@@ -1,7 +1,7 @@
 "use client";
 import MainCard from "@/components/cards/MainCard";
 import { MessagesInterpreter, delay, siteName } from "@/utils";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Skeleton } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { TemplatesData } from "../templates/types";
 import { PermissionTypes, initialPermissions } from "@/utils/permissions";
@@ -29,15 +29,14 @@ import {
 import { AlertDialog, CustomDialog } from "@/components/modals";
 import { optionType } from "@/components/forms/FormInputDropdown";
 interface ControlProps {
-  idTemplate?: string;
-  exists: boolean;
+  idTemplate: string;
 }
 
-const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
+const ControlsPage = ({ idTemplate }: ControlProps) => {
+  console.log(idTemplate);
   const [selectedTemplate, setSelectedTemplate] = useState<string>(
     idTemplate ?? ""
   );
-
   const { sessionRequest, getPermissions } = useSession();
   const [permissions, setPermissions] =
     useState<PermissionTypes>(initialPermissions);
@@ -54,16 +53,14 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
   const [deleteControlGroup, setDeleteControlGroup] = useState<boolean>(false);
   const [deleteControlSpecific, setDeleteControlSpecific] =
     useState<boolean>(false);
-
   const [selectedControlGroup, setSelectedControlGroup] = useState<
     CUControlGroupType | undefined
   >(undefined);
   const [addModalInfo, setAddModalInfo] =
     useState<AddModalInfo>(initialAddModalInfo);
-  const [actualTemplate, setActualTemplate] = useState<
-    TemplatesData | undefined
-  >(undefined);
+
   const [loading, setLoading] = useState<boolean>(true);
+  const [loadingControls, setLoadingControls] = useState<boolean>(false);
 
   useEffect(() => {
     const getPermissionsClient = async () => {
@@ -99,13 +96,6 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
       }
       setOptionsTemplate(optionTemporal);
 
-      const ActualTemplate: TemplatesData[] = res.data?.rows;
-      if (idTemplate) {
-        const actualTemplate: TemplatesData | undefined = ActualTemplate.find(
-          (elem) => elem.id === idTemplate
-        );
-        setActualTemplate(actualTemplate);
-      }
       await delay(100);
       if (idTemplate !== undefined) {
         const res2 = await sessionRequest({
@@ -125,13 +115,25 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
     }
   };
 
-  const updateTemplateView = (newIdTemplate: string) => {
-    setSelectedTemplate(newIdTemplate);
-    const ActualTemplate: TemplatesData[] = templatesData;
-    const actualTemplate: TemplatesData | undefined = ActualTemplate.find(
-      (elem) => elem.id === newIdTemplate
-    );
-    setActualTemplate(actualTemplate);
+  const updateTemplateView = async (newIdTemplate: string) => {
+    try {
+      setLoadingControls(true);
+      setSelectedTemplate(newIdTemplate);
+      const res = await sessionRequest({
+        url: `${CONSTANTS.baseUrl}/control-groups`,
+        params: {
+          page: 1,
+          limit: 30,
+          idTemplate: newIdTemplate,
+        },
+      });
+      setDataControls(res.data?.rows);
+      setSelectedControlGroup(undefined);
+    } catch (error) {
+      toast.error(MessagesInterpreter(error));
+    } finally {
+      setLoadingControls(false);
+    }
   };
 
   const getControlSpecificRequest = async (id: string) => {
@@ -376,7 +378,7 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
               <>
                 <TemplateSelector
                   permissions={permissions}
-                  exists={true}
+                  exists={selectedTemplate.length > 0}
                   idControlGroup=""
                   setIdTemplate={updateTemplateView}
                   data={optionsTemplate}
@@ -405,8 +407,9 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                     style={{ minHeight: "78vh" }}
                   >
                     <LeftPanel
-                      exists={exists}
+                      exists={selectedTemplate.length > 0}
                       idTemplate={idTemplate ?? ""}
+                      loading={loadingControls}
                       dataControls={dataControls}
                       editionControlGroup={selectedControlGroup}
                       setEditionControlGroup={setSelectedControlGroup}
@@ -414,6 +417,7 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
                     <RightPanel
                       permissions={permissions}
                       editionControlGroup={selectedControlGroup}
+                      loading={loadingControls}
                       onEditControlGroup={() => {
                         setAddModalInfo({
                           state: true,

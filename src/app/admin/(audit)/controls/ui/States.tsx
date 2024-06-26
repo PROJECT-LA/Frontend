@@ -120,7 +120,7 @@ export const TemplateSelector = ({
             label="Seleccione una plantilla"
             onChange={async (e: any) => {
               if (e && e.value !== undefined) {
-                setIdTemplate(e.value);
+                await setIdTemplate(e.value);
                 // router.replace(`/admin/controls?template=${e.value}`);
               }
             }}

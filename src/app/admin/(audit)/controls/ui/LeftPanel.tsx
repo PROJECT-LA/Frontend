@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   useTheme,
+  Skeleton,
 } from "@mui/material";
 import { FormInputAutocomplete } from "@/components/forms";
 import { useForm } from "react-hook-form";
@@ -26,6 +27,7 @@ interface LeftPanel {
   dataControls: ControlGroupType[];
   editionControlGroup: CUControlGroupType | undefined;
   setEditionControlGroup: (data: CUControlGroupType) => void;
+  loading: boolean;
 }
 
 export const LeftPanel = ({
@@ -34,6 +36,7 @@ export const LeftPanel = ({
   exists,
   dataControls,
   setEditionControlGroup,
+  loading,
 }: LeftPanel) => {
   const theme = useTheme();
   const [optionsGroup, setOptionsGroup] = useState<Array<optionType>>([]);
@@ -56,84 +59,106 @@ export const LeftPanel = ({
           }}
         >
           <Stack padding={2}>
-            <FormInputAutocomplete
-              control={control}
-              disabled={!exists}
-              InputProps={{
-                placeholder: "Busca un grupo...",
-              }}
-              id="group"
-              name="group"
-              searchIcon={true}
-              options={optionsGroup}
-              label=""
-              freeSolo
-              newValues
-              forcePopupIcon
-              getOptionLabel={(option) => option.label}
-              renderOption={(option) => <>{option.label}</>}
-            />
+            {loading ? (
+              <Skeleton height="3rem" />
+            ) : (
+              <FormInputAutocomplete
+                control={control}
+                disabled={!exists}
+                InputProps={{
+                  placeholder: "Busca un grupo...",
+                }}
+                id="group"
+                name="group"
+                searchIcon={true}
+                options={optionsGroup}
+                label=""
+                freeSolo
+                newValues
+                forcePopupIcon
+                getOptionLabel={(option) => option.label}
+                renderOption={(option) => <>{option.label}</>}
+              />
+            )}
           </Stack>
           <List>
-            {idTemplate !== undefined &&
-              dataControls.map((elem) => (
-                <ListItem
-                  key={`group-controls-${elem.id}-${elem.groupCode}`}
-                  onClick={() => {
-                    setEditionControlGroup({
-                      idTemplate,
-                      group: elem.group,
-                      groupCode: elem.groupCode,
-                      groupDescription: elem.groupDescription,
-                      id: elem.id,
-                      objective: elem.objective,
-                      objectiveCode: elem.objectiveCode,
-                      objectiveDescription: elem.objectiveDescription,
-                      controls: elem.controls,
-                      status: elem.status,
-                    });
-                  }}
-                >
-                  <Box
-                    width={"100%"}
-                    border={1}
-                    borderColor={`${
-                      elem.id === editionControlGroup?.id
-                        ? theme.palette.primary.main
-                        : theme.palette.divider + "80"
-                    }`}
-                    paddingX={3}
-                    paddingY={2}
-                    boxShadow={
-                      elem.id === editionControlGroup?.id
-                        ? CONSTANTS.boxShadow
-                        : ""
-                    }
-                    borderRadius={1}
-                    sx={{
-                      backgroundColor: `${
-                        elem.id === editionControlGroup?.id
-                          ? theme.palette.primary.light + "50"
-                          : "transparent !important"
-                      }`,
-                      cursor: "pointer",
-                      transition: "all .3s ease-in",
-                      "&:hover": {
-                        backgroundColor: `${theme.palette.primary.light}35`,
-                      },
-                    }}
-                  >
-                    <Stack spacing={1}>
-                      <Stack spacing={0.3}>
-                        <Typography variant="h5">{elem.groupCode}</Typography>
-                        <Typography variant="subtitle2">
-                          {elem.group}
-                        </Typography>
-                      </Stack>
-                    </Stack>
-                  </Box>
+            {loading ? (
+              <>
+                <ListItem>
+                  <Skeleton width="100%" animation="pulse" height="6rem" />
                 </ListItem>
-              ))}
+                <ListItem>
+                  <Skeleton width="100%" animation="pulse" height="6rem" />
+                </ListItem>
+                <ListItem>
+                  <Skeleton width="100%" animation="pulse" height="6rem" />
+                </ListItem>
+              </>
+            ) : (
+              <>
+                {idTemplate !== undefined &&
+                  dataControls.map((elem) => (
+                    <ListItem
+                      key={`group-controls-${elem.id}-${elem.groupCode}`}
+                      onClick={() => {
+                        setEditionControlGroup({
+                          idTemplate,
+                          group: elem.group,
+                          groupCode: elem.groupCode,
+                          groupDescription: elem.groupDescription,
+                          id: elem.id,
+                          objective: elem.objective,
+                          objectiveCode: elem.objectiveCode,
+                          objectiveDescription: elem.objectiveDescription,
+                          controls: elem.controls,
+                          status: elem.status,
+                        });
+                      }}
+                    >
+                      <Box
+                        width={"100%"}
+                        border={1}
+                        borderColor={`${
+                          elem.id === editionControlGroup?.id
+                            ? theme.palette.primary.main
+                            : theme.palette.divider + "80"
+                        }`}
+                        paddingX={3}
+                        paddingY={2}
+                        boxShadow={
+                          elem.id === editionControlGroup?.id
+                            ? CONSTANTS.boxShadow
+                            : ""
+                        }
+                        borderRadius={1}
+                        sx={{
+                          backgroundColor: `${
+                            elem.id === editionControlGroup?.id
+                              ? theme.palette.primary.light + "50"
+                              : "transparent !important"
+                          }`,
+                          cursor: "pointer",
+                          transition: "all .3s ease-in",
+                          "&:hover": {
+                            backgroundColor: `${theme.palette.primary.light}35`,
+                          },
+                        }}
+                      >
+                        <Stack spacing={1}>
+                          <Stack spacing={0.3}>
+                            <Typography variant="h5">
+                              {elem.groupCode}
+                            </Typography>
+                            <Typography variant="subtitle2">
+                              {elem.group}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                      </Box>
+                    </ListItem>
+                  ))}
+              </>
+            )}
           </List>
         </Box>
       </Panel>

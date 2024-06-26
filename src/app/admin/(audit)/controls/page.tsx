@@ -5,9 +5,5 @@ export default async function Page({
 }: {
   searchParams?: { template?: string };
 }) {
-  if (searchParams?.template) {
-    return <ControlsPage exists={true} idTemplate={searchParams.template} />;
-  } else {
-    return <ControlsPage exists={false} />;
-  }
+  return <ControlsPage idTemplate={searchParams?.template ?? ""} />;
 }

@@ -7,6 +7,7 @@ import {
   Box,
   useTheme,
   Button,
+  Skeleton,
 } from "@mui/material";
 import { Panel } from "react-resizable-panels";
 import MainCard from "@/components/cards/MainCard";
@@ -20,7 +21,6 @@ import {
   ToggleRight,
   Check,
   ToggleLeft,
-  Cross,
   X,
 } from "lucide-react";
 import { styled } from "@mui/material/styles";
@@ -40,7 +40,7 @@ interface RightPanel {
   onChangeState: () => void;
   onEditControlGroup: () => void;
   onDeleteControlGroup: () => void;
-
+  loading: boolean;
   onEditControlSpecific: (editionSpecific: ControlSpecificType) => void;
   onDeleteControlSpecific: (editionSpecific: ControlSpecificType) => void;
   onChangeStateControlSpecific: (id: string) => void;
@@ -52,7 +52,7 @@ export const RightPanel = ({
   onEditControlGroup,
   onChangeState,
   onDeleteControlGroup,
-
+  loading,
   onEditControlSpecific,
   onDeleteControlSpecific,
   onChangeStateControlSpecific,
@@ -86,60 +86,72 @@ export const RightPanel = ({
               padding={2}
               borderColor={theme.palette.divider}
             >
-              <Typography variant="h4">Control de accesos</Typography>
-              <Stack direction="row" alignItems="center">
-                {permissions.update && (
-                  <IconTooltip
-                    id={`edit-sub-control-group-${editionControlGroup.id}`}
-                    title={"Editar"}
-                    color={"secondary"}
-                    action={() => {
-                      onEditControlGroup();
-                    }}
-                    icon={<Pencil />}
-                    name={"Editar control específico"}
-                  />
+              <>
+                {loading ? (
+                  <Typography variant="h4">Control de accesos</Typography>
+                ) : (
+                  <Skeleton />
                 )}
+              </>
+              <>
+                {loading ? (
+                  <Skeleton />
+                ) : (
+                  <Stack direction="row" alignItems="center">
+                    {permissions.update && (
+                      <IconTooltip
+                        id={`edit-sub-control-group-${editionControlGroup.id}`}
+                        title={"Editar"}
+                        color={"secondary"}
+                        action={() => {
+                          onEditControlGroup();
+                        }}
+                        icon={<Pencil />}
+                        name={"Editar control específico"}
+                      />
+                    )}
 
-                {permissions.update && (
-                  <IconTooltip
-                    id={`change-status-control-group-${editionControlGroup.id}`}
-                    title={
-                      editionControlGroup.status === "ACTIVO"
-                        ? "Inactivar"
-                        : "Activar"
-                    }
-                    color={
-                      editionControlGroup.status === "ACTIVO"
-                        ? "success"
-                        : "error"
-                    }
-                    action={() => {
-                      onChangeState();
-                    }}
-                    icon={
-                      editionControlGroup.status === "ACTIVO" ? (
-                        <ToggleRight />
-                      ) : (
-                        <ToggleLeft />
-                      )
-                    }
-                    name={"Activar control específico"}
-                  />
+                    {permissions.update && (
+                      <IconTooltip
+                        id={`change-status-control-group-${editionControlGroup.id}`}
+                        title={
+                          editionControlGroup.status === "ACTIVO"
+                            ? "Inactivar"
+                            : "Activar"
+                        }
+                        color={
+                          editionControlGroup.status === "ACTIVO"
+                            ? "success"
+                            : "error"
+                        }
+                        action={() => {
+                          onChangeState();
+                        }}
+                        icon={
+                          editionControlGroup.status === "ACTIVO" ? (
+                            <ToggleRight />
+                          ) : (
+                            <ToggleLeft />
+                          )
+                        }
+                        name={"Activar control específico"}
+                      />
+                    )}
+                    {permissions.delete && (
+                      <IconTooltip
+                        id={`delete-control-group-${editionControlGroup.id}`}
+                        name="Eliminar"
+                        title="Eliminar"
+                        color="error"
+                        action={() => {
+                          onDeleteControlGroup();
+                        }}
+                        icon={<Trash2Icon />}
+                      />
+                    )}
+                  </Stack>
                 )}
-                {permissions.delete && (
-                  <IconTooltip
-                    id={`delete-control-group-${editionControlGroup.id}`}
-                    name="Eliminar"
-                    title="Eliminar"
-                    color="error"
-                    action={() => {
-                      onDeleteControlGroup();
-                    }}
-                    icon={<Trash2Icon />}
-                  />
-                )}
-              </Stack>
+              </>
             </Stack>
             <Grid container spacing={1}>
               <Grid item xs={5.7} height="7.5rem">
