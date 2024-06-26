@@ -9,7 +9,6 @@ import { useSession } from "@/hooks/useSession";
 import { CONSTANTS } from "../../../../../config";
 import { toast } from "sonner";
 import {
-  ControlsHeader,
   LoadingControlsSkeleton,
   ModalControlGroup,
   ModalControlSpecific,
@@ -28,16 +27,23 @@ import {
   initialAddModalInfo,
 } from "./types";
 import { AlertDialog, CustomDialog } from "@/components/modals";
+import { optionType } from "@/components/forms/FormInputDropdown";
 interface ControlProps {
   idTemplate?: string;
   exists: boolean;
 }
 
 const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
+  const [selectedTemplate, setSelectedTemplate] = useState<string>(
+    idTemplate ?? ""
+  );
+
   const { sessionRequest, getPermissions } = useSession();
   const [permissions, setPermissions] =
     useState<PermissionTypes>(initialPermissions);
   const [templatesData, setTemplatesData] = useState<TemplatesData[]>([]);
+  const [optionsTemplate, setOptionsTemplate] = useState<Array<optionType>>([]);
+
   const [dataControls, setDataControls] = useState<ControlGroupType[]>([]);
   const [editionControlGroup, setEditionControlGroup] = useState<
     CUControlGroupType | undefined
@@ -82,8 +88,18 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
           limit: 30,
         },
       });
-      const ActualTemplate: TemplatesData[] = res.data?.rows;
       setTemplatesData(res.data?.rows);
+      const optionTemporal: Array<optionType> = [];
+      for (const template of res.data?.rows) {
+        optionTemporal.push({
+          key: `option-template-search-${template.id}`,
+          label: `${template.version} - ${template.name}`,
+          value: template.id,
+        });
+      }
+      setOptionsTemplate(optionTemporal);
+
+      const ActualTemplate: TemplatesData[] = res.data?.rows;
       if (idTemplate) {
         const actualTemplate: TemplatesData | undefined = ActualTemplate.find(
           (elem) => elem.id === idTemplate
@@ -108,6 +124,16 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
       setLoading(false);
     }
   };
+
+  const updateTemplateView = (newIdTemplate: string) => {
+    setSelectedTemplate(newIdTemplate);
+    const ActualTemplate: TemplatesData[] = templatesData;
+    const actualTemplate: TemplatesData | undefined = ActualTemplate.find(
+      (elem) => elem.id === newIdTemplate
+    );
+    setActualTemplate(actualTemplate);
+  };
+
   const getControlSpecificRequest = async (id: string) => {
     try {
       setLoading(true);
@@ -348,30 +374,29 @@ const ControlsPage = ({ idTemplate, exists }: ControlProps) => {
               <NoTemplate />
             ) : (
               <>
-                {!exists && <TemplateSelector data={templatesData} />}
-
-                {actualTemplate !== undefined && idTemplate !== undefined && (
-                  <ControlsHeader
-                    idControlGroup={selectedControlGroup?.id}
-                    exists={exists}
-                    permissions={permissions}
-                    title={actualTemplate.name}
-                    actionGroup={() => {
-                      setAddModalInfo({
-                        state: true,
-                        isGroup: true,
-                      });
-                      setEditionControlGroup({ idTemplate });
-                    }}
-                    actionControlSpecific={(groupId: string) => {
-                      setAddModalInfo({
-                        state: true,
-                        isGroup: false,
-                        groupId,
-                      });
-                    }}
-                  />
-                )}
+                <TemplateSelector
+                  permissions={permissions}
+                  exists={true}
+                  idControlGroup=""
+                  setIdTemplate={updateTemplateView}
+                  data={optionsTemplate}
+                  actionGroup={() => {
+                    setAddModalInfo({
+                      state: true,
+                      isGroup: true,
+                    });
+                    setEditionControlGroup({
+                      idTemplate: selectedTemplate ?? "",
+                    });
+                  }}
+                  actionControlSpecific={(groupId: string) => {
+                    setAddModalInfo({
+                      state: true,
+                      isGroup: false,
+                      groupId,
+                    });
+                  }}
+                />
 
                 <Box height={20} />
                 <MainCard padding={false} radius="0.4rem">

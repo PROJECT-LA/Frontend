@@ -3,28 +3,19 @@ import {
   Stack,
   Typography,
   Grid,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   Box,
   Link,
   Button,
-  SelectChangeEvent,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
-import {
-  PlusCircle,
-  ArrowBigRightDash,
-  Group,
-  FileSliders,
-} from "lucide-react";
-import { FormInputDropdown } from "@/components/forms";
-import { TemplatesData } from "../../templates/types";
+import { PlusCircle, Group, FileSliders } from "lucide-react";
+import { FormInputAutocomplete } from "@/components/forms";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { ActionsButton } from "@/components/buttons";
 import { PermissionTypes } from "@/utils/permissions";
+import { optionType } from "@/components/forms/FormInputDropdown";
 
 export const NoTemplate = () => {
   return (
@@ -49,77 +40,25 @@ export const NoTemplate = () => {
 };
 
 interface TemplateSelector {
-  data: TemplatesData[];
-}
-interface SearchTemplate {
-  selectTemplate: string;
-}
-export const TemplateSelector = ({ data }: TemplateSelector) => {
-  const router = useRouter();
-  const { control } = useForm<SearchTemplate>({
-    defaultValues: {
-      selectTemplate: "",
-    },
-  });
-
-  const onDropDownText = (e: SelectChangeEvent) => {
-    if (e.target && e.target.value) {
-      router.push(`/admin/controls?template=${e.target.value}`);
-    }
-  };
-
-  return (
-    <Box marginBottom={3}>
-      <Grid container>
-        <Grid item xs={12} md={3}>
-          <Stack justifyContent="center" height="100%">
-            <ListItem>
-              <ListItemIcon>
-                <ArrowBigRightDash />
-              </ListItemIcon>
-              <ListItemText>
-                <Typography variant="h5">Seleccione una plantilla</Typography>
-              </ListItemText>
-            </ListItem>
-          </Stack>
-        </Grid>
-        <Grid item xs={12} md={5}>
-          <FormInputDropdown
-            id="selectTemplate"
-            name="selectTemplate"
-            control={control}
-            label=""
-            onChange={(e) => onDropDownText(e)}
-            options={data.map((elem) => ({
-              key: elem.id,
-              value: elem.id,
-              label: elem.name,
-            }))}
-            bgcolor="background.paper"
-          />
-        </Grid>
-      </Grid>
-    </Box>
-  );
-};
-
-interface ControlsHeader {
-  title: string;
+  data: Array<optionType>;
   idControlGroup: string | undefined;
   actionGroup: () => void;
   actionControlSpecific: (groupId: string) => void;
   exists: boolean;
   permissions: PermissionTypes;
+  setIdTemplate: (idTemplate: string) => void;
 }
-
-export const ControlsHeader = ({
-  title,
-  exists,
+interface SearchTemplate {
+  selectTemplate: string;
+}
+export const TemplateSelector = ({
+  data,
+  setIdTemplate,
   actionControlSpecific,
   idControlGroup,
-  permissions,
   actionGroup,
-}: ControlsHeader) => {
+  exists,
+}: TemplateSelector) => {
   const theme = useTheme();
   const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
@@ -162,17 +101,56 @@ export const ControlsHeader = ({
     },
   ];
 
+  const router = useRouter();
+  const { control } = useForm<SearchTemplate>({
+    defaultValues: {
+      selectTemplate: "",
+    },
+  });
+
   return (
-    <Stack direction="row" justifyContent="space-between" alignItems="center">
-      <Typography variant="h4">{`Plantilla: ${title}`}</Typography>
-      <ActionsButton
-        id={"addControlOrGroup"}
-        text={"Agregar"}
-        deactivate={!exists}
-        alter={xs ? "icono" : "boton"}
-        label={"Agregar nuevo control o grupo"}
-        actions={idControlGroup ? actions : action}
-      />
-    </Stack>
+    <Grid container>
+      <Grid item xs={6}>
+        <Stack width="80%">
+          <FormInputAutocomplete
+            id="selectTemplate"
+            name="selectTemplate"
+            control={control}
+            searchIcon={true}
+            label="Seleccione una plantilla"
+            onChange={async (e: any) => {
+              if (e && e.value !== undefined) {
+                setIdTemplate(e.value);
+                // router.replace(`/admin/controls?template=${e.value}`);
+              }
+            }}
+            options={data}
+            freeSolo
+            newValues
+            bgcolor="background.paper"
+            forcePopupIcon
+            getOptionLabel={(option) => option.label}
+            renderOption={(option) => <>{option.label}</>}
+          />
+        </Stack>
+      </Grid>
+      <Grid item xs={6}>
+        <Stack
+          direction="row"
+          height="100%"
+          justifyContent="end"
+          alignItems="center"
+        >
+          <ActionsButton
+            id={"addControlOrGroup"}
+            text={"Agregar"}
+            deactivate={!exists}
+            alter={xs ? "icono" : "boton"}
+            label={"Agregar nuevo control o grupo"}
+            actions={idControlGroup ? actions : action}
+          />
+        </Stack>
+      </Grid>
+    </Grid>
   );
 };

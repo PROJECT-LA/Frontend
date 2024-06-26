@@ -59,18 +59,7 @@ export default function LoginPage() {
               />
             )}
           </Grid>
-          <Grid
-            item
-            xs={12}
-            lg={5}
-            xl={4}
-            position="relative"
-            paddingX={5}
-            paddingY={lgUp ? 4 : xlUp ? 8 : 4}
-            sx={{
-              overflowY: "auto",
-            }}
-          >
+          <Grid item xs={12} lg={5} xl={4} position="relative">
             <Box
               sx={{
                 position: "absolute",
@@ -107,7 +96,15 @@ export default function LoginPage() {
                 filter: "blur(160px)",
               }}
             />
-            <LoginForm />
+            <Box
+              minHeight="700px"
+              sx={{
+                py: { xs: 2, lg: 5 },
+                px: { xs: 3, lg: 7, xl: 4 },
+              }}
+            >
+              <LoginForm />
+            </Box>
           </Grid>
         </Grid>
       </Card>

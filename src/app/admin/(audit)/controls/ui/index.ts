@@ -5,4 +5,3 @@ export { ModalControlSpecific } from "./ModalControlSpecific";
 export { ModalControlGroup } from "./ModalControlGroup";
 export { NoTemplate } from "./States";
 export { TemplateSelector } from "./States";
-export { ControlsHeader } from "./States";
