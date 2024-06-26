@@ -24,6 +24,7 @@ import {
   X,
 } from "lucide-react";
 import { styled } from "@mui/material/styles";
+import noData from "@/assets/no hay datos.png";
 
 const TruncatedTypography = styled(Typography)(() => ({
   display: "-webkit-box",
@@ -65,7 +66,7 @@ export const RightPanel = ({
         {editionControlGroup == undefined ? (
           <Stack justifyContent="center" height="600px" alignItems="center">
             <Image
-              src="/images/support/no-data-hd.png"
+              src={noData}
               height={250}
               width={230}
               alt="No data support impaget"
@@ -73,7 +74,7 @@ export const RightPanel = ({
             <Box height={20} />
             <Typography variant="h4">No hay datos que mostrar</Typography>
             <Typography variant="caption">
-              Por favor busque algún grupo de control.
+              Por favor seleccione algún grupo de control.
             </Typography>
           </Stack>
         ) : (

@@ -4,7 +4,6 @@ import {
   Box,
   Stack,
   Typography,
-  Divider,
   List,
   ListItem,
   useTheme,
@@ -39,7 +38,11 @@ export const LeftPanel = ({
   loading,
 }: LeftPanel) => {
   const theme = useTheme();
-  const [optionsGroup, setOptionsGroup] = useState<Array<optionType>>([]);
+  const optionsGroup: Array<optionType> = dataControls.map((elem) => ({
+    key: `controls-group-search-${elem.id}`,
+    label: `${elem.groupCode} - ${elem.group}`,
+    value: elem.id,
+  }));
   const { control } = useForm<SearchGroup>({
     defaultValues: {
       group: "",
@@ -71,6 +74,28 @@ export const LeftPanel = ({
                 id="group"
                 name="group"
                 searchIcon={true}
+                onChange={(e: any) => {
+                  if (e && e.value !== null) {
+                    const controlGroupTemp = dataControls.find(
+                      (elem) => elem.id === e.value
+                    );
+                    if (controlGroupTemp) {
+                      setEditionControlGroup({
+                        idTemplate,
+                        group: controlGroupTemp.group,
+                        groupCode: controlGroupTemp.groupCode,
+                        groupDescription: controlGroupTemp.groupDescription,
+                        id: controlGroupTemp.id,
+                        objective: controlGroupTemp.objective,
+                        objectiveCode: controlGroupTemp.objectiveCode,
+                        objectiveDescription:
+                          controlGroupTemp.objectiveDescription,
+                        controls: controlGroupTemp.controls,
+                        status: controlGroupTemp.status,
+                      });
+                    }
+                  }
+                }}
                 options={optionsGroup}
                 label=""
                 freeSolo

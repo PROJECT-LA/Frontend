@@ -12,7 +12,6 @@ import {
 import { PlusCircle, Group, FileSliders } from "lucide-react";
 import { FormInputAutocomplete } from "@/components/forms";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 import { ActionsButton } from "@/components/buttons";
 import { PermissionTypes } from "@/utils/permissions";
 import { optionType } from "@/components/forms/FormInputDropdown";
@@ -41,11 +40,12 @@ export const NoTemplate = () => {
 
 interface TemplateSelector {
   data: Array<optionType>;
-  idControlGroup: string | undefined;
+  idControlGroup: string;
   actionGroup: () => void;
   actionControlSpecific: (groupId: string) => void;
   exists: boolean;
   permissions: PermissionTypes;
+  idTemplate: string;
   setIdTemplate: (idTemplate: string) => void;
 }
 interface SearchTemplate {
@@ -53,6 +53,7 @@ interface SearchTemplate {
 }
 export const TemplateSelector = ({
   data,
+  idTemplate,
   setIdTemplate,
   actionControlSpecific,
   idControlGroup,
@@ -100,11 +101,12 @@ export const TemplateSelector = ({
       name: "Nuevo grupo",
     },
   ];
-
-  const router = useRouter();
   const { control } = useForm<SearchTemplate>({
     defaultValues: {
-      selectTemplate: "",
+      selectTemplate:
+        idTemplate.length > 0
+          ? data.find((elem) => elem.value === idTemplate)?.label
+          : "",
     },
   });
 
@@ -147,7 +149,7 @@ export const TemplateSelector = ({
             deactivate={!exists}
             alter={xs ? "icono" : "boton"}
             label={"Agregar nuevo control o grupo"}
-            actions={idControlGroup ? actions : action}
+            actions={idControlGroup.length > 0 ? actions : action}
           />
         </Stack>
       </Grid>

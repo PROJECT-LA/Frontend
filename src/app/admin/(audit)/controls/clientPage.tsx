@@ -379,7 +379,8 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
                 <TemplateSelector
                   permissions={permissions}
                   exists={selectedTemplate.length > 0}
-                  idControlGroup=""
+                  idControlGroup={selectedControlGroup?.id ?? ""}
+                  idTemplate={selectedTemplate}
                   setIdTemplate={updateTemplateView}
                   data={optionsTemplate}
                   actionGroup={() => {
