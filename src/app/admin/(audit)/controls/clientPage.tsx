@@ -401,12 +401,9 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
                   }}
                 />
 
-                <Box height={20} />
+                <Box height={10} />
                 <MainCard padding={false} radius="0.4rem">
-                  <PanelGroup
-                    direction="horizontal"
-                    style={{ minHeight: "78vh" }}
-                  >
+                  <PanelGroup direction="horizontal" style={{ height: "75vh" }}>
                     <LeftPanel
                       exists={selectedTemplate.length > 0}
                       idTemplate={idTemplate ?? ""}

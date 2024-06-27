@@ -19,6 +19,7 @@ interface Props {
   action: MouseEventHandler<any> | undefined;
   deactivate?: boolean;
   name: string;
+  buttonSize?: "large" | "medium" | "small";
   id: string;
 }
 
@@ -28,6 +29,7 @@ export const IconTooltip = ({
   title,
   action,
   deactivate = false,
+  buttonSize = "medium",
   name,
   id,
 }: Props) => {
@@ -64,6 +66,7 @@ export const IconTooltip = ({
               action(event);
             }
           }}
+          size={buttonSize}
         >
           <Icono color={deactivate ? "disabled" : color}> {icon}</Icono>
         </IconButton>
