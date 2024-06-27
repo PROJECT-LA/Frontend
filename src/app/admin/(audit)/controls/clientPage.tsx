@@ -33,7 +33,6 @@ interface ControlProps {
 }
 
 const ControlsPage = ({ idTemplate }: ControlProps) => {
-  console.log(idTemplate);
   const [selectedTemplate, setSelectedTemplate] = useState<string>(
     idTemplate ?? ""
   );
@@ -71,7 +70,7 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
       getTemplateRequest().finally(() => {});
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [, idTemplate]);
+  }, []);
   /****************************  ESTADOS  *******************************/
 
   /***************************  REQUESTS  *******************************/
@@ -97,13 +96,13 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
       setOptionsTemplate(optionTemporal);
 
       await delay(100);
-      if (idTemplate !== undefined) {
+      if (selectedTemplate.length > 0) {
         const res2 = await sessionRequest({
           url: `${CONSTANTS.baseUrl}/control-groups`,
           params: {
             page: 1,
             limit: 30,
-            idTemplate,
+            idTemplate: selectedTemplate,
           },
         });
         setDataControls(res2.data.rows);
@@ -149,11 +148,11 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
         },
       });
       const dos: ControlSpecificType[] = res2.data.rows;
-      if (idTemplate) {
+      if (selectedTemplate) {
         setEditionControlGroup({
           ...editionControlGroup,
           controls: dos,
-          idTemplate,
+          idTemplate: selectedTemplate,
         });
       }
     } catch (error) {
@@ -165,15 +164,16 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
 
   const getControlGroupRequest = async (specific: boolean) => {
     try {
+      console.log("entra a datos");
       setLoading(true);
       await delay(100);
-      if (idTemplate) {
+      if (selectedTemplate) {
         const res = await sessionRequest({
           url: `${CONSTANTS.baseUrl}/control-groups`,
           params: {
             page: 1,
             limit: 30,
-            idTemplate,
+            idTemplate: selectedTemplate,
           },
         });
         const data: ControlGroupType[] = res.data.rows;
@@ -182,7 +182,10 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
         );
         setDataControls(res.data.rows);
         if (uniqueSimil !== undefined)
-          setSelectedControlGroup({ ...uniqueSimil, idTemplate });
+          setSelectedControlGroup({
+            ...uniqueSimil,
+            idTemplate: selectedTemplate,
+          });
       }
     } catch (error) {
       toast.error(MessagesInterpreter(error));
@@ -207,14 +210,14 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
           params: {
             page: 1,
             limit: 30,
-            idTemplate,
+            idTemplate: selectedTemplate,
           },
         });
         const findSelected = res2.data.rows.find((elem: any) => elem.id === id);
-        if (findSelected !== undefined && idTemplate !== undefined)
+        if (findSelected !== undefined && selectedTemplate.length > 0)
           setSelectedControlGroup({
             ...findSelected,
-            idTemplate,
+            idTemplate: selectedTemplate,
           });
       }
     } catch (error) {
@@ -353,7 +356,7 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
       <AlertDialog
         isOpen={deleteControlGroup}
         title={"Alerta"}
-        text={`¿Está seguro de eliminar el control-group "${selectedControlGroup?.groupCode} - ${selectedControlGroup?.group}"?`}
+        text={`¿Está seguro de eliminar el grupo de control "${selectedControlGroup?.groupCode} - ${selectedControlGroup?.group}" y TODOS sus controles específicos?`}
       >
         <Button onClick={cancelDeleteControlGroup}>Cancelar</Button>
         <Button onClick={acceptDeleteControlGroup}>Aceptar</Button>
@@ -406,7 +409,7 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
                   <PanelGroup direction="horizontal" style={{ height: "75vh" }}>
                     <LeftPanel
                       exists={selectedTemplate.length > 0}
-                      idTemplate={idTemplate ?? ""}
+                      idTemplate={selectedTemplate}
                       loading={loadingControls}
                       dataControls={dataControls}
                       editionControlGroup={selectedControlGroup}
