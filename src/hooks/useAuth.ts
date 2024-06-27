@@ -32,9 +32,6 @@ export const useAuth = () => {
     if (res.status === 401) await logoutSession();
 
     print(`Token nuevo Rol ✅: ${res.data.token}`);
-
-    saveCookie("token", res.data.token);
-
     setUserData(res.data);
     router.push("/admin/home");
   };
@@ -48,17 +45,12 @@ export const useAuth = () => {
         url: `${CONSTANTS.baseUrl}/auth/login`,
         body: { username, password },
       });
-
       print(res.data.token);
-      saveCookie("token", res.data.token);
-
       setUserData(res.data);
       print(`Usuarios ✅`, res.data);
-
       showFullScreen();
       await delay(1000);
       router.push("/admin/home");
-
       await delay(1000);
     } catch (e) {
       print(`Error al iniciar sesión: `, e);

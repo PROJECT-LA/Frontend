@@ -1,12 +1,11 @@
-import { MessagesInterpreter, delay, saveCookie } from "@/utils";
+import { MessagesInterpreter, delay } from "@/utils";
 import { readCookie, deleteCookie, print } from "../utils";
-import { Services, forbiddenStates, methodFormatRequest } from "../services";
+import { Services, methodFormatRequest } from "../services";
 import { checkToken } from "@/utils/token";
 import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
 import { CONSTANTS } from "../../config";
 import { useRouter } from "next/navigation";
 import { PermissionTypes, getPermissionsBoolean } from "@/utils/permissions";
-import { toast } from "sonner";
 
 export const useSession = () => {
   const router = useRouter();
@@ -32,7 +31,6 @@ export const useSession = () => {
 
       const cabeceras = {
         accept: "application/json",
-        Authorization: `Bearer ${readCookie("token") ?? ""}`,
         ...headers,
       };
 
@@ -50,7 +48,19 @@ export const useSession = () => {
       print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
-      console.log(e.response.status);
+      console.error("Error completo:", e);
+
+      if (e.response) {
+        console.error("Estado de la respuesta:", e.response.status);
+        console.error("Datos de la respuesta:", e.response.data);
+      } else if (e.request) {
+        console.error(
+          "La petición fue hecha pero no se recibió respuesta",
+          e.request
+        );
+      } else {
+        console.error("Error al configurar la petición:", e.message);
+      }
 
       if (e.code === "ECONNABORTED") {
         throw new Error("La petición está tardando demasiado");
@@ -61,11 +71,11 @@ export const useSession = () => {
       }
 
       if (isPermissions) {
-        if (e.response?.status === 403 || e.response?.status === 401) {
-          router.push("/not-found");
-        }
-
-        if (e.response?.status === 404) {
+        if (
+          e.response?.status === 403 ||
+          e.response?.status === 401 ||
+          e.response?.status === 404
+        ) {
           router.push("/not-found");
         }
       }
@@ -106,17 +116,9 @@ export const useSession = () => {
     try {
       showFullScreen();
       await delay(1000);
-      const token = readCookie("token");
-      if (!token) {
-        router.refresh();
-        router.push("/login");
-      }
-
-      deleteCookie("token");
       const response = await Services.post({
         headers: {
           accept: "application/json",
-          Authorization: `Bearer ${token}`,
         },
         url: `${CONSTANTS.baseUrl}/auth/logout`,
       });
@@ -125,8 +127,6 @@ export const useSession = () => {
       router.push("/login");
     } catch (e) {
       print(`Error al cerrar sesión: `, e);
-      deleteCookie("token");
-      router.refresh();
       router.push("/login");
     } finally {
       hideFullScreen();
@@ -141,7 +141,6 @@ export const useSession = () => {
       });
 
       print(res.data.token);
-      saveCookie("token", res.data.token);
 
       if (res.status !== 201) {
         await logoutSession();

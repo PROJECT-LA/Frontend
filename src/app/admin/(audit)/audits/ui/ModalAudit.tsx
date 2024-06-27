@@ -176,7 +176,8 @@ const AuditModalView = ({
                 steps={1}
                 min={0}
                 max={Number(
-                  levelsData.find((elem) => elem.id === idLevelValue)?.grade
+                  levelsData.find((elem) => elem.id === idLevelValue)?.grade ||
+                    0
                 )}
                 initialValue={0}
                 rules={{ required: "Este campo es requerido" }}
