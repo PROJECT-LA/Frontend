@@ -135,37 +135,9 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
     }
   };
 
-  const getControlSpecificRequest = async (id: string) => {
-    try {
-      setLoading(true);
-      await delay(100);
-      const res2 = await sessionRequest({
-        url: `${CONSTANTS.baseUrl}/controls`,
-        params: {
-          page: 1,
-          limit: 30,
-          idControlGroup: id,
-        },
-      });
-      const dos: ControlSpecificType[] = res2.data.rows;
-      if (selectedTemplate) {
-        setEditionControlGroup({
-          ...editionControlGroup,
-          controls: dos,
-          idTemplate: selectedTemplate,
-        });
-      }
-    } catch (error) {
-      toast.error(MessagesInterpreter(error));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const getControlGroupRequest = async (specific: boolean) => {
     try {
-      console.log("entra a datos");
-      setLoading(true);
+      setLoadingControls(true);
       await delay(100);
       if (selectedTemplate) {
         const res = await sessionRequest({
@@ -190,12 +162,12 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
     } catch (error) {
       toast.error(MessagesInterpreter(error));
     } finally {
-      setLoading(false);
+      setLoadingControls(false);
     }
   };
   const changeControlGroupStatus = async (id: string) => {
     try {
-      setLoading(true);
+      setLoadingControls(true);
       await delay(100);
       if (id) {
         const res = await sessionRequest({
@@ -203,7 +175,6 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
           type: "PATCH",
         });
         toast.success(MessagesInterpreter(res));
-        await getTemplateRequest();
         await delay(100);
         const res2 = await sessionRequest({
           url: `${CONSTANTS.baseUrl}/control-groups`,
@@ -223,12 +194,12 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
     } catch (error) {
       toast.error(MessagesInterpreter(error));
     } finally {
-      setLoading(false);
+      setLoadingControls(false);
     }
   };
   const changeControlSpecificStatus = async (id: string) => {
     try {
-      setLoading(true);
+      setLoadingControls(true);
       await delay(100);
       if (id) {
         const res = await sessionRequest({
@@ -237,53 +208,48 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
         });
         toast.success(MessagesInterpreter(res));
         await delay(100);
-        await getTemplateRequest();
-
-        if (editionControlGroup !== undefined && editionControlGroup.id)
-          await getControlSpecificRequest(editionControlGroup.id);
+        await getControlGroupRequest(true);
       }
     } catch (error) {
       toast.error(MessagesInterpreter(error));
     } finally {
-      setLoading(false);
+      setLoadingControls(false);
     }
   };
   const deleteControlGroupDelete = async (id: string) => {
     try {
-      setLoading(true);
+      setLoadingControls(true);
       await delay(100);
       if (id) {
         const res = await sessionRequest({
           url: `${CONSTANTS.baseUrl}/control-groups/${id}`,
           type: "DELETE",
         });
-        await getTemplateRequest();
 
         toast.success(MessagesInterpreter(res));
       }
     } catch (error) {
       toast.error(MessagesInterpreter(error));
     } finally {
-      setLoading(false);
+      setLoadingControls(false);
     }
   };
   const deleteControlSpecificRequest = async (id: string) => {
     try {
-      setLoading(true);
+      setLoadingControls(true);
       await delay(100);
       if (id) {
         const res = await sessionRequest({
           url: `${CONSTANTS.baseUrl}/controls/${id}`,
           type: "DELETE",
         });
-        await getTemplateRequest();
 
         toast.success(MessagesInterpreter(res));
       }
     } catch (error) {
       toast.error(MessagesInterpreter(error));
     } finally {
-      setLoading(false);
+      setLoadingControls(false);
     }
   };
 
@@ -295,8 +261,6 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
     setAddModalInfo(initialAddModalInfo);
   };
   const acceptModalControlSpecific = async () => {
-    // const id = editionControlGroup?.id;
-    // // if (id) await getControlSpecificRequest(id);
     await delay(100);
     await getControlGroupRequest(true);
 
@@ -317,12 +281,11 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
     setDeleteControlGroup(false);
   };
   const acceptDeleteControlSpecific = async () => {
-    if (editionControlSpecific !== undefined && editionControlSpecific.id)
+    if (editionControlSpecific !== undefined && editionControlSpecific.id) {
       await deleteControlSpecificRequest(editionControlSpecific.id);
-
-    if (editionControlGroup !== undefined && editionControlGroup.id)
-      await getControlSpecificRequest(editionControlGroup.id);
-    setDeleteControlSpecific(false);
+      await getControlGroupRequest(true);
+    }
+    cancelDeleteControlSpecific();
   };
   const cancelDeleteControlSpecific = async () => {
     setEditionControlSpecific(undefined);

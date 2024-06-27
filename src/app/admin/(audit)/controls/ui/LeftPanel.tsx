@@ -110,15 +110,13 @@ export const LeftPanel = ({
 
           {loading ? (
             <List sx={{ width: "100%" }}>
-              <ListItem>
-                <Skeleton width="100%" height="3rem" />
-              </ListItem>
-              <ListItem>
-                <Skeleton width="100%" height="3rem" />
-              </ListItem>
-              <ListItem>
-                <Skeleton width="100%" height="3rem" />
-              </ListItem>
+              {Array(6)
+                .fill(0)
+                .map((_, index) => (
+                  <ListItem key={`left-panel-item-skeleton-${index}`}>
+                    <Skeleton width="100%" height="3rem" />
+                  </ListItem>
+                ))}
             </List>
           ) : (
             <List
