@@ -16,9 +16,7 @@ import {
   Typography,
   useMediaQuery,
 } from "@mui/material";
-
 import { useGlobalStore } from "@/store";
-import { Home } from "lucide-react";
 import { getIconLucide } from "@/types/icons";
 
 interface ListItemProps {
@@ -108,7 +106,7 @@ const NavItem = ({
       width: "0",
     },
     "&:hover::before": {
-      width: matchDownMd ? "90%" : "100%",
+      width: !openDrawer ? "75%" : matchDownMd ? "90%" : "100%",
       borderRadius: "1rem",
       transition: "all .3s ease",
       backgroundColor:
