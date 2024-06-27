@@ -13,11 +13,10 @@ export const useAuth = () => {
   const { deleteUserInfo, setUserData, setLoginLoader } = useAuthStore();
   const router = useRouter();
   const { showFullScreen, hideFullScreen } = useFullScreenLoading();
-  const { sessionRequest, deleteSessionCookie, logoutSession } = useSession();
+  const { sessionRequest, logoutSession } = useSession();
 
   const deleteUserSession = () => {
     deleteUserInfo();
-    deleteSessionCookie();
   };
 
   const changeRole = async (idRole: string) => {

@@ -1,6 +1,6 @@
-import { MessagesInterpreter, delay, saveCookie } from "@/utils";
+import { MessagesInterpreter, delay } from "@/utils";
 import { readCookie, deleteCookie, print } from "../utils";
-import { Services, forbiddenStates, methodFormatRequest } from "../services";
+import { Services, methodFormatRequest } from "../services";
 import { checkToken } from "@/utils/token";
 import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
 import { CONSTANTS } from "../../config";
@@ -87,15 +87,10 @@ export const useSession = () => {
       const resPolicies: PermissionTypes = getPermissionsBoolean(
         res.data.policie
       );
-
       return resPolicies;
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const deleteSessionCookie = () => {
-    deleteCookie("token");
   };
 
   const logoutSession = async () => {
@@ -131,22 +126,13 @@ export const useSession = () => {
   const updateSession = async () => {
     print(`Actualizando token 🚨`);
     try {
-      const res = await Services.post({
+      await Services.post({
         url: `${CONSTANTS.baseUrl}/auth/refresh`,
       });
-
-      print(res.data.token);
-      // saveCookie("token", res.data.token);
-
-      if (res.status !== 201) {
-        await logoutSession();
-      }
-
-      await delay(500);
     } catch (e) {
       print(MessagesInterpreter(e));
     }
   };
 
-  return { sessionRequest, logoutSession, deleteSessionCookie, getPermissions };
+  return { sessionRequest, logoutSession, getPermissions };
 };
