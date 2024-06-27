@@ -10,15 +10,15 @@ import { usePathname } from "next/navigation";
 import { styled, useTheme } from "@mui/material/styles";
 import {
   Box,
+  ButtonBase,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  Tooltip,
   Typography,
   useMediaQuery,
 } from "@mui/material";
-
 import { useGlobalStore } from "@/store";
-import { Home } from "lucide-react";
 import { getIconLucide } from "@/types/icons";
 
 interface ListItemProps {
@@ -67,7 +67,9 @@ const NavItem = ({
   }
 
   const itemHandler = (itemNav: Item) => {
-    if (itemNav.title && itemNav.title?.length > 0) setTitlePage(itemNav.title);
+    if (itemNav.title && itemNav.title?.length > 0) {
+      setTitlePage(itemNav.title);
+    }
 
     if (matchesSM) cerrarDrawer();
   };
@@ -106,7 +108,7 @@ const NavItem = ({
       width: "0",
     },
     "&:hover::before": {
-      width: matchDownMd ? "90%" : "100%",
+      width: !openDrawer ? "75%" : matchDownMd ? "90%" : "100%",
       borderRadius: "1rem",
       transition: "all .3s ease",
       backgroundColor:
@@ -144,85 +146,77 @@ const NavItem = ({
   }));
 
   return (
-    <ListItemStyled
-      {...listItemProps}
-      selected={pathname === item?.url}
-      sx={{
-        position: "relative",
-        marginLeft: !openDrawer ? "15px" : "0px",
-        "&.Mui-selected": {
-          color:
-            level > 1
-              ? `${theme.palette.text.primary} !important`
-              : "primary.dark",
-          "& .MuiTypography-root": {
-            fontWeight: "600 !important",
-          },
-          "&:before": {
-            width: !openDrawer ? (matchDownMd ? "90%" : "75%") : "100%",
-            borderRadius: "1rem",
-            transition: "all .2s ease",
-            backgroundColor:
-              theme.palette.mode === "light"
-                ? `${theme.palette.primary.main}50`
-                : `${theme.palette.primary.light}50`,
-            color: theme.palette.text.primary,
-          },
-        },
-      }}
-      onClick={() => itemHandler(item)}
-    >
-      {pathname === item?.url && (
-        <Box
+    <Tooltip placement="right" title={!openDrawer ? item.title : ""}>
+      <ButtonBase onClick={() => itemHandler(item)} sx={{ width: "100%" }}>
+        <ListItemStyled
+          {...listItemProps}
+          selected={pathname === item?.url}
           sx={{
-            height: "90%",
-            position: "absolute",
-            width: "5px",
-            backgroundColor: theme.palette.text.primary,
-            color: theme.palette.primary.light,
-            top: "3px",
-            left: openDrawer ? "-20px" : "-14px",
+            position: "relative",
+            marginLeft: !openDrawer ? "15px" : "0px",
+            "&.Mui-selected": {
+              color:
+                level > 1
+                  ? `${theme.palette.text.primary} !important`
+                  : "primary.dark",
+              "& .MuiTypography-root": {
+                fontWeight: "600 !important",
+              },
+              "&:before": {
+                width: !openDrawer ? (matchDownMd ? "90%" : "75%") : "100%",
+                borderRadius: "1rem",
+                transition: "all .2s ease",
+                backgroundColor:
+                  theme.palette.mode === "light"
+                    ? `${theme.palette.primary.main}50`
+                    : `${theme.palette.primary.light}50`,
+                color: theme.palette.text.primary,
+              },
+            },
           }}
-        />
-      )}
-      <ListItemIcon
-        sx={{
-          my: "auto",
-          minWidth: !item?.icon ? 18 : 36,
-        }}
-      >
-        {!isFromCollapse && item.icon && getIconLucide(item.icon)}
-      </ListItemIcon>
+        >
+          {pathname === item?.url && (
+            <Box
+              sx={{
+                height: "90%",
+                position: "absolute",
+                width: "5px",
+                backgroundColor: theme.palette.text.primary,
+                color: theme.palette.primary.light,
+                top: "3px",
+                left: openDrawer ? "-20px" : "-14px",
+              }}
+            />
+          )}
+          <ListItemIcon
+            sx={{
+              my: "auto",
+              minWidth: !item?.icon ? 18 : 36,
+            }}
+          >
+            {!isFromCollapse && item.icon && getIconLucide(item.icon)}
+          </ListItemIcon>
 
-      {(openDrawer || matchDownMd) && (
-        <ListItemText
-          primary={<Typography variant={"h6"}>{item.title}</Typography>}
-          secondary={
-            item.caption && (
-              <Typography
-                variant="h6"
-                sx={{ ...SubMenuCaption }}
-                display="block"
-                gutterBottom
-              >
-                {item.caption}
-              </Typography>
-            )
-          }
-        />
-      )}
-      {/* 
-        El numeral que aparece en la parte superior
-      {item.chip && (
-        <Chip
-          color={item.chip.color}
-          variant={item.chip.variant}
-          size={item.chip.size}
-          label={item.chip.label}
-          avatar={item.chip.avatar && <Avatar>{item.chip.avatar}</Avatar>}
-        />
-      )} */}
-    </ListItemStyled>
+          {(openDrawer || matchDownMd) && (
+            <ListItemText
+              primary={<Typography variant={"h6"}>{item.title}</Typography>}
+              secondary={
+                item.caption && (
+                  <Typography
+                    variant="h6"
+                    sx={{ ...SubMenuCaption }}
+                    display="block"
+                    gutterBottom
+                  >
+                    {item.caption}
+                  </Typography>
+                )
+              }
+            />
+          )}
+        </ListItemStyled>
+      </ButtonBase>
+    </Tooltip>
   );
 };
 

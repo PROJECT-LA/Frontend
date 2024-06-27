@@ -10,6 +10,7 @@ import {
   Link,
   Button,
   Divider,
+  Hidden,
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 
@@ -46,14 +47,14 @@ export const LoginForm = () => {
       </Stack>
 
       <Stack>
-        <Box height={mdUp ? 25 : 20} />
+        <Box height={mdUp ? 25 : 10} />
         <Divider />
-        <Box height={mdUp ? 25 : 20} />
+        <Box height={mdUp ? 25 : 10} />
         <Typography variant={xlUp ? "h1" : "h2"} color="primary">
           Inicia sesión
         </Typography>
         <Box height={5} />
-        <Stack direction={lgUp ? "row" : "column"} spacing={1}>
+        <Stack direction={"row"} spacing={1}>
           <Typography variant={xlUp ? "h5" : "h6"} fontWeight="300">
             ¿Sin cuenta?
           </Typography>
@@ -65,27 +66,30 @@ export const LoginForm = () => {
             Contacta con un administrador
           </Typography>
         </Stack>
-        <Box height={mdUp ? 25 : 20} />
+
+        <Box height={20} />
         <Divider />
-        <Box height={mdUp ? 25 : 20} />
+        <Box height={20} />
+
+        <Hidden xlDown={true}>
+          <Box height={70} />
+        </Hidden>
 
         <FormInputText
           id={"username"}
           control={control}
           name="username"
           label="Usuario"
-          size={"medium"}
           labelVariant={"subtitle1"}
           disabled={loginLoader}
           rules={{ required: "Este campo es requerido" }}
         />
-        <Box sx={{ mt: 1, mb: 1 }}></Box>
+        <Box height={20} />
         <FormInputText
           id={"password"}
           control={control}
           name="password"
           label="Contraseña"
-          size={"medium"}
           labelVariant={"subtitle1"}
           type={"password"}
           disabled={loginLoader}
@@ -115,7 +119,7 @@ export const LoginForm = () => {
           </Stack>
         </Box>
 
-        <Stack gap={3} width="100%" marginTop={4} alignItems="center">
+        <Stack width="100%" marginTop={xlUp ? 5 : 3} alignItems="center">
           <Grid item xs={12} sx={{ width: "100%" }}>
             <Button
               type="submit"
@@ -131,8 +135,9 @@ export const LoginForm = () => {
               Iniciar sesión
             </Button>
           </Grid>
-
+          <Box height={xlUp ? 20 : 15} />
           <Divider sx={{ width: "80%" }} />
+          <Box height={xlUp ? 20 : 15} />
           <Button
             type="button"
             disableElevation

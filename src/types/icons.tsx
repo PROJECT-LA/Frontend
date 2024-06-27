@@ -5,6 +5,7 @@ import {
   LineChart,
   Lock,
   Notebook,
+  NotebookPen,
   PackageOpen,
   Scale,
   Settings2,
@@ -45,6 +46,10 @@ export const icons: IconMapper[] = [
   {
     name: "notebook",
     icon: <Notebook />,
+  },
+  {
+    name: "notebook-pen",
+    icon: <NotebookPen />,
   },
   {
     name: "user-cog",

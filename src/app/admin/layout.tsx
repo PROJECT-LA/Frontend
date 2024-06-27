@@ -37,7 +37,7 @@ const Main = styled("main", {
         }
   ),
   [theme.breakpoints.up("md")]: {
-    marginTop: 90,
+    marginTop: 65,
     marginLeft: open ? 20 : -(CONSTANTS.drawerWidth - 110),
     width: "92%",
     marginRight: "0.7rem",
@@ -117,7 +117,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
         <Box
           display="flex"
           justifyContent="center"
-          marginTop={5}
+          marginTop={3}
           alignItems="center"
         >
           <Typography>

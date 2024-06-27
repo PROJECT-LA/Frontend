@@ -171,8 +171,8 @@ export const CustomDataTable = ({
           border: 1,
           borderColor: theme.palette.divider,
           pt: 0,
-          pl: { sm: 3, md: 3, xl: 3 },
-          pr: { sm: 3, md: 3, xl: 3 },
+          pl: 0,
+          pr: 0,
           pb: { sm: 2, md: 2, xl: 2 },
           mb: { sm: 3, md: 3, xl: 3 },
           backgroundColor: xs
@@ -329,7 +329,15 @@ export const CustomDataTable = ({
                   <TableContainer>
                     <Table>
                       <TableHead>
-                        <TableRow>
+                        <TableRow
+                          sx={{
+                            borderBottom: 2,
+                            borderColor:
+                              theme.palette.mode == "light"
+                                ? theme.palette.divider
+                                : theme.palette.primary.main,
+                          }}
+                        >
                           {isSelectable && (
                             <TableCell key={`cabecera-id-seleccionar`}>
                               <Checkbox
@@ -466,6 +474,9 @@ export const CustomDataTable = ({
                                       return (
                                         <TableCell
                                           key={`celda-id-${indexContenidoTabla}-${indexContenidoFila}`}
+                                          sx={{
+                                            paddingY: 1,
+                                          }}
                                         >
                                           <Fade in={!loading} timeout={1000}>
                                             <Box>{contenido}</Box>
