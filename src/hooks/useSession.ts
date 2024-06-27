@@ -31,7 +31,6 @@ export const useSession = () => {
 
       const cabeceras = {
         accept: "application/json",
-        Authorization: `Bearer ${readCookie("token") ?? ""}`,
         ...headers,
       };
 
@@ -49,8 +48,6 @@ export const useSession = () => {
       print("respuesta 🔐📡", body, type, url, response);
       return response.data;
     } catch (e: import("axios").AxiosError | any) {
-      print(`${e.response.status}`);
-
       if (e.code === "ECONNABORTED") {
         throw new Error("La petición está tardando demasiado");
       }
@@ -60,10 +57,11 @@ export const useSession = () => {
       }
 
       if (isPermissions) {
-        if (e.response?.status === 403) {
-          router.push("/not-found");
-        }
-        if (e.response?.status === 404) {
+        if (
+          e.response?.status === 403 ||
+          e.response?.status === 401 ||
+          e.response?.status === 404
+        ) {
           router.push("/not-found");
         }
       }
@@ -104,17 +102,16 @@ export const useSession = () => {
     try {
       showFullScreen();
       await delay(1000);
-      const token = readCookie("token");
-      if (!token) {
-        router.refresh();
-        router.push("/login");
-      }
+      // const token = readCookie("token");
+      // if (!token) {
+      //   router.refresh();
+      //   router.push("/login");
+      // }
 
-      deleteCookie("token");
+      // deleteCookie("token");
       const response = await Services.post({
         headers: {
           accept: "application/json",
-          Authorization: `Bearer ${token}`,
         },
         url: `${CONSTANTS.baseUrl}/auth/logout`,
       });
@@ -123,8 +120,8 @@ export const useSession = () => {
       router.push("/login");
     } catch (e) {
       print(`Error al cerrar sesión: `, e);
-      deleteCookie("token");
-      router.refresh();
+      // deleteCookie("token");
+      // router.refresh();
       router.push("/login");
     } finally {
       hideFullScreen();
@@ -139,7 +136,7 @@ export const useSession = () => {
       });
 
       print(res.data.token);
-      saveCookie("token", res.data.token);
+      // saveCookie("token", res.data.token);
 
       if (res.status !== 201) {
         await logoutSession();

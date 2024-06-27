@@ -1,7 +1,7 @@
 "use client";
 import { useFullScreenLoading } from "@/context/FullScreenLoadingProvider";
 import { useAuthStore } from "@/store";
-import { MessagesInterpreter, delay, print, saveCookie } from "@/utils";
+import { MessagesInterpreter, delay, print } from "@/utils";
 import { useSession } from "./useSession";
 import { useRouter } from "next/navigation";
 import { LoginType } from "@/types/auth";
@@ -35,8 +35,6 @@ export const useAuth = () => {
 
     print(`Token nuevo Rol ✅: ${res.data.token}`);
 
-    saveCookie("token", res.data.token);
-
     setUserData(res.data);
     router.push("/admin/home");
   };
@@ -50,9 +48,7 @@ export const useAuth = () => {
         url: `${CONSTANTS.baseUrl}/auth/login`,
         body: { username, password },
       });
-
       print(res.data.token);
-      saveCookie("token", res.data.token);
 
       setUserData(res.data);
       print(`Usuarios ✅`, res.data);
