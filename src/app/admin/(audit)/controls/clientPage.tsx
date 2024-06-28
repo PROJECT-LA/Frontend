@@ -1,7 +1,14 @@
 "use client";
 import MainCard from "@/components/cards/MainCard";
 import { MessagesInterpreter, delay, siteName } from "@/utils";
-import { Box, Button, Skeleton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Grid,
+  Skeleton,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { TemplatesData } from "../templates/types";
 import { PermissionTypes, initialPermissions } from "@/utils/permissions";
@@ -16,6 +23,8 @@ import {
   TemplateSelector,
   LeftPanel,
   RightPanel,
+  LeftResponsivePanel,
+  RightResponsivePanel,
 } from "./ui";
 import { PanelGroup } from "react-resizable-panels";
 import {
@@ -33,6 +42,8 @@ interface ControlProps {
 }
 
 const ControlsPage = ({ idTemplate }: ControlProps) => {
+  const theme = useTheme();
+  const lgUp = useMediaQuery(theme.breakpoints.up("lg"));
   const [selectedTemplate, setSelectedTemplate] = useState<string>(
     idTemplate ?? ""
   );
@@ -60,6 +71,9 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
 
   const [loading, setLoading] = useState<boolean>(true);
   const [loadingControls, setLoadingControls] = useState<boolean>(false);
+
+  const [mobileGroupSelected, setMobileGroupSelected] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const getPermissionsClient = async () => {
@@ -369,60 +383,129 @@ const ControlsPage = ({ idTemplate }: ControlProps) => {
 
                 <Box height={10} />
                 <MainCard padding={false} radius="0.4rem">
-                  <PanelGroup direction="horizontal" style={{ height: "75vh" }}>
-                    <LeftPanel
-                      exists={selectedTemplate.length > 0}
-                      idTemplate={selectedTemplate}
-                      loading={loadingControls}
-                      dataControls={dataControls}
-                      editionControlGroup={selectedControlGroup}
-                      setEditionControlGroup={setSelectedControlGroup}
-                    />
-                    <RightPanel
-                      permissions={permissions}
-                      editionControlGroup={selectedControlGroup}
-                      loading={loadingControls}
-                      onEditControlGroup={() => {
-                        setAddModalInfo({
-                          state: true,
-                          isGroup: true,
-                        });
-                        setEditionControlGroup(selectedControlGroup);
-                      }}
-                      onChangeState={async () => {
-                        if (selectedControlGroup?.id)
-                          await changeControlGroupStatus(
-                            selectedControlGroup?.id
-                          );
-                      }}
-                      onDeleteControlGroup={() => {
-                        setDeleteControlGroup(true);
-                      }}
-                      onChangeStateControlSpecific={changeControlSpecificStatus}
-                      onEditControlSpecific={(
-                        editionSpecific: ControlSpecificType
-                      ) => {
-                        setEditionControlSpecific({
-                          ...editionSpecific,
-                          idControlGroup: selectedControlGroup?.id ?? "",
-                        });
-                        setAddModalInfo({
-                          state: true,
-                          isGroup: false,
-                          groupId: selectedControlGroup?.id,
-                        });
-                      }}
-                      onDeleteControlSpecific={(
-                        editionSpecific: ControlSpecificType
-                      ) => {
-                        setEditionControlSpecific({
-                          ...editionSpecific,
-                          idControlGroup: selectedControlGroup?.id ?? "",
-                        });
-                        setDeleteControlSpecific(true);
-                      }}
-                    />
-                  </PanelGroup>
+                  {lgUp ? (
+                    <PanelGroup
+                      direction="horizontal"
+                      style={{ height: "75vh" }}
+                    >
+                      <LeftPanel
+                        exists={selectedTemplate.length > 0}
+                        idTemplate={selectedTemplate}
+                        loading={loadingControls}
+                        dataControls={dataControls}
+                        editionControlGroup={selectedControlGroup}
+                        setEditionControlGroup={setSelectedControlGroup}
+                      />
+                      <RightPanel
+                        permissions={permissions}
+                        editionControlGroup={selectedControlGroup}
+                        loading={loadingControls}
+                        onEditControlGroup={() => {
+                          setAddModalInfo({
+                            state: true,
+                            isGroup: true,
+                          });
+                          setEditionControlGroup(selectedControlGroup);
+                        }}
+                        onChangeState={async () => {
+                          if (selectedControlGroup?.id)
+                            await changeControlGroupStatus(
+                              selectedControlGroup?.id
+                            );
+                        }}
+                        onDeleteControlGroup={() => {
+                          setDeleteControlGroup(true);
+                        }}
+                        onChangeStateControlSpecific={
+                          changeControlSpecificStatus
+                        }
+                        onEditControlSpecific={(
+                          editionSpecific: ControlSpecificType
+                        ) => {
+                          setEditionControlSpecific({
+                            ...editionSpecific,
+                            idControlGroup: selectedControlGroup?.id ?? "",
+                          });
+                          setAddModalInfo({
+                            state: true,
+                            isGroup: false,
+                            groupId: selectedControlGroup?.id,
+                          });
+                        }}
+                        onDeleteControlSpecific={(
+                          editionSpecific: ControlSpecificType
+                        ) => {
+                          setEditionControlSpecific({
+                            ...editionSpecific,
+                            idControlGroup: selectedControlGroup?.id ?? "",
+                          });
+                          setDeleteControlSpecific(true);
+                        }}
+                      />
+                    </PanelGroup>
+                  ) : (
+                    <>
+                      {!mobileGroupSelected ? (
+                        <LeftResponsivePanel
+                          exists={selectedTemplate.length > 0}
+                          setGroupSelected={setMobileGroupSelected}
+                          idTemplate={selectedTemplate}
+                          loading={loadingControls}
+                          dataControls={dataControls}
+                          editionControlGroup={selectedControlGroup}
+                          setEditionControlGroup={setSelectedControlGroup}
+                        />
+                      ) : (
+                        <RightResponsivePanel
+                          permissions={permissions}
+                          editionControlGroup={selectedControlGroup}
+                          backToSelectGroup={setMobileGroupSelected}
+                          loading={loadingControls}
+                          onEditControlGroup={() => {
+                            setAddModalInfo({
+                              state: true,
+                              isGroup: true,
+                            });
+                            setEditionControlGroup(selectedControlGroup);
+                          }}
+                          onChangeState={async () => {
+                            if (selectedControlGroup?.id)
+                              await changeControlGroupStatus(
+                                selectedControlGroup?.id
+                              );
+                          }}
+                          onDeleteControlGroup={() => {
+                            setDeleteControlGroup(true);
+                          }}
+                          onChangeStateControlSpecific={
+                            changeControlSpecificStatus
+                          }
+                          onEditControlSpecific={(
+                            editionSpecific: ControlSpecificType
+                          ) => {
+                            setEditionControlSpecific({
+                              ...editionSpecific,
+                              idControlGroup: selectedControlGroup?.id ?? "",
+                            });
+                            setAddModalInfo({
+                              state: true,
+                              isGroup: false,
+                              groupId: selectedControlGroup?.id,
+                            });
+                          }}
+                          onDeleteControlSpecific={(
+                            editionSpecific: ControlSpecificType
+                          ) => {
+                            setEditionControlSpecific({
+                              ...editionSpecific,
+                              idControlGroup: selectedControlGroup?.id ?? "",
+                            });
+                            setDeleteControlSpecific(true);
+                          }}
+                        />
+                      )}
+                    </>
+                  )}
                 </MainCard>
               </>
             )}

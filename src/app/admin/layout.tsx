@@ -23,7 +23,7 @@ const Main = styled("main", {
 
   width: `100%`,
   padding: "16px",
-  marginTop: "6rem",
+  marginTop: "5rem",
   transition: theme.transitions.create(
     "margin",
     open

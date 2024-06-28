@@ -61,7 +61,6 @@ export const TemplateSelector = ({
   exists,
 }: TemplateSelector) => {
   const theme = useTheme();
-  const xs = useMediaQuery(theme.breakpoints.only("xs"));
 
   const actions = [
     {
@@ -112,7 +111,7 @@ export const TemplateSelector = ({
 
   return (
     <Grid container>
-      <Grid item xs={6}>
+      <Grid item xs={11} lg={6}>
         <Stack width="80%">
           <FormInputAutocomplete
             id="selectTemplate"
@@ -123,7 +122,6 @@ export const TemplateSelector = ({
             onChange={async (e: any) => {
               if (e && e.value !== undefined) {
                 await setIdTemplate(e.value);
-                // router.replace(`/admin/controls?template=${e.value}`);
               }
             }}
             options={data}
@@ -136,18 +134,19 @@ export const TemplateSelector = ({
           />
         </Stack>
       </Grid>
-      <Grid item xs={6}>
+      <Grid item xs={1} lg={6}>
         <Stack
           direction="row"
           height="100%"
           justifyContent="end"
-          alignItems="center"
+          alignItems="end"
+          paddingBottom={0.5}
         >
           <ActionsButton
             id={"addControlOrGroup"}
             text={"Agregar"}
             deactivate={!exists}
-            alter={xs ? "icono" : "boton"}
+            alter={"boton"}
             label={"Agregar nuevo control o grupo"}
             actions={idControlGroup.length > 0 ? actions : action}
           />

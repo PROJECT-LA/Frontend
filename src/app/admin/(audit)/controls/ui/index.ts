@@ -5,3 +5,5 @@ export { ModalControlSpecific } from "./ModalControlSpecific";
 export { ModalControlGroup } from "./ModalControlGroup";
 export { NoTemplate } from "./States";
 export { TemplateSelector } from "./States";
+export { LeftResponsivePanel } from "./LeftResponsivePanel";
+export { RightResponsivePanel } from "./RightResponsivePanel";
