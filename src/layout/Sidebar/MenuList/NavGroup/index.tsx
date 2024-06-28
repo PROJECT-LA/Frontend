@@ -13,7 +13,14 @@ const NavGroup = ({ item }: { item: Item }) => {
 
   const items = item.subModule?.map((menu) => {
     if (menu.icon && menu.icon.length > 0) {
-      return <NavItem key={menu.id} item={menu} level={1} />;
+      return (
+        <NavItem
+          key={menu.id}
+          item={menu}
+          level={1}
+          container={item.title ?? ""}
+        />
+      );
     } else {
       return (
         <Typography key={menu.id} variant="h6" color="error" align="center">

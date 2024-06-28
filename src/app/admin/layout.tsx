@@ -109,7 +109,7 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
             borderColor: theme.palette.divider,
           }}
         >
-          <Header handleLeftDrawerToggle={toggleDrawer} scrolled={scrolled} />
+          <Header />
         </Toolbar>
       </AppBar>
       <Main theme={theme} open={openDrawer}>

@@ -32,15 +32,18 @@ interface ListItemProps {
 const NavItem = ({
   item,
   level,
+  container,
   isFromCollapse = false,
 }: {
   item: Item;
   level: any;
+  container: string;
   isFromCollapse?: boolean;
 }) => {
   const theme = useTheme();
 
-  const { cerrarDrawer, openDrawer, setTitlePage } = useGlobalStore();
+  const { cerrarDrawer, openDrawer, setTitlePage, setContainerTitle } =
+    useGlobalStore();
   const pathname = usePathname();
   const matchesSM = useMediaQuery(theme.breakpoints.down("lg"));
 
@@ -68,6 +71,7 @@ const NavItem = ({
 
   const itemHandler = (itemNav: Item) => {
     if (itemNav.title && itemNav.title?.length > 0) {
+      setContainerTitle(container);
       setTitlePage(itemNav.title);
     }
 

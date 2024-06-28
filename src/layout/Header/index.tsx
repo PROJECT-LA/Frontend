@@ -1,37 +1,18 @@
 "use client";
 import { useTheme } from "@mui/material/styles";
-import {
-  Box,
-  Stack,
-  Button,
-  Typography,
-  Hidden,
-  useMediaQuery,
-} from "@mui/material";
-
-// project imports
+import { Box, Stack, Typography, Hidden, useMediaQuery } from "@mui/material";
 import ProfileSection from "./ProfileSection";
 import NotificationSection from "./NotificationSection";
 import { IconTooltip } from "@/components/buttons";
-// assets
 import { CONSTANTS } from "../../../config";
-import { Menu, Search } from "lucide-react";
+import { Menu } from "lucide-react";
 import { ThemeToggler } from "@/components/buttons";
-import { usePathname } from "next/navigation";
-import { useAuthStore, useGlobalStore } from "@/store";
+import { useGlobalStore } from "@/store";
 import SearchSection from "./SearchSection";
-import { useEffect } from "react";
 
-const Header = ({
-  handleLeftDrawerToggle,
-  scrolled,
-}: {
-  handleLeftDrawerToggle: () => void;
-  scrolled: boolean;
-}) => {
-  const { user } = useAuthStore();
+const Header = () => {
   const theme = useTheme();
-  const { toggleDrawer, titlePage } = useGlobalStore();
+  const { toggleDrawer, titlePage, containerTitle } = useGlobalStore();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
 
   return (
@@ -50,7 +31,23 @@ const Header = ({
             id="menu-hamburguesa"
             icon={<Menu />}
           />
-          <Typography variant="h5">{titlePage}</Typography>
+          {containerTitle.length > 0 ? (
+            <Stack direction="row" alignItems="center">
+              <Typography variant="h5" fontWeight={300}>
+                {`${containerTitle}`}
+              </Typography>
+              <Box width={10} />
+              <Typography variant="h5" fontWeight={300}>
+                /
+              </Typography>
+              <Box width={10} />
+              <Typography variant="h5" color="primary.main">
+                {titlePage}
+              </Typography>
+            </Stack>
+          ) : (
+            <Typography variant="h5">{titlePage}</Typography>
+          )}
         </Stack>
       </Box>
 

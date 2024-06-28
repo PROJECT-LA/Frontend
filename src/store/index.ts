@@ -6,7 +6,8 @@ import { persist, createJSONStorage } from "zustand/middleware";
 interface GlobalState {
   titlePage: string;
   setTitlePage: (title: string) => void;
-
+  containerTitle: string;
+  setContainerTitle: (container: string) => void;
   openDrawer: boolean;
   toggleDrawer: () => void;
   cerrarDrawer: () => void;
@@ -52,6 +53,12 @@ export const useAuthStore = create<AuthState>()(
 export const useGlobalStore = create<GlobalState>()(
   persist(
     (set) => ({
+      containerTitle: "",
+      setContainerTitle: (newContainer: string) => {
+        set((state) => {
+          return { ...state, containerTitle: newContainer };
+        });
+      },
       titlePage: "",
       setTitlePage: (newTitle: string) => {
         set((state) => {
