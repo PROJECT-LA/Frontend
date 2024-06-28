@@ -126,47 +126,49 @@ export const ModulesModalView = ({
       <DialogContent dividers>
         <Grid container direction={"column"} justifyContent="space-evenly">
           {!isSection && (
-            <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
-              <Grid item xs={12} sm={12} md={6}>
-                <FormInputText
-                  id={"nameSection"}
-                  name="nameSection"
-                  control={control}
-                  label="Sección"
-                  disabled={true}
-                />
+            <>
+              <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
+                <Grid item xs={12} sm={12} md={6}>
+                  <FormInputText
+                    id={"nameSection"}
+                    name="nameSection"
+                    control={control}
+                    label="Sección"
+                    disabled={true}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={12} md={6} alignContent="end">
+                  <FormInputAutocomplete
+                    id={"icon"}
+                    control={control}
+                    name="icon"
+                    label="Icono"
+                    disabled={loadingModal}
+                    rules={
+                      isSection
+                        ? {}
+                        : {
+                            required: "Este campo es requerido",
+                          }
+                    }
+                    freeSolo
+                    newValues
+                    forcePopupIcon
+                    options={options}
+                    InputProps={{
+                      startAdornment: iconWatch && (
+                        <Icono sx={{ ml: 1 }}>{actualIcon}</Icono>
+                      ),
+                    }}
+                    getOptionLabel={(option) => option.label}
+                    renderOption={(option) => <>{option.label}</>}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={12} md={6} alignContent="end">
-                <FormInputAutocomplete
-                  id={"icon"}
-                  control={control}
-                  name="icon"
-                  label="Icono"
-                  disabled={loadingModal}
-                  rules={
-                    isSection
-                      ? {}
-                      : {
-                          required: "Este campo es requerido",
-                        }
-                  }
-                  freeSolo
-                  newValues
-                  forcePopupIcon
-                  options={options}
-                  InputProps={{
-                    startAdornment: iconWatch && (
-                      <Icono sx={{ ml: 1 }}>{actualIcon}</Icono>
-                    ),
-                  }}
-                  getOptionLabel={(option) => option.label}
-                  renderOption={(option) => <>{option.label}</>}
-                />
-              </Grid>
-            </Grid>
+              <Box height={"15px"} />
+            </>
           )}
 
-          <Box height={"15px"} />
           {!isSection && urls !== undefined && (
             <>
               <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
@@ -189,7 +191,6 @@ export const ModulesModalView = ({
             </>
           )}
 
-          <Box height={"15px"} />
           <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>
             <Grid item xs={12} sm={12} md={12}>
               <FormInputText
@@ -202,6 +203,7 @@ export const ModulesModalView = ({
               />
             </Grid>
           </Grid>
+          <Box height={"15px"} />
 
           {isSection && (
             <Grid container direction="row" spacing={{ xs: 2, sm: 1, md: 2 }}>

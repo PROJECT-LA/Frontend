@@ -6,6 +6,9 @@ import {
   Box,
   Button,
   Card,
+  List,
+  ListItem,
+  Skeleton,
   Stack,
   Tab,
   Tabs,
@@ -82,7 +85,7 @@ const ModulesClient2 = () => {
   const [roles, setRoles] = useState<RolCRUDType[]>([]);
   const [modules, setModules] = useState<RolModules[]>([]);
   const [value, setValue] = React.useState(0);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
   const [permissions, setPermissions] =
     useState<PermissionTypes>(initialPermissions);
   const { sessionRequest, getPermissions } = useSession();
@@ -94,20 +97,18 @@ const ModulesClient2 = () => {
       const data = await getPermissions("/admin/modules");
       if (data !== undefined) setPermissions(data);
     };
-    getPermissionsClient();
+    getPermissionsClient()
+      .then(() => {
+        getModulesRoles().finally(() => {});
+      })
+      .finally(() => {});
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    getModulesRoles().finally(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const getModulesRoles = async () => {
     try {
       setLoading(true);
-      await delay(1000);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/roles`,
       });
@@ -129,7 +130,6 @@ const ModulesClient2 = () => {
           rolName: rol.name,
           data: res.data,
         });
-        await delay(50);
         temporalURLs.push({
           id: rol.id,
           data: res2.data,
@@ -139,7 +139,7 @@ const ModulesClient2 = () => {
       setModules(temporalModules);
       setDataURLsByRole(temporalURLs);
     } catch (e) {
-      toast.error("Error", { description: MessagesInterpreter(e) });
+      toast.error(MessagesInterpreter(e));
     } finally {
       setLoading(false);
     }
@@ -192,7 +192,7 @@ const ModulesClient2 = () => {
     if (!e.over) return;
     if (e.active.id !== e.over.id) {
       setOrderListener(true);
-      setModules((rolesModules) => {
+      setModules((_) => {
         const newRoles = [...modules];
         const newSections = newRoles[idRole].data;
         const oldIdx = newSections.findIndex(
@@ -341,6 +341,7 @@ const ModulesClient2 = () => {
     }
     setModuleEdition(null);
   };
+  const [tab, setTab] = useState<string>("1");
 
   const cancelDeleteModule = () => {
     setShowDeleteModule(false);
@@ -401,20 +402,58 @@ const ModulesClient2 = () => {
         />
       </CustomDialog>
 
-      {!loading && roles.length > 0 && modules.length > 0 && (
+      {loading ? (
+        <List>
+          {Array(5)
+            .fill(0)
+            .map((_, index) => (
+              <ListItem key={`modules-list-skeleton-wait-${index}`}>
+                <Skeleton width="100%" height="4rem" />
+              </ListItem>
+            ))}
+        </List>
+      ) : (
         <>
-          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+          <Box position="relative" marginTop={2}>
+            {!loading && (
+              <Box
+                position="absolute"
+                width="100%"
+                borderBottom={1.5}
+                bottom={0}
+                borderColor={theme.palette.primary.main}
+                zIndex={0}
+              />
+            )}
             <Tabs
               value={value}
               onChange={handleChange}
-              aria-label="basic tabs example"
+              aria-label="audit page data"
+              scrollButtons
+              allowScrollButtonsMobile
+              sx={{
+                zIndex: 10,
+              }}
             >
               {modules.map((elem, index) => (
                 <Tab
                   key={`tab-content-roles-${index}`}
                   label={elem.rolName}
                   id={`simple-tab-${index}`}
-                  aria-controls={`simple-tabpanel-${index}`}
+                  aria-controls={`modules-by-role-tab-${index}`}
+                  onClick={(e) => setTab(elem.rolId)}
+                  sx={{
+                    backgroundColor:
+                      tab === elem.rolId
+                        ? theme.palette.background.default
+                        : "transparent",
+                    position: "relative",
+                    borderTop: tab === elem.rolId ? 1.5 : 0,
+                    borderLeft: tab === elem.rolId ? 1.5 : 0,
+                    borderRight: tab === elem.rolId ? 1.5 : 0,
+                    borderTopLeftRadius: tab === elem.rolId ? 4 : 0,
+                    borderTopRightRadius: tab === elem.rolId ? 4 : 0,
+                  }}
                 />
               ))}
             </Tabs>

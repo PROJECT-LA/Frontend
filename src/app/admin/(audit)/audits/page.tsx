@@ -110,7 +110,7 @@ const AuditPage = () => {
             <Tabs
               value={value}
               onChange={handleChange}
-              aria-label="basic tabs example"
+              aria-label="audit page data"
               scrollButtons
               allowScrollButtonsMobile
               sx={{
