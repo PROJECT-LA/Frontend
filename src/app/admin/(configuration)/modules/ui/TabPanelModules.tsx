@@ -34,56 +34,6 @@ export const TabPanelModules = ({
   const mdUp = useMediaQuery(theme.breakpoints.up("md"));
   const [sections, setSections] = useState<any>();
 
-  const reorderSections = (idRole: number, e: DragEndEvent) => {
-    if (!e.over) return;
-    if (e.active.id !== e.over.id) {
-      setOrderListener(true);
-      setModules((_) => {
-        const newRoles = [...modules];
-        const newSections = newRoles[idRole].data;
-        const oldIdx = newSections.findIndex(
-          (section) => section.id === e.active.id
-        );
-        const newIdx = newSections.findIndex(
-          (section) => section.id === e.over!.id
-        );
-        newRoles[idRole].data = arrayMove(newSections, oldIdx, newIdx);
-        return newRoles;
-      });
-    }
-  };
-
-  const reorderSubModules = (
-    idRole: number,
-    sectionIndex: number,
-    e: DragEndEvent
-  ) => {
-    if (!e.over) return;
-    if (e.active.id !== e.over.id) {
-      setOrderListener(true);
-
-      setModules((modules) => {
-        const newRoles = [...modules];
-        const newSections = newRoles[idRole].data;
-        const newModules = newSections[sectionIndex].subModule!;
-
-        const oldIdx = newModules.findIndex(
-          (module) => module.id === e.active.id
-        );
-        const newIdx = newModules.findIndex(
-          (module) => module.id === e.over!.id
-        );
-        newSections[sectionIndex].subModule = arrayMove(
-          newModules,
-          oldIdx,
-          newIdx
-        );
-        newRoles[idRole].data = [...newSections];
-        return newRoles;
-      });
-    }
-
-
   return (
     <div
       role="tabpanel"
