@@ -55,13 +55,12 @@ export const useSession = () => {
       if (Services.isNetworkError(e)) {
         throw new Error("Error en la conexión 🌎");
       }
+      if (e.response?.status === 401) {
+        logoutSession();
+      }
 
       if (isPermissions) {
-        if (
-          e.response?.status === 403 ||
-          e.response?.status === 401 ||
-          e.response?.status === 404
-        ) {
+        if (e.response?.status === 403 || e.response?.status === 404) {
           router.push("/not-found");
         }
       }
@@ -96,14 +95,6 @@ export const useSession = () => {
   const logoutSession = async () => {
     try {
       showFullScreen();
-      await delay(1000);
-      // const token = readCookie("token");
-      // if (!token) {
-      //   router.refresh();
-      //   router.push("/login");
-      // }
-
-      // deleteCookie("token");
       const response = await Services.post({
         headers: {
           accept: "application/json",
@@ -115,8 +106,6 @@ export const useSession = () => {
       router.push("/login");
     } catch (e) {
       print(`Error al cerrar sesión: `, e);
-      // deleteCookie("token");
-      // router.refresh();
       router.push("/login");
     } finally {
       hideFullScreen();

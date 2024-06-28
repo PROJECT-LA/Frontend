@@ -164,6 +164,9 @@ const ProfileClient = () => {
                       <Box
                         border={1}
                         borderColor={theme.palette.grey[500]}
+                        display="flex"
+                        justifyContent="center"
+                        alignItems="center"
                         borderRadius="50%"
                         padding={
                           fileList.length === 0 && image.length === 0 ? 5 : 0
