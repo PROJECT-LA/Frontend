@@ -17,7 +17,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-
 import { ListSkeleton, TableSkeletonBody } from "./CustomSkeleton";
 import { Icono } from "@/components/Icono";
 import { SortTypeCriteria, ToggleOrden } from "@/types";
@@ -168,19 +167,12 @@ export const CustomDataTable = ({
         sx={{
           boxShadow: CONSTANTS.boxShadow,
           borderRadius: 2,
-          border: 1,
           borderColor: theme.palette.divider,
           pt: 0,
           pl: 0,
           pr: 0,
           pb: { sm: 2, md: 2, xl: 2 },
           mb: { sm: 3, md: 3, xl: 3 },
-          backgroundColor: xs
-            ? {
-                sm: "inherit",
-                xs: "inherit",
-              }
-            : {},
         }}
       >
         {

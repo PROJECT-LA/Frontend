@@ -139,6 +139,13 @@ export const darkTheme = createTheme({
         },
       },
     },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: colors.darkDefault,
+        },
+      },
+    },
     MuiTabs: {
       styleOverrides: {
         indicator: {

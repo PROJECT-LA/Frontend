@@ -9,12 +9,12 @@ export const colors: EsquemaColor = {
   paper: "#fff",
   default: "#F0EDE6",
 
-  darkPaper: "#101516",
-  darkDefault: "#0D0E12",
+  darkPaper: "#050B05",
+  darkDefault: "#0D1515",
 
   // divider
   divider: "#C4C4C4",
-  dividerDark: "#697586",
+  dividerDark: "#25292E",
 
   // primary
   primaryLight: "#89C9B8",

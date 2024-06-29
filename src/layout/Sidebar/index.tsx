@@ -1,6 +1,5 @@
 import { useTheme } from "@mui/material/styles";
 import { Box, Drawer, Stack, useMediaQuery } from "@mui/material";
-
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { BrowserView, MobileView } from "react-device-detect";
 
@@ -88,13 +87,28 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
             background: theme.palette.background.paper,
             height: "100%",
             color: theme.palette.text.primary,
-            borderRight: 1,
+            borderRight: 0.2,
             borderColor: theme.palette.divider,
           },
         }}
         ModalProps={{ keepMounted: true }}
         color="inherit"
       >
+        <Box position="relative">
+          <Box
+            sx={{
+              position: "absolute",
+              top: 0,
+              left: 10,
+              width: "50px",
+              height: "800px",
+              borderRadius: "50%",
+              backgroundColor: "#5DEBD7",
+              opacity: "60%",
+              filter: "blur(100px)",
+            }}
+          />
+        </Box>
         {drawer}
       </Drawer>
     </Box>
