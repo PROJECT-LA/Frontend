@@ -642,8 +642,8 @@ const AuditModalView = ({
       </DialogContent>
       <DialogActions
         sx={{
-          my: 1,
-          mx: 2,
+          py: 1,
+          px: 2,
           justifyContent: "space-between",
         }}
       >

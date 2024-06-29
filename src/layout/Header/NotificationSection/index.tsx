@@ -98,7 +98,10 @@ const NotificationSection = () => {
             padding: 1,
             borderRadius: "50%",
             transition: "all .2s ease-in-out",
-            background: theme.palette.background.paper,
+            background:
+              theme.palette.mode === "light"
+                ? theme.palette.background.paper
+                : theme.palette.background.default,
             color: theme.palette.text.primary,
             border: 1,
             borderColor: theme.palette.divider,

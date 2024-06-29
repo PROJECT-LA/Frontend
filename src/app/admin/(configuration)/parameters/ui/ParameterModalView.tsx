@@ -116,8 +116,8 @@ export const ParameterModalView = ({
       </DialogContent>
       <DialogActions
         sx={{
-          my: 1,
-          mx: 2,
+          py: 1,
+          px: 2,
           justifyContent: {
             lg: "flex-end",
             md: "flex-end",

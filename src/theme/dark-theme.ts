@@ -213,5 +213,26 @@ export const darkTheme = createTheme({
         },
       },
     },
+    MuiDialogContent: {
+      styleOverrides: {
+        root: {
+          background: colors.darkDefault,
+        },
+      },
+    },
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          background: colors.darkDefault,
+        },
+      },
+    },
+    MuiDialogActions: {
+      styleOverrides: {
+        root: {
+          background: colors.darkDefault,
+        },
+      },
+    },
   },
 });

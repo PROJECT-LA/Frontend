@@ -167,6 +167,7 @@ export const CustomDataTable = ({
         sx={{
           boxShadow: CONSTANTS.boxShadow,
           borderRadius: 2,
+          border: theme.palette.mode === "dark" ? 1 : 0,
           borderColor: theme.palette.divider,
           pt: 0,
           pl: 0,

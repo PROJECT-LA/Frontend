@@ -17,7 +17,7 @@ export const ThemeToggler = ({ ...rest }: IconButtonProps) => {
         backgroundColor:
           theme.palette.mode === "light"
             ? theme.palette.background.paper
-            : "transparent",
+            : theme.palette.background.default,
       }}
       title={themeMode ? `Cambiar a modo oscuro` : `Cambiar a modo claro`}
     >
