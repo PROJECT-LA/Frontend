@@ -1,4 +1,6 @@
 import {
+  FilePen,
+  FilePenLine,
   FileSliders,
   FileStack,
   Home,
@@ -82,6 +84,14 @@ export const icons: IconMapper[] = [
   {
     name: "file-stack",
     icon: <FileStack />,
+  },
+  {
+    name: "file-pen",
+    icon: <FilePen />,
+  },
+  {
+    name: "file-pen-line",
+    icon: <FilePenLine />,
   },
 ];
 

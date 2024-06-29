@@ -51,7 +51,13 @@ const NotFoundPage = () => {
             <Typography>No podemos encontrar esta página</Typography>
 
             <Box height={20} />
-            <Button variant="contained" onClick={() => router.back()}>
+            <Button
+              variant="contained"
+              onClick={() => {
+                router.back();
+                router.back();
+              }}
+            >
               Volver
             </Button>
           </Stack>

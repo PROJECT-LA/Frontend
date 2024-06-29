@@ -1,12 +1,5 @@
 import { useTheme } from "@mui/material/styles";
-import {
-  Box,
-  ButtonBase,
-  Drawer,
-  Stack,
-  Typography,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, Drawer, Stack, useMediaQuery } from "@mui/material";
 
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { BrowserView, MobileView } from "react-device-detect";

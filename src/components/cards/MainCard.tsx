@@ -9,6 +9,8 @@ interface MainCard {
   padding?: boolean;
   radius?: string;
   height?: string;
+  boxShadow?: boolean;
+  border?: boolean;
 }
 
 const MainCard = ({
@@ -16,13 +18,15 @@ const MainCard = ({
   padding = true,
   radius = CONSTANTS.borderRadius,
   height = "auto",
+  boxShadow = false,
+  border = true,
 }: MainCard) => {
   const theme = useTheme();
   const matchDownMd = useMediaQuery(theme.breakpoints.down("md"));
   return (
     <Card
       sx={{
-        border: 1,
+        border: border ? 1 : 0,
         borderRadius: radius,
         height,
         borderColor: theme.palette.divider,
@@ -31,6 +35,7 @@ const MainCard = ({
             ? theme.palette.background.paper
             : "transparent !important",
         padding: !padding ? "0" : !matchDownMd ? "2.5rem" : "1rem",
+        boxShadow: boxShadow ? CONSTANTS.boxShadow : 0,
       }}
     >
       {children}

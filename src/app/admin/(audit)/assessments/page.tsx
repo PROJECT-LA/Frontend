@@ -131,6 +131,7 @@ const AssessmentsPageClient = ({ idTemplate }: AssessmentsPageClient) => {
           url: `${CONSTANTS.baseUrl}/audits`,
           params: {
             idClient: id ? id : user?.id,
+            status: "CREADO",
           },
         });
         const optionsAuditsTemp: Array<optionType> = [];

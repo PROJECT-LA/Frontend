@@ -14,7 +14,7 @@ import { CONSTANTS } from "../../../config";
 interface Props {
   isOpen: boolean;
   title: string;
-  text: string;
+  text?: string;
   disablePortal?: PortalProps["disablePortal"];
   disableScrollLock?: boolean;
 }
@@ -40,10 +40,13 @@ export const AlertDialog: FC<PropsWithChildren<Props>> = ({
       <DialogTitle sx={{ m: 1, p: 2 }} variant="h4">
         {title}
       </DialogTitle>
+
       <DialogContent>
-        <DialogContentText>
-          <Typography component={"span"}>{text}</Typography>
-        </DialogContentText>
+        {text && (
+          <DialogContentText>
+            <Typography component={"span"}>{text}</Typography>
+          </DialogContentText>
+        )}
       </DialogContent>
       <DialogActions>{children}</DialogActions>
     </Dialog>

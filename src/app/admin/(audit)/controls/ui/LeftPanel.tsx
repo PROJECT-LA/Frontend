@@ -16,6 +16,7 @@ import { optionType } from "@/components/forms/FormInputDropdown";
 import { ControlGroupType } from "../types";
 import { CUControlGroupType } from "../types";
 import { CONSTANTS } from "../../../../../../config";
+import PerfectScrollbar from "react-perfect-scrollbar";
 
 interface SearchGroup {
   group: string;
@@ -119,72 +120,76 @@ export const LeftPanel = ({
                 ))}
             </List>
           ) : (
-            <List
-              sx={{
+            <PerfectScrollbar
+              component="div"
+              style={{
                 height: xlUp ? "calc(75vh*0.92)" : "calc(75vh * 0.88)",
-                overflow: "auto",
               }}
             >
-              {idTemplate !== undefined &&
-                dataControls.map((elem) => (
-                  <ListItem
-                    key={`group-controls-${elem.id}-${elem.groupCode}`}
-                    onClick={() => {
-                      setEditionControlGroup({
-                        idTemplate,
-                        group: elem.group,
-                        groupCode: elem.groupCode,
-                        groupDescription: elem.groupDescription,
-                        id: elem.id,
-                        objective: elem.objective,
-                        objectiveCode: elem.objectiveCode,
-                        objectiveDescription: elem.objectiveDescription,
-                        controls: elem.controls,
-                        status: elem.status,
-                      });
-                    }}
-                  >
-                    <Box
-                      width={"100%"}
-                      border={1}
-                      borderColor={`${
-                        elem.id === editionControlGroup?.id
-                          ? theme.palette.primary.main
-                          : theme.palette.divider + "80"
-                      }`}
-                      paddingX={3}
-                      paddingY={2}
-                      boxShadow={
-                        elem.id === editionControlGroup?.id
-                          ? CONSTANTS.boxShadow
-                          : ""
-                      }
-                      borderRadius={1}
-                      sx={{
-                        backgroundColor: `${
-                          elem.id === editionControlGroup?.id
-                            ? theme.palette.primary.light + "50"
-                            : "transparent !important"
-                        }`,
-                        cursor: "pointer",
-                        transition: "all .3s ease-in",
-                        "&:hover": {
-                          backgroundColor: `${theme.palette.primary.light}35`,
-                        },
+              <List>
+                {idTemplate !== undefined &&
+                  dataControls.map((elem) => (
+                    <ListItem
+                      key={`group-controls-${elem.id}-${elem.groupCode}`}
+                      onClick={() => {
+                        setEditionControlGroup({
+                          idTemplate,
+                          group: elem.group,
+                          groupCode: elem.groupCode,
+                          groupDescription: elem.groupDescription,
+                          id: elem.id,
+                          objective: elem.objective,
+                          objectiveCode: elem.objectiveCode,
+                          objectiveDescription: elem.objectiveDescription,
+                          controls: elem.controls,
+                          status: elem.status,
+                        });
                       }}
                     >
-                      <Stack spacing={1}>
-                        <Stack spacing={0.3}>
-                          <Typography variant="h5">{elem.groupCode}</Typography>
-                          <Typography variant="subtitle2">
-                            {elem.group}
-                          </Typography>
+                      <Box
+                        width={"100%"}
+                        border={1}
+                        borderColor={`${
+                          elem.id === editionControlGroup?.id
+                            ? theme.palette.primary.main
+                            : theme.palette.divider + "80"
+                        }`}
+                        paddingX={3}
+                        paddingY={2}
+                        boxShadow={
+                          elem.id === editionControlGroup?.id
+                            ? CONSTANTS.boxShadow
+                            : ""
+                        }
+                        borderRadius={1}
+                        sx={{
+                          backgroundColor: `${
+                            elem.id === editionControlGroup?.id
+                              ? theme.palette.primary.light + "50"
+                              : "transparent !important"
+                          }`,
+                          cursor: "pointer",
+                          transition: "all .3s ease-in",
+                          "&:hover": {
+                            backgroundColor: `${theme.palette.primary.light}35`,
+                          },
+                        }}
+                      >
+                        <Stack spacing={1}>
+                          <Stack spacing={0.3}>
+                            <Typography variant="h5">
+                              {elem.groupCode}
+                            </Typography>
+                            <Typography variant="subtitle2">
+                              {elem.group}
+                            </Typography>
+                          </Stack>
                         </Stack>
-                      </Stack>
-                    </Box>
-                  </ListItem>
-                ))}
-            </List>
+                      </Box>
+                    </ListItem>
+                  ))}
+              </List>
+            </PerfectScrollbar>
           )}
         </Box>
       </Panel>
