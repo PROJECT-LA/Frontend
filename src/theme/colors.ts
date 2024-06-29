@@ -18,8 +18,8 @@ export const colors: EsquemaColor = {
 
   // primary
   primaryLight: "#89C9B8",
-  primaryMain: "#3CA25E",
-  primaryDark: "#30322F",
+  primaryMain: "#00A68E",
+  primaryDark: "#024238",
 
   // primary dark
   darkPrimaryLight: "#89C9B8",
@@ -28,12 +28,12 @@ export const colors: EsquemaColor = {
 
   // secondary
   secondaryLight: "#E4D6F3",
-  secondaryMain: "#A686C4",
+  secondaryMain: "#FF6C00",
   secondaryDark: "#707a82",
 
   // secondary dark
   darkSecondaryLight: "#E4D6F3",
-  darkSecondaryMain: "#A686C4",
+  darkSecondaryMain: "#FFD155",
   darkSecondaryDark: "#7c4dff",
 
   // success

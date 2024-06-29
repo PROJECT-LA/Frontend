@@ -73,7 +73,6 @@ export const useSession = () => {
     route: string
   ): Promise<PermissionTypes | undefined> => {
     try {
-      await delay(500);
       const res = await sessionRequest({
         url: `${CONSTANTS.baseUrl}/policies/authorization`,
         type: "POST",
@@ -89,12 +88,14 @@ export const useSession = () => {
       return resPolicies;
     } catch (error) {
       console.log(error);
+    } finally {
     }
   };
 
   const logoutSession = async () => {
     try {
-      showFullScreen();
+      showFullScreen("Cerrando sesión");
+      await delay(1000);
       const response = await Services.post({
         headers: {
           accept: "application/json",

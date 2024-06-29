@@ -37,7 +37,7 @@ export const AlertDialog: FC<PropsWithChildren<Props>> = ({
       disablePortal={disablePortal}
       disableScrollLock={disableScrollLock}
     >
-      <DialogTitle sx={{ m: 1, p: 2 }} variant="h4">
+      <DialogTitle sx={{ p: 2 }} variant="h4">
         {title}
       </DialogTitle>
 

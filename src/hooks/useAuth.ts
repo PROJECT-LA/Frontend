@@ -40,7 +40,7 @@ export const useAuth = () => {
 
   const login = async ({ username, password }: LoginType) => {
     try {
-      setLoginLoader(true);
+      showFullScreen("Validando credenciales...");
       await delay(1000);
 
       const res = await Services.post({
@@ -52,11 +52,7 @@ export const useAuth = () => {
       setUserData(res.data);
       print(`Usuarios ✅`, res.data);
 
-      showFullScreen();
-      await delay(1000);
       router.push("/admin/home");
-
-      await delay(1000);
     } catch (e) {
       print(`Error al iniciar sesión: `, e);
       toast.error(MessagesInterpreter(e));

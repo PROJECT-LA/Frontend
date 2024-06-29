@@ -109,7 +109,7 @@ export default function PoliticsPage() {
         <Link
           href={`${CONSTANTS.sitePath}/admin/controls?template=${template.id}`}
         >
-          <Button variant="text" endIcon={<SquareArrowOutUpRight />}>
+          <Button variant="text" color="secondary">
             Ver controles
           </Button>
         </Link>
@@ -138,7 +138,7 @@ export default function PoliticsPage() {
           <IconTooltip
             id={`editarPolitica-${indexTemplate}`}
             title={"Editar"}
-            color={"primary"}
+            color={"secondary"}
             action={() => {
               editarPoliticaModal(template);
             }}

@@ -137,7 +137,7 @@ const NavItem = ({
     "&.Mui-selected": {
       backgroundColor: "transparent !important",
       ".MuiListItemIcon-root": {
-        color: theme.palette.primary.main,
+        color: theme.palette.secondary.main,
       },
       "&:before": {
         backgroundColor: theme.palette.primary.light,
@@ -203,7 +203,18 @@ const NavItem = ({
 
           {(openDrawer || matchDownMd) && (
             <ListItemText
-              primary={<Typography variant={"h6"}>{item.title}</Typography>}
+              primary={
+                <Typography
+                  color={
+                    pathname === item?.url
+                      ? "secondary"
+                      : theme.palette.text.primary
+                  }
+                  variant={"h6"}
+                >
+                  {item.title}
+                </Typography>
+              }
               secondary={
                 item.caption && (
                   <Typography

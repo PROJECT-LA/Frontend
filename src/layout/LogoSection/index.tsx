@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Stack, Typography, useTheme } from "@mui/material";
 import { CONSTANTS } from "../../../config";
-import LogoImg from "@/assets/logo.png";
+import LogoImg from "@/assets/logo_2.png";
 import Image from "next/image";
 
 export const LogoCorto = () => {

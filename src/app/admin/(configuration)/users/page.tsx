@@ -167,7 +167,7 @@ export default function UsersClientPage() {
             <IconTooltip
               id={`editarUsusario-${userData.id}`}
               title={"Editar"}
-              color={"primary"}
+              color={"secondary"}
               action={() => {
                 print(`Editaremos`, userData);
                 editUserModal(userData);
@@ -180,7 +180,7 @@ export default function UsersClientPage() {
             <IconTooltip
               id={`eliminarUsuario-${userData.id}`}
               title={"Eliminar"}
-              color={"secondary"}
+              color={"error"}
               action={() => {
                 print(`Eliminaremos`, userData);
                 deleteUserModal(userData);

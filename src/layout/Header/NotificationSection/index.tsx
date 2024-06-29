@@ -121,7 +121,10 @@ const NotificationSection = () => {
               borderRadius: "100%",
             }}
           >
-            <Typography color={"white"} variant="caption">
+            <Typography
+              color={theme.palette.mode === "dark" ? "black" : "white"}
+              variant="caption"
+            >
               3
             </Typography>
           </Box>
