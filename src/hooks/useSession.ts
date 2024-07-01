@@ -83,8 +83,9 @@ export const useSession = () => {
       });
 
       const resPolicies: PermissionTypes = getPermissionsBoolean(
-        res.data.policie
+        res.data.policy
       );
+
       return resPolicies;
     } catch (error) {
       console.log(error);
