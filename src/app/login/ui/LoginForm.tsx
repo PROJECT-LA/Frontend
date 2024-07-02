@@ -71,8 +71,8 @@ export const LoginForm = () => {
         <Divider />
         <Box height={20} />
 
-        <Hidden lgDown={true}>
-          <Box height={70} />
+        <Hidden xlDown={true}>
+          <Box height={30} />
         </Hidden>
 
         <FormInputText

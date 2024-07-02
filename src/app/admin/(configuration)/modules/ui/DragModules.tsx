@@ -129,12 +129,15 @@ export const DragSection = ({
                   <Chip label={section.order + ""} />
                   <Typography>{section.title}</Typography>
                 </Stack>
-                <Stack direction="row" spacing={1} sx={{ zIndex: 5 }}>
+
+                <Stack direction="row" spacing={1} sx={{ zIndex: 10 }}>
                   {section.description && (
                     <IconTooltip
                       title={section.description}
                       icon={<Info />}
-                      action={() => {}}
+                      action={(e) => {
+                        e.stopPropagation();
+                      }}
                       color="info"
                       id=""
                       name=""
@@ -146,7 +149,8 @@ export const DragSection = ({
                       id={`editarSubModule-${section.id}`}
                       title={"Editar"}
                       color={"primary"}
-                      action={() => {
+                      action={(e) => {
+                        e.stopPropagation();
                         editModule(section, idRole, true);
                       }}
                       icon={<Pencil />}
@@ -161,7 +165,8 @@ export const DragSection = ({
                         section.status == "ACTIVO" ? "Inactivar" : "Activar"
                       }
                       color={section.status == "ACTIVO" ? "success" : "error"}
-                      action={() => {
+                      action={(e) => {
+                        e.stopPropagation();
                         changeState(section, true);
                       }}
                       deactivate={section.status == "PENDIENTE"}
@@ -185,7 +190,8 @@ export const DragSection = ({
                       name="Eliminar"
                       title="Eliminar"
                       color="error"
-                      action={() => {
+                      action={(e) => {
+                        e.stopPropagation();
                         deleteModule(section, true);
                       }}
                       icon={<Trash2Icon />}

@@ -49,7 +49,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
           style={{
             display: "flex",
             flexDirection: "column",
-            height: !matchUpMd ? "calc(100vh - 140px)" : "calc(100vh -  100px)",
+            height: !matchUpMd ? "calc(100vh - 140px)" : "calc(97vh -  100px)",
             paddingLeft: openDrawer ? "25px" : 0,
             paddingRight: openDrawer ? "16px" : 0,
           }}
