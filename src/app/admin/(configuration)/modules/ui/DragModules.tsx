@@ -17,6 +17,7 @@ import {
   ListItem,
   Stack,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import {
@@ -36,7 +37,6 @@ import { useState } from "react";
 
 interface SectionProps {
   idRole: string;
-  indexRole: number;
   section: Item;
   permissions: PermissionTypes;
   sectionIndex: number;
@@ -60,7 +60,6 @@ interface SectionProps {
 
 export const DragSection = ({
   section,
-  indexRole,
   permissions,
   sectionIndex,
   reorderSubModules,
@@ -71,6 +70,7 @@ export const DragSection = ({
   idRole,
 }: SectionProps) => {
   const theme = useTheme();
+  const mdUp = useMediaQuery(theme.breakpoints.up("md"));
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: section.id });
 
@@ -231,7 +231,10 @@ export const DragSection = ({
               onClick={() =>
                 addModuleModal(false, idRole, section.id, section.title)
               }
-              startIcon={<PlusCircle />}
+              startIcon={<PlusCircle size={mdUp ? 16 : 15} />}
+              sx={{
+                fontSize: mdUp ? "1.2rem" : "0.7rem",
+              }}
             >
               Agregar módulo
             </Button>
@@ -271,6 +274,9 @@ const Module = ({
   deleteModule,
   editModule,
 }: ModuleProps) => {
+  const theme = useTheme();
+  const mdUp = useMediaQuery(theme.breakpoints.up("md"));
+
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -282,7 +288,7 @@ const Module = ({
         borderColor: "black",
         border: 1,
         marginBottom: 1,
-        padding: 1,
+        padding: mdUp ? 1 : 0,
         borderRadius: 2,
         transition: transition,
         transform: CSS.Transform.toString(transform),
@@ -303,7 +309,6 @@ const Module = ({
           {...listeners}
           direction="row"
           alignItems="center"
-          spacing={1}
           sx={{
             flexGrow: 1,
           }}
@@ -316,7 +321,7 @@ const Module = ({
           <Typography>{module.title}</Typography>
         </Stack>
 
-        <Stack direction="row" spacing={1} sx={{ zIndex: 5 }}>
+        <Stack direction="row" sx={{ zIndex: 5 }}>
           {module.description && (
             <IconTooltip
               title={module.description}

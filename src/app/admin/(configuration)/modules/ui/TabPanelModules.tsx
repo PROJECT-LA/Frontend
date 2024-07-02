@@ -372,9 +372,10 @@ export const TabPanelModules = ({
             <Stack
               alignItems="center"
               direction={mdUp ? "row" : "column"}
-              spacing={mdUp ? 0 : 3}
+              spacing={mdUp ? 0 : 2}
               width="100%"
-              justifyContent="space-between"
+              justifyContent={mdUp ? "space-between" : "start"}
+              alignContent={mdUp ? "center" : "start"}
             >
               <Typography>{`Módulos para ${module.rolName}`}</Typography>
               <Stack direction="row" spacing={1}>
@@ -405,10 +406,10 @@ export const TabPanelModules = ({
               </Stack>
             </Stack>
             <DndContext onDragEnd={(e) => reorderSections(e)}>
-              <Box marginTop={3} minHeight="80vh">
+              <Box minHeight="80vh" marginTop={1}>
                 <Card
                   sx={{
-                    padding: mdUp ? 4 : 1,
+                    padding: mdUp ? 2 : 0.5,
                     borderRadius: CONSTANTS.borderRadius,
                     height: "100%",
                     width: "100%",
@@ -432,7 +433,6 @@ export const TabPanelModules = ({
                       >
                         {module.data.map((section, indexSection) => (
                           <DragSection
-                            indexRole={index}
                             key={`section-${section.id}`}
                             changeState={changeStateModuleModal}
                             deleteModule={deleteModule}
