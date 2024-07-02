@@ -40,11 +40,7 @@ interface SectionProps {
   section: Item;
   permissions: PermissionTypes;
   sectionIndex: number;
-  reorderSubModules: (
-    rolId: number,
-    sectionIndex: number,
-    e: DragEndEvent
-  ) => void;
+  reorderSubModules: (sectionIndex: number, e: DragEndEvent) => void;
   addModuleModal: (
     state: boolean,
     idRole: string,
@@ -79,9 +75,7 @@ export const DragSection = ({
     useSortable({ id: section.id });
 
   return (
-    <DndContext
-      onDragEnd={(e) => reorderSubModules(indexRole, sectionIndex, e)}
-    >
+    <DndContext onDragEnd={(e) => reorderSubModules(sectionIndex, e)}>
       <Box
         ref={setNodeRef}
         sx={{

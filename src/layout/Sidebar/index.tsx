@@ -21,6 +21,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
   const theme = useTheme();
   const { openDrawer } = useGlobalStore();
   const matchUpMd = useMediaQuery(theme.breakpoints.up("md"));
+  const xlUp = useMediaQuery(theme.breakpoints.up("xl"));
 
   const drawer = (
     <>
@@ -101,7 +102,7 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }: SidebarProps) => {
               top: 0,
               left: 10,
               width: "50px",
-              height: "800px",
+              height: xlUp ? "800px" : "400px",
               borderRadius: "50%",
               backgroundColor: "#5DEBD7",
               opacity: "60%",
