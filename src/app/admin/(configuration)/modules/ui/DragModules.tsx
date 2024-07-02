@@ -32,8 +32,6 @@ import {
 } from "lucide-react";
 import { CSS } from "@dnd-kit/utilities";
 import { getIconLucide } from "@/types/icons";
-import { ModuleCRUDType } from "../types";
-import { useState } from "react";
 
 interface SectionProps {
   idRole: string;

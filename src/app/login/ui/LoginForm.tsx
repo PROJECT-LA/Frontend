@@ -40,7 +40,7 @@ export const LoginForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(loginSesion)}>
+    <form onSubmit={handleSubmit(loginSesion)} style={{ borderRadius: 2 }}>
       <Stack direction="row" justifyContent="space-between">
         <Logo />
         <ThemeToggler />
@@ -71,7 +71,7 @@ export const LoginForm = () => {
         <Divider />
         <Box height={20} />
 
-        <Hidden xlDown={true}>
+        <Hidden lgDown={true}>
           <Box height={70} />
         </Hidden>
 
